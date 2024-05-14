@@ -1,16 +1,19 @@
 {
-  "name": "client",
   "version": "1.0.0",
-  "private": true,
+  "private": true,  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clear": "rm -rf dist/*",
     "build:sass": "sass src/styles/main.scss dist/styles.css",
     "build:webpack": "webpack --mode production",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "build": "npm run format && npm run clear && npm run build:sass && npm run build:webpack",
+    "build": "npm run format && npm run clear && npm run build:sass && npm run build:webpack"
   },
+  "name": "client",
   "keywords": [],
+  "author": "Quollveth",
+  "license": "MIT",
+  "description": "",
   "dependencies": {
     "lodash": "^4.17.21"
   },
