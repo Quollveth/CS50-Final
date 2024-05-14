@@ -11,4 +11,4 @@ server/include/
 server/__pycache__/
 server/flask_session/
 
-server/whiteboard.db
+.mysql-data/
