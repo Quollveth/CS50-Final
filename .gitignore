@@ -1,0 +1,12 @@
+.vscode
+client/node_modules/
+client/dist/
+
+server/bin/
+server/lib/
+server/lib64
+server/include/
+server/__pycache__/
+server/flask_session/
+
+server/whiteboard.db

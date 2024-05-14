@@ -1,0 +1,31 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clear": "rm -rf dist/*",
+    "build:sass": "sass src/styles/main.scss dist/styles.css",
+    "build:webpack": "webpack --mode production",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "build": "npm run format && npm run clear && npm run build:sass && npm run build:webpack",
+  },
+  "keywords": [],
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.30",
+    "@types/lodash": "^4.17.1",
+    "css-loader": "^7.1.1",
+    "html-webpack-plugin": "^5.6.0",
+    "jquery": "^3.7.1",
+    "prettier": "^3.2.5",
+    "sass": "^1.77.1",
+    "sass-loader": "^14.2.1",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
