@@ -25,9 +25,10 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    $.post('endpoint', { username, email, password })
+    $.post('http://127.0.0.1:8080/hello', { username, email, password })
       .done(function (response) {
         alert('Registration successful');
+        console.log(response);
       })
       .fail(function (error) {
         alert('Registration failed');
