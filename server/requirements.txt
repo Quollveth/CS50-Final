@@ -3,3 +3,5 @@ Flask-session==0.8.0
 Flask-RESTful==0.3.10
 requests==2.31.0
 Flask-Cors==4.0.1
+Flask-SQLAlchemy==3.1.1
+mysql-connector==2.2.9
