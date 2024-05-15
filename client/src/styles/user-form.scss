@@ -1,0 +1,43 @@
+@import 'styles.scss';
+
+form.user-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+label.user-form {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input.user-form {
+  width: calc(100% - 10px);
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button.user-form {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.lightMode form.user-form {
+    background-color: $form-bg-light;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.lightMode button.user-form {
+    background-color: $form-button-bg-light;
+    color: $form-button-text-light;
+}
+
+.lightMode button:hover.user-form {
+  background-color: darken($form-button-bg-light,20%);
+}
