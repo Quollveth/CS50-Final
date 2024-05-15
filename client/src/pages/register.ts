@@ -1,1 +1,5 @@
-alert('This is the registration page');
+import $ from 'jquery';
+
+$(function () {
+  console.log('This is the registration page');
+});
