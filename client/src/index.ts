@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+const SERVER_IP = 'http://127.0.0.1:8080';
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('registerForm') as HTMLFormElement;
 
@@ -25,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    $.post('http://127.0.0.1:8080/hello', { username, email, password })
+    $.post(`${SERVER_IP}/test`, { username, email, password })
       .done(function (response) {
         alert('Registration successful');
         console.log(response);
