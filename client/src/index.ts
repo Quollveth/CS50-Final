@@ -7,13 +7,11 @@ let userForm: HTMLFormElement;
 
 // On document load
 $(function () {
-  userForm = document.getElementById('user-form-body') as HTMLFormElement;
-  /*
   userForm = document.createElement('form') as HTMLFormElement;
   userForm.classList.add('user-form');
   userForm.id = 'user-form-body';
-  document.appendChild(userForm);
-  */
+  document.body.appendChild(userForm);
+
   createForm('LOGIN', userForm);
 });
 
