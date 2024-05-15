@@ -1,0 +1,13 @@
+    <form class="user-form" id="userForm">
+
+      <label class="user-form" for="username">
+        Username:<input class="user-form" type="text" id="username" name="username" required />
+      </label>
+
+      <label class="user-form" for="password">
+        Password:<input class="user-form" type="password" id="password" name="password" required />
+      </label>
+
+      <button class="user-form" type="submit">Login</button>
+      <button class="user-form" id="signUpBtn">Sign Up</button>
+    </form>

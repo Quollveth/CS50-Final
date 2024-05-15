@@ -6,23 +6,9 @@
     <link rel="stylesheet" href="styles.css" />
     <title>Document</title>
   </head>
-  <body>
+  <body class="lightMode">
     <h1><%= htmlWebpackPlugin.options.header %></h1>
-    <form id="registerForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required />
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required />
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
-      <label for="confirmPassword">Confirm Password:</label>
-      <input
-        type="password"
-        id="confirmPassword"
-        name="confirmPassword"
-        required
-      />
-      <button type="submit">Register</button>
+    <form class="user-form" id="user-form-body">
     </form>
     <script src="src/index.ts"></script>
   </body>

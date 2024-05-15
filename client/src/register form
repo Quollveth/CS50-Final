@@ -1,0 +1,12 @@
+    <form class="user-form" id="registerForm">
+      <label class="user-form" for="username">Username:</label>
+      <input class="user-form" type="text" id="username" name="username" required />
+      <label class="user-form" for="email">Email:</label>
+      <input class="user-form" type="email" id="email" name="email" required />
+      <label class="user-form" for="password">Password:</label>
+      <input class="user-form" type="password" id="password" name="password" required />
+      <label class="user-form" for="confirmPassword">Confirm Password:</label>
+      <input class="user-form" type="password" id="confirmPassword" name="confirmPassword" required />
+      <button class="user-form" type="submit">Register</button>
+      <button class="user-form" id="signUpBtn">Log In</button>
+    </form>
