@@ -3,6 +3,12 @@ const path = require('path');
 
 module.exports = {
   entry: './src/index.ts',
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename]
+    }
+  },
   module: {
     rules: [
       {
