@@ -1,4 +1,5 @@
-@import 'styles.scss';
+@import './styles.scss';
+@import './mixins.scss';
 
 form.user-form {
   max-width: 400px;
@@ -10,6 +11,14 @@ form.user-form {
 label.user-form {
   display: block;
   margin-bottom: 5px;
+  &#change-label{
+    font-size: x-small;
+  }
+}
+
+#buttons.user-form {
+  display: flex;
+  justify-content: space-between;
 }
 
 input.user-form {
@@ -21,6 +30,7 @@ input.user-form {
 }
 
 button.user-form {
+  height: min-content;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
@@ -36,8 +46,10 @@ button.user-form {
 .lightMode button.user-form {
     background-color: $form-button-bg-light;
     color: $form-button-text-light;
+    @include darken-on-hover($form-button-bg-light)
 }
 
-.lightMode button:hover.user-form {
-  background-color: darken($form-button-bg-light,20%);
+.lightMode button.user-form#change-button {
+  background-color: $form-button-swap-bg-light;
+  @include darken-on-hover($form-button-swap-bg-light)
 }

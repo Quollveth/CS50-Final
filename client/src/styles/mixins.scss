@@ -1,0 +1,12 @@
+@import 'styles.scss'; //Contains global style variables
+
+@mixin darken-on-hover($color){
+    &:hover {
+        background-color: darken($color,$hover-darken-amount);
+    }
+}
+@mixin lighten-on-hover($color){
+    &:hover {
+        background-color: lighten($color,$hover-darken-amount);
+    }
+}
