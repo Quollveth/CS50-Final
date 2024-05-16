@@ -41,9 +41,11 @@ export function setCookie(cookie: Cookie) {
     cookieString += '; SameSite=Lax';
   }
 
-  console.log(`Full cookie string: '${cookieString}'`)
-
   document.cookie = cookieString;
+}
+
+export function clearCookie(name: string) {
+  document.cookie = name + '=; Max-Age=-1; path=/';
 }
 
 export function getCookie(name: string): Cookie | undefined {

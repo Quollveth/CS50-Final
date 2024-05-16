@@ -1,23 +1,48 @@
 import $ from 'jquery';
 
-const SERVER_IP = 'http://127.0.0.1:8080';
+import { SESSION_COOKIE_NAME } from '../constants';
+import { getCookie, clearCookie } from './helpers/cookies';
+import { validateSession } from './helpers/server-talker';
 
-// On document load
+async function checkSession(token: string): Promise<string | undefined> {
+  try {
+    const result = await validateSession(token);
+    if (result.valid) {
+      return result.token; // return session token if valid
+    } else {
+      return undefined; // return undefined if valid is false
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 $(function () {
-  console.log('This is the index page');
-});
+  //Check if session cookie exists
+  let session_cookie = getCookie(SESSION_COOKIE_NAME);
+  if (!session_cookie) {
+    //No cookie, go to login page
+    //window.location.href = 'login.html';
+    //return;
+  }
 
-/*
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
+  session_cookie = {
+    name: SESSION_COOKIE_NAME,
+    value: 'testValue'
+  };
 
-  $.post(`${SERVER_IP}/login`, {})
-    .done(function (response) {
-      alert('Login successful');
-      console.log(response);
-    })
-    .fail(function (error) {
-      alert('Login failed');
-    });
+  //Cookie is present, validade with server
+  checkSession(session_cookie.value)
+  .then((result) => {
+    if (!result) {
+      //invalid, go login again
+      clearCookie(SESSION_COOKIE_NAME);
+      window.location.href = 'login.html';
+    }
+    //valid, go to website
+
+    //Website doesn't exist :(
+    alert('Session validated');
+  });
+
 });
-*/
