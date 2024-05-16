@@ -4,8 +4,8 @@ const fs = require('fs');
 
 const pages = [
   './src/pages/index',
-  //'./src/pages/login',
-  //'./src/pages/register'
+  './src/pages/login',
+  './src/pages/register'
 ]
 
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);

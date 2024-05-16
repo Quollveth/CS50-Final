@@ -1,40 +1,28 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Whiteboard|Login</title>
-  </head>
-  <body class="lightMode">
-    <form class="user-form" id="userForm">
-      <label class="user-form" for="username">
-        Username:<input
-          class="user-form"
-          type="text"
-          id="username"
-          name="username"
-          required
-        />
-      </label>
+<form class="user-form" id="userForm">
+<label class="user-form" for="username">
+  Username:<input
+    class="user-form"
+    type="text"
+    id="username"
+    name="username"
+    required
+  />
+</label>
 
-      <label class="user-form" for="password">
-        Password:<input
-          class="user-form"
-          type="password"
-          id="password"
-          name="password"
-          required
-        />
-      </label>
-      <div id="buttons" class="user-form">
-        <button class="user-form" id="submit-button" type="submit">Login</button>
-        <div>
-            <label for="change-button" class="user-form">Don't have an account?</label>
-            <button class="user-form" id="change-button">Sign Up</button>
-        </div>
-      </div>
-    </form>
-    <%= htmlWebpackPlugin.options.templateParameters.sourceFile %>
-  </body>
-</html>
+<label class="user-form" for="password">
+  Password:<input
+    class="user-form"
+    type="password"
+    id="password"
+    name="password"
+    required
+  />
+</label>
+<div id="buttons" class="user-form">
+  <button class="user-form" id="submit-button" type="submit">Login</button>
+  <div>
+      <label for="change-button" class="user-form">Don't have an account?</label>
+      <button class="user-form" id="change-button">Sign Up</button>
+  </div>
+</div>
+</form>
