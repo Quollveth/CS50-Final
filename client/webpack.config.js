@@ -41,7 +41,7 @@ const generateEntries = () => {
   })
   return obj;
 }
-
+ 
 module.exports = {
   entry: generateEntries(),
   cache: {
