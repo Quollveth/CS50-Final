@@ -3,9 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
 
 const pages = [
-  './src/pages/index',
-  './src/pages/login',
-  './src/pages/register'
+  './src/scripts/index',
+  './src/scripts/login',
+  './src/scripts/register'
 ]
 
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
