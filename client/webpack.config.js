@@ -1,5 +1,5 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const pages = [
   './src/index',
@@ -7,16 +7,23 @@ const pages = [
   './src/pages/register'
 ]
 
+const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
+const removeExtension = (path) => path.substring(0,path.lastIndexOf('.'));
+
 const generateHTMLPlugins = () => {
   const arr = [];
-  
+
   pages
    .map(page => page + '.html')
    .forEach(page => {
       arr.push(
         new HtmlWebpackPlugin({
           template:page,
-          filename:page.substring(page.lastIndexOf('/')+1)
+          filename:getPageName(page),
+          templateParameters: {
+            sourceFile: `<script src="${removeExtension(getPageName(page))}.js"></script>`
+          },
+          chunks:[]
         })
       )
    })
@@ -27,7 +34,7 @@ const generateEntries = () => {
   const obj = {};
   pages.forEach(page => {
     console.log()
-    obj[page.substring(page.lastIndexOf('/')+1)] = page+'.ts';
+    obj[getPageName(page)] = page+'.ts';
   })
   return obj;
 }
@@ -54,7 +61,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist/')
+    path: path.resolve(__dirname, 'dist/'),
   },
   plugins: [
 

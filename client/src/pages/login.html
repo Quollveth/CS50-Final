@@ -7,7 +7,6 @@
     <title>Whiteboard|Login</title>
   </head>
   <body class="lightMode">
-    <h1><%= htmlWebpackPlugin.options.header %></h1>
     <form class="user-form" id="userForm">
       <label class="user-form" for="username">
         Username:<input
@@ -36,6 +35,6 @@
         </div>
       </div>
     </form>
-    <script src="./login.ts"></script>
+    <%= htmlWebpackPlugin.options.templateParameters.sourceFile %>
   </body>
 </html>

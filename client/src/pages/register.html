@@ -7,7 +7,6 @@
     <title>Whiteboard|Register</title>
   </head>
   <body class="lightMode">
-    <h1><%= htmlWebpackPlugin.options.header %></h1>
     <form class="user-form" id="registerForm">
         <label class="user-form" for="username">Username:</label>
         <input class="user-form" type="text" id="username" name="username" required />
@@ -25,7 +24,7 @@
                 <button class="user-form" id="change-button">Sign In</button>
             </div>
           </div>
-      </form>  
-      <script src="./register.ts"></script>
+      </form>
+      <%= htmlWebpackPlugin.options.templateParameters.sourceFile %>
   </body>
 </html>
