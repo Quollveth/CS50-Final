@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Whiteboard</title>
+    <title><%= htmlWebpackPlugin.options.templateParameters.title %></title>
   </head>
   <body class="lightMode">
+    <%= htmlWebpackPlugin.options.templateParameters.content %>
     <%= htmlWebpackPlugin.options.templateParameters.sourceFile %>
   </body>
 </html>

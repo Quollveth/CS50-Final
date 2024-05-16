@@ -1,10 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fs = require('fs');
 
 const pages = [
-  './src/index',
-  './src/pages/login',
-  './src/pages/register'
+  './src/pages/index',
+  //'./src/pages/login',
+  //'./src/pages/register'
 ]
 
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
@@ -18,10 +19,12 @@ const generateHTMLPlugins = () => {
    .forEach(page => {
       arr.push(
         new HtmlWebpackPlugin({
-          template:page,
+          template:'src/template.html',
           filename:getPageName(page),
           templateParameters: {
-            sourceFile: `<script src="${removeExtension(getPageName(page))}.js"></script>`
+            title: 'Whiteboard|' + removeExtension(getPageName(page)),
+            content: fs.readFileSync(`src/pages/${getPageName(page)}`),
+            sourceFile: `<script src="${removeExtension(getPageName(page))}.js"></script>`,
           },
           chunks:[]
         })
