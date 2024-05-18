@@ -1,5 +1,11 @@
 import $ from 'jquery';
 
 $(function () {
-  console.log('This is the login page');
+  const changeFormBtn = document.getElementById(
+    'change-button'
+  ) as HTMLButtonElement;
+  changeFormBtn.addEventListener('click', () => {
+    window.location.href = 'register.html';
+    return;
+  });
 });

@@ -5,13 +5,14 @@ export interface Cookie {
   domain?: string; //Defaults to empty string
   path?: string; //Defaults to host url
   secure?: boolean; //Defaults to false
-  HttpOnly?:boolean; //Defaults to false
+  HttpOnly?: boolean; //Defaults to false
   sameSite?: 'Strict' | 'Lax' | 'None'; //Defaults to Lax
-  expires?: Date|null; //Defaults to expiring when session ends
+  expires?: Date | null; //Defaults to expiring when session ends
 }
 
 export function setCookie(cookie: Cookie) {
-  let cookieString = encodeURIComponent(cookie.name) + '=' + encodeURIComponent(cookie.value);
+  let cookieString =
+    encodeURIComponent(cookie.name) + '=' + encodeURIComponent(cookie.value);
 
   if (cookie.domain) {
     cookieString += '; domain=' + cookie.domain;
@@ -49,12 +50,15 @@ export function clearCookie(name: string) {
 }
 
 export function getCookie(name: string): Cookie | undefined {
-  const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+  const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
 
   for (const cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split('=');
     if (decodeURIComponent(cookieName) === name) {
-      const cookieObj: Cookie = { name: decodeURIComponent(cookieName), value: decodeURIComponent(cookieValue) };
+      const cookieObj: Cookie = {
+        name: decodeURIComponent(cookieName),
+        value: decodeURIComponent(cookieValue)
+      };
       return cookieObj;
     }
   }

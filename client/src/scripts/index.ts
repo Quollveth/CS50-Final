@@ -22,8 +22,8 @@ $(function () {
   let session_cookie = getCookie(SESSION_COOKIE_NAME);
   if (!session_cookie) {
     //No cookie, go to login page
-    //window.location.href = 'login.html';
-    //return;
+    window.location.href = 'login.html';
+    return;
   }
 
   session_cookie = {
@@ -32,8 +32,7 @@ $(function () {
   };
 
   //Cookie is present, validade with server
-  checkSession(session_cookie.value)
-  .then((result) => {
+  checkSession(session_cookie.value).then((result) => {
     if (!result) {
       //invalid, go login again
       clearCookie(SESSION_COOKIE_NAME);
@@ -44,5 +43,4 @@ $(function () {
     //Website doesn't exist :(
     alert('Session validated');
   });
-
 });
