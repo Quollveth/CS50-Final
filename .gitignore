@@ -10,5 +10,8 @@ server/lib64
 server/include/
 server/__pycache__/
 server/flask_session/
+flask_session/
+**/__pycache__/
 
 .mysql-data/
+Chatterer.code-workspace
