@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import { registerUser } from './helpers/server-talker';
 import type { UserData, RegistResult } from './helpers/server-talker';
+//                          ^?
 
 /** Checks if a username already exists in the server
  * @returns Promise resolving to wether or not the given username exists
@@ -14,12 +15,11 @@ async function usernameExists(usr: string): Promise<boolean> {
 };
 
 async function sendRegisterForm(data: UserData): Promise<RegistResult> {
-  return usernameExists(data.username).then(async result => {
-    if(result){
-      return 'EXISTS';
-    }
-    return await registerUser(data)
-  })
+  const result = await usernameExists(data.username);
+  if (result) {
+    return 'EXISTS';
+  }
+  return await registerUser(data);
 }
 
 const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
@@ -93,7 +93,7 @@ $(function () {
     takenLabel.removeClass('hidden valid invalid').addClass(className).text(text);
   }
 
-  checkButton.on('click', () => {
+  checkButton.on('click', async () => {
     const username = userField.val() as string;
   
     if (!validateUsername(username)) {
@@ -101,13 +101,12 @@ $(function () {
       return;
     }
   
-    usernameExists(username).then(result => {
-      if (!result) {
-        updateLabel('Username available', 'valid');
-      } else {
-        updateLabel('Username already in use', 'invalid');
-      }
-    });
+    const result = await usernameExists(username);
+    if (!result) {
+      updateLabel('Username available', 'valid');
+    } else {
+      updateLabel('Username already in use', 'invalid');
+    }
   });
 
   // Updates fields as user is typing
@@ -117,7 +116,7 @@ $(function () {
   validateField(confirmField, () => passwordField.val() === confirmField.val());
 
   // Send form to server
-  userForm.addEventListener('submit', (e) => {
+  userForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Clientside validation
@@ -142,18 +141,20 @@ $(function () {
     };
 
     // Handle possible results
-    sendRegisterForm(data).then((result) => {
-      switch (result) {
-        case 'EXISTS':
-          alert('Username already in use!');
-          break;
-        case 'INVALID':
-          alert('Invalid Data');
-          break;
-        case 'SUCCESS':
-          alert('Registration Successfull');
-          window.location.href = '/index';
-      }
-    });
+    const result = await sendRegisterForm(data);
+    switch (result) {
+      case 'EXISTS':
+        alert('Username already in use!');
+        break;
+      case 'INVALID':
+        alert('Invalid Data');
+        break;
+      case 'SUCCESS':
+        alert('Registration Successful');
+        window.location.href = '/index';
+        break;
+      default:
+        alert('Unexpected error occurred');
+    }
   });
 });
