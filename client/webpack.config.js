@@ -10,6 +10,7 @@ const pages = [
 
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
 const removeExtension = (path) => path.substring(0,path.lastIndexOf('.'));
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
 const generateHTMLPlugins = () => {
   const arr = [];
@@ -22,7 +23,7 @@ const generateHTMLPlugins = () => {
           template:'src/template.html',
           filename:getPageName(page),
           templateParameters: {
-            title: 'Whiteboard|' + removeExtension(getPageName(page)),
+            title: 'Chatterer | ' + capitalize(removeExtension(getPageName(page))),
             content: fs.readFileSync(`src/pages/${getPageName(page)}`),
             sourceFile: `<script src="${removeExtension(getPageName(page))}.js"></script>`,
           },
