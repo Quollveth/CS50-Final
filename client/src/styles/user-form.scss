@@ -27,6 +27,15 @@ input.user-form {
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  &:focus {
+    outline: none;
+  }
+  &.valid-input {
+    border: 2px green solid;
+  }
+  &.invalid-input {
+    border: 2px red solid;
+  }
 }
 
 button.user-form {
