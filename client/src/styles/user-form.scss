@@ -8,6 +8,18 @@ form.user-form {
   border-radius: 8px;
 }
 
+form.user-form {
+  > #username-container {
+    display: flex;
+    > button {
+      margin-left: 6px;
+      max-width: 100px;
+      font-size: smaller;
+      padding: 8px 13px;
+    }
+  }
+}
+
 label.user-form {
   display: block;
   margin-bottom: 5px;

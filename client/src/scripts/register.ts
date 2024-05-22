@@ -1,14 +1,25 @@
 import $ from 'jquery';
 
 import { registerUser } from './helpers/server-talker';
-import type { UserData } from './helpers/server-talker';
+import type { UserData, RegistResult } from './helpers/server-talker';
 
 let userForm: HTMLFormElement;
 
-async function sendRegisterForm(data: UserData) {
-  //TODO: Check if username exists
+const checkUsername = (usr:string):Promise<boolean> => {
+  //TODO: Query the server for data, placeholder promise for now
+  return new Promise((resolve) => {
+    resolve(true);
+  })
+}
 
-  const result = await registerUser(data);
+async function sendRegisterForm(data: UserData):Promise<RegistResult> {  
+  const exists = await checkUsername(data.username);
+
+  if(exists){
+    return 'EXISTS';
+  }
+
+  return await registerUser(data);
 }
 
 const validadeUsername = (str: string) => {
@@ -58,6 +69,12 @@ $(function () {
   const passwordField = $('#password') as JQuery<HTMLInputElement>;
   const confirmField = $('#confirmPassword') as JQuery<HTMLInputElement>;
 
+  const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
+
+  checkButton.on('click',()=>{
+    const exists = checkUsername(userField.val() as string);
+  })
+
   validateField(userField, validadeUsername);
   validateField(emailField, validateEmail);
   validateField(passwordField, validatePassword);
@@ -85,6 +102,18 @@ $(function () {
       password: passwordField.val() as string
     };
 
-    sendRegisterForm(data);
+    sendRegisterForm(data).then(result => {
+      switch(result) {
+        case 'EXISTS':
+          alert('Username already in use!');
+          break;
+        case 'INVALID':
+          alert('Invalid Data');
+          break;
+        case 'SUCCESS':
+          alert('Registration Successfull');
+          window.location.href = '/';
+      }
+    })
   });
 });
