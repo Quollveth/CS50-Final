@@ -5,17 +5,17 @@ import type { UserData, RegistResult } from './helpers/server-talker';
 
 let userForm: HTMLFormElement;
 
-const checkUsername = (usr:string):Promise<boolean> => {
+async function checkUsername(usr: string): Promise<boolean> {
   //TODO: Query the server for data, placeholder promise for now
   return new Promise((resolve) => {
     resolve(true);
-  })
-}
+  });
+};
 
-async function sendRegisterForm(data: UserData):Promise<RegistResult> {  
+async function sendRegisterForm(data: UserData): Promise<RegistResult> {
   const exists = await checkUsername(data.username);
 
-  if(exists){
+  if (exists) {
     return 'EXISTS';
   }
 
@@ -71,9 +71,15 @@ $(function () {
 
   const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
 
-  checkButton.on('click',()=>{
-    const exists = checkUsername(userField.val() as string);
-  })
+  checkButton.on('click', () => {
+    checkUsername(userField.val() as string).then(result => {
+      if(result){
+        alert('Username in use');
+        return;
+      }
+      alert('Username available');
+    })
+  });
 
   validateField(userField, validadeUsername);
   validateField(emailField, validateEmail);
@@ -102,8 +108,8 @@ $(function () {
       password: passwordField.val() as string
     };
 
-    sendRegisterForm(data).then(result => {
-      switch(result) {
+    sendRegisterForm(data).then((result) => {
+      switch (result) {
         case 'EXISTS':
           alert('Username already in use!');
           break;
@@ -114,6 +120,6 @@ $(function () {
           alert('Registration Successfull');
           window.location.href = '/';
       }
-    })
+    });
   });
 });
