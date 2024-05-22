@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_session import Session
 
 # Project imports
-from helpers.sql_helper import SQL
+from helpers.sql_helper import MySQL
 from helpers.validation import validateUsername, validadePassword, validateEmail
 
 
@@ -25,13 +25,13 @@ Session(app)
 # Connect to database
 db_user = os.getenv("DB_USER", "root")
 db_pass = os.getenv("DB_PASS", "password")
-db_name = os.getenv("DB_NAME", "Chatterer")
-db_host = os.getenv("DB_HOST", "localhost")
+db_host = os.getenv("DB_HOST", "127.0.0.1")
 db_port = os.getenv("DB_PORT", "3306")
+db_name = os.getenv("DB_NAME", "Chatterer")
 
-db = SQL(
-    f'{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}'
-)
+dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
+
+db = MySQL(dbConnection)
 
 # Server initialization finished
 
