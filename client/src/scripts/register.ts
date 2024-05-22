@@ -5,7 +5,10 @@ import type { UserData, RegistResult } from './helpers/server-talker';
 
 let userForm: HTMLFormElement;
 
-async function checkUsername(usr: string): Promise<boolean> {
+async function usernameExists(usr: string): Promise<boolean> {
+  /** Checks if a username already exists in the server
+   * @returns Promise resolving to wether or not the given username exists
+   */
   //TODO: Query the server for data, placeholder promise for now
   return new Promise((resolve) => {
     resolve(true);
@@ -13,7 +16,7 @@ async function checkUsername(usr: string): Promise<boolean> {
 };
 
 async function sendRegisterForm(data: UserData): Promise<RegistResult> {
-  const exists = await checkUsername(data.username);
+  const exists = await usernameExists(data.username);
 
   if (exists) {
     return 'EXISTS';
@@ -70,14 +73,20 @@ $(function () {
   const confirmField = $('#confirmPassword') as JQuery<HTMLInputElement>;
 
   const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
+  const takenLabel = $('#username-taken-label') as JQuery<HTMLLabelElement>
 
   checkButton.on('click', () => {
-    checkUsername(userField.val() as string).then(result => {
-      if(result){
-        alert('Username in use');
+    usernameExists(userField.val() as string).then(result => {
+      takenLabel.removeClass('hidden');
+      if(!result){
+        takenLabel.addClass('valid');
+        takenLabel.removeClass('invalid');
+        takenLabel.text('Username available');
         return;
       }
-      alert('Username available');
+      takenLabel.addClass('invalid');
+      takenLabel.removeClass('valid');
+      takenLabel.text('Username already in use');
     })
   });
 

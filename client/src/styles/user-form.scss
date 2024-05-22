@@ -1,6 +1,9 @@
 @import './styles.scss';
 @import './mixins.scss';
 
+$valid-field: green;
+$invalid-field: red;
+
 form.user-form {
   max-width: 400px;
   margin: 0 auto;
@@ -8,15 +11,31 @@ form.user-form {
   border-radius: 8px;
 }
 
+// Special container for checking if username exists
 form.user-form {
   > #username-container {
     display: flex;
-    > button {
-      margin-left: 6px;
-      max-width: 100px;
-      font-size: smaller;
-      padding: 8px 13px;
+    flex-direction: column;
+    > div {
+      display: flex;
+      > button {
+        margin-left: 6px;
+        max-width: 100px;
+        font-size: smaller;
+        padding: 8px 13px;
+      }
     }
+    > label {
+      font-size: smaller;
+      margin-top: -10px;
+      &.valid {
+        color: $valid-field;
+      }
+      &.invalid {
+        color: $invalid-field;
+      }
+    }
+    margin-bottom: 10px;
   }
 }
 
@@ -43,10 +62,10 @@ input.user-form {
     outline: none;
   }
   &.valid-input {
-    border: 2px green solid;
+    border: 2px $valid-field solid;
   }
   &.invalid-input {
-    border: 2px red solid;
+    border: 2px $invalid-field solid;
   }
 }
 

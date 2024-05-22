@@ -1,8 +1,11 @@
 <form class="user-form" id="registerForm">
   <label class="user-form" for="username">Username:</label>
   <div id="username-container">
-    <input class="user-form" type="text" id="username" name="username" required />
-    <button class="user-form" id="check-user">Check</button>
+    <div>
+      <input class="user-form" type="text" id="username" name="username" required />
+      <button class="user-form" id="check-user">Check</button>
+    </div>
+    <label id="username-taken-label" class="hidden">Username Check Label</label>
   </div>
   <label class="user-form" for="email">Email:</label>
   <input class="user-form" type="email" id="email" name="email" required />
