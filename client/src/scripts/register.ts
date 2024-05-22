@@ -71,6 +71,15 @@ $(function () {
   const passwordField = $('#password') as JQuery<HTMLInputElement>;
   const confirmField = $('#confirmPassword') as JQuery<HTMLInputElement>;
 
+  // Password must contain X textbox
+  const passwordData = $('#password-data') as JQuery<HTMLDivElement>
+  passwordField.on('input',()=>{
+    passwordData.removeClass('hidden');
+  })
+  passwordField.on('blur',()=>{
+    passwordData.addClass('hidden');
+  })
+
   // Is username in use button
   const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
   const takenLabel = $('#username-taken-label') as JQuery<HTMLLabelElement>

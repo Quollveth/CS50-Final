@@ -10,7 +10,19 @@
   <label class="user-form" for="email">Email:</label>
   <input class="user-form" type="email" id="email" name="email" required />
   <label class="user-form" for="password">Password:</label>
-  <input class="user-form" type="password" id="password" name="password" required />
+  <div id="password-container">
+    <input class="user-form" type="password" id="password" name="password" required />
+    <div id="password-data" class="hidden">
+      <p>Your password must contain:</p>
+      <ul>
+        <li>At least 8 characters</li>
+        <li>At least one uppercase letter</li>
+        <li>At least one lowercase letter</li>
+        <li>At least one number</li>
+      </ul>
+    </div>
+  </div>
+  <br>
   <label class="user-form" for="confirmPassword">Confirm Password:</label>
   <input class="user-form" type="password" id="confirmPassword" name="confirmPassword" required />
 
