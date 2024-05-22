@@ -3,12 +3,10 @@ import $ from 'jquery';
 import { registerUser } from './helpers/server-talker';
 import type { UserData, RegistResult } from './helpers/server-talker';
 
-let userForm: HTMLFormElement;
-
+/** Checks if a username already exists in the server
+ * @returns Promise resolving to wether or not the given username exists
+ */
 async function usernameExists(usr: string): Promise<boolean> {
-  /** Checks if a username already exists in the server
-   * @returns Promise resolving to wether or not the given username exists
-   */
   //TODO: Query the server for data, placeholder promise for now
   return new Promise((resolve) => {
     resolve(true);
@@ -16,33 +14,30 @@ async function usernameExists(usr: string): Promise<boolean> {
 };
 
 async function sendRegisterForm(data: UserData): Promise<RegistResult> {
-  const exists = await usernameExists(data.username);
-
-  if (exists) {
-    return 'EXISTS';
-  }
-
-  return await registerUser(data);
+  return usernameExists(data.username).then(async result => {
+    if(result){
+      return 'EXISTS';
+    }
+    return await registerUser(data)
+  })
 }
 
-const validadeUsername = (str: string) => {
-  return /^[a-zA-Z0-9]+$/.test(str);
-};
+const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
+const validateEmail = (str: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
+/*
+  * At least 8 characters long
+  * One uppercase letter
+  * One lowercase letter
+  * One digit
+*/
+const validatePassword = (str: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
 
-const validateEmail = (str: string) => {
-  return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
-};
-
-const validatePassword = (str: string) => {
-  /*
-   * At least 8 characters long
-   * One uppercase letter
-   * One lowercase letter
-   * One digit
-   */
-  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
-};
-
+/**
+ * Visual feedback for registration fields
+ * @param field field to validate
+ * @param validationFn function to validate, must receive string and return boolean
+ * @sideEffect input receives valid or invalid class
+ */
 function validateField(
   field: JQuery<HTMLInputElement>,
   validationFn: (arg0: string) => boolean
@@ -56,7 +51,9 @@ function validateField(
   });
 }
 
+// On document load
 $(function () {
+  // Already have an account? Go to login page
   const changeFormBtn = document.getElementById(
     'change-button'
   ) as HTMLButtonElement;
@@ -65,40 +62,57 @@ $(function () {
     return;
   });
 
-  userForm = document.getElementById('registerForm') as HTMLFormElement;
+  // Actual registration stuff goes here
+  const userForm = document.getElementById('registerForm') as HTMLFormElement;
 
+  // All fields
   const userField = $('#username') as JQuery<HTMLInputElement>;
   const emailField = $('#email') as JQuery<HTMLInputElement>;
   const passwordField = $('#password') as JQuery<HTMLInputElement>;
   const confirmField = $('#confirmPassword') as JQuery<HTMLInputElement>;
 
+  // Is username in use button
   const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
   const takenLabel = $('#username-taken-label') as JQuery<HTMLLabelElement>
 
-  checkButton.on('click', () => {
-    usernameExists(userField.val() as string).then(result => {
-      takenLabel.removeClass('hidden');
-      if(!result){
-        takenLabel.addClass('valid');
-        takenLabel.removeClass('invalid');
-        takenLabel.text('Username available');
-        return;
-      }
-      takenLabel.addClass('invalid');
-      takenLabel.removeClass('valid');
-      takenLabel.text('Username already in use');
-    })
+  // Hide label when username updates
+  userField.on('input', () => {
+    takenLabel.addClass('hidden');
   });
 
-  validateField(userField, validadeUsername);
+  const updateLabel = (text: string, className: string) => {
+    takenLabel.removeClass('hidden valid invalid').addClass(className).text(text);
+  }
+
+  checkButton.on('click', () => {
+    const username = userField.val() as string;
+  
+    if (!validateUsername(username)) {
+      updateLabel('Invalid username', 'invalid');
+      return;
+    }
+  
+    usernameExists(username).then(result => {
+      if (!result) {
+        updateLabel('Username available', 'valid');
+      } else {
+        updateLabel('Username already in use', 'invalid');
+      }
+    });
+  });
+
+  // Updates fields as user is typing
+  validateField(userField, validateUsername);
   validateField(emailField, validateEmail);
   validateField(passwordField, validatePassword);
   validateField(confirmField, () => passwordField.val() === confirmField.val());
 
+  // Send form to server
   userForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    if (!validadeUsername(userField.val() as string)) {
+    // Clientside validation
+    if (!validateUsername(userField.val() as string)) {
       alert('Invalid Username');
       return;
     }
@@ -111,12 +125,14 @@ $(function () {
       return;
     }
 
+    // Assembler data and send
     const data: UserData = {
       username: userField.val() as string,
       email: emailField.val() as string,
       password: passwordField.val() as string
     };
 
+    // Handle possible results
     sendRegisterForm(data).then((result) => {
       switch (result) {
         case 'EXISTS':
@@ -127,7 +143,7 @@ $(function () {
           break;
         case 'SUCCESS':
           alert('Registration Successfull');
-          window.location.href = '/';
+          window.location.href = '/index';
       }
     });
   });
