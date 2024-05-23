@@ -1,20 +1,12 @@
 import $ from 'jquery';
 
 import { registerUser } from './helpers/server-talker';
-import type { UserData, RegistResult } from './helpers/server-talker';
+import { UserData, RegistResult, usernameExists } from './helpers/server-talker';
 //                          ^?
 
-/** Checks if a username already exists in the server
- * @returns Promise resolving to wether or not the given username exists
- */
-async function usernameExists(usr: string): Promise<boolean> {
-  //TODO: Query the server for data, placeholder promise for now
-  return new Promise((resolve) => {
-    resolve(true);
-  });
-};
 
 async function sendRegisterForm(data: UserData): Promise<RegistResult> {
+  //TODO: This should be a try catch
   const result = await usernameExists(data.username);
   if (result) {
     return 'EXISTS';
@@ -22,7 +14,9 @@ async function sendRegisterForm(data: UserData): Promise<RegistResult> {
   return await registerUser(data);
 }
 
+// Only alphanumerical characters
 const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
+// Simple email validator from https://regexr.com/3e48o
 const validateEmail = (str: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
 /*
   * At least 8 characters long
@@ -95,12 +89,13 @@ $(function () {
 
   checkButton.on('click', async () => {
     const username = userField.val() as string;
-  
+    
     if (!validateUsername(username)) {
       updateLabel('Invalid username', 'invalid');
       return;
     }
-  
+    
+    //TODO: This should be a try catch
     const result = await usernameExists(username);
     if (!result) {
       updateLabel('Username available', 'valid');
@@ -133,7 +128,7 @@ $(function () {
       return;
     }
 
-    // Assembler data and send
+    // Assemble data and send
     const data: UserData = {
       username: userField.val() as string,
       email: emailField.val() as string,
@@ -141,6 +136,7 @@ $(function () {
     };
 
     // Handle possible results
+    //TODO: This should be a try catch
     const result = await sendRegisterForm(data);
     switch (result) {
       case 'EXISTS':
@@ -154,6 +150,7 @@ $(function () {
         window.location.href = '/index';
         break;
       default:
+        //TODO: Improve error handling
         alert('Unexpected error occurred');
     }
   });

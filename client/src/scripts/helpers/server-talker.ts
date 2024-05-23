@@ -10,6 +10,7 @@ export const validateSession = (
         resolve(response);
       })
       .fail((response) => {
+        //TODO: Improve error handling
         reject(new Error(`Request failed`));
       });
   });
@@ -28,6 +29,23 @@ const RegisRes = {
 } as const;
 export type RegistResult = (typeof RegisRes)[keyof typeof RegisRes];
 
+/** Checks if a username already exists in the server
+ * @returns Promise resolving to wether or not the given username exists
+ */
+export const usernameExists = (username:string): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.post(`${SERVER_IP}${Routes.checkUser}`, {
+      username: username
+    }).done((response) => {
+      resolve(response.exists)
+    })
+    .fail((response) => {
+      //TODO: Improve error handling
+      reject(new Error('Request failed'));
+    })
+  })
+}
+
 export const registerUser = (user: UserData): Promise<RegistResult> => {
   return new Promise((resolve, reject) => {
     $.post(`${SERVER_IP}${Routes.register}`, user)
@@ -37,6 +55,7 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
         }
       })
       .fail((response) => {
+        //TODO: Improve error handling
         reject(new Error('Request failed'));
       });
   });
