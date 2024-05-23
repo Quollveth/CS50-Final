@@ -4,3 +4,4 @@ lib/
 lib64
 flask_session/
 **/__pycache__/
+db-schema.sql
