@@ -14,4 +14,4 @@ flask_session/
 **/__pycache__/
 
 .mysql-data/
-Chatterer.code-workspace
+*.code-workspace

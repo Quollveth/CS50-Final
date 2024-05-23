@@ -27,7 +27,7 @@ db_user = os.getenv("DB_USER", "root")
 db_pass = os.getenv("DB_PASS", "password")
 db_host = os.getenv("DB_HOST", "127.0.0.1")
 db_port = os.getenv("DB_PORT", "3306")
-db_name = os.getenv("DB_NAME", "Chatterer")
+db_name = os.getenv("DB_NAME", "dashboard")
 
 dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 

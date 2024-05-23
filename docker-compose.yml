@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   server:
-    container_name: Chatterer-Server
+    container_name: Server
     build: ./server/
     ports: 
       - 8080:8080
@@ -10,17 +10,17 @@ services:
     environment:
       DB_USER: root
       DB_PASS: password
-      DB_NAME: Chatterer
+      DB_NAME: dashboard
       DB_HOST: database
       DB_PORT: 3306
 
   database:
     image: mysql:5.7
-    container_name: Chatterer-Database
+    container_name: Database
     restart: always
     environment:
       MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: 'Chatterer'   
+      MYSQL_DATABASE: 'dashboard'   
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'      
       MYSQL_ROOT_PASSWORD: 'password'
@@ -29,7 +29,7 @@ services:
     expose:
       - '3306'
     volumes:
-      - './.mysql-data/Chatterer:/var/lib/mysql'
+      - './.mysql-data/dashboard:/var/lib/mysql'
     networks:
       - db_network
 

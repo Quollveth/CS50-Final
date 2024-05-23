@@ -1,3 +1,5 @@
+const PROJ_NAME = 'Dashboard';
+
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
@@ -23,7 +25,7 @@ const generateHTMLPlugins = () => {
           template:'src/template.html',
           filename:getPageName(page),
           templateParameters: {
-            title: 'Chatterer | ' + capitalize(removeExtension(getPageName(page))),
+            title: `${PROJ_NAME} | ` + capitalize(removeExtension(getPageName(page))),
             content: fs.readFileSync(`src/pages/${getPageName(page)}`),
             sourceFile: `<script src="${removeExtension(getPageName(page))}.js"></script>`,
           },
