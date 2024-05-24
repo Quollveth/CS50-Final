@@ -39,7 +39,7 @@ export const usernameExists = (username:string): Promise<boolean> => {
     }).done((response) => {
       resolve(response.exists)
     })
-    .fail((response) => {
+    .fail(() => {
       //HANDLE: Improve error handling
       reject(new Error('Request failed'));
     })
@@ -48,15 +48,20 @@ export const usernameExists = (username:string): Promise<boolean> => {
 
 export const registerUser = (user: UserData): Promise<RegistResult> => {
   return new Promise((resolve, reject) => {
-    $.post(`${SERVER_IP}${Routes.register}`, user)
-      .done((response) => {
-        if (response.valid) {
-          resolve(response.valid);
+    $.ajax({
+      url:`${SERVER_IP}${Routes.register}`,
+      method: 'POST',
+      data: user,
+      success: (response) => resolve(response.result),
+      error: (xhr, error) => {
+        if(xhr.status == 400){
+          // Is it a expected error?
+          if(xhr.responseJSON.result){
+            resolve(xhr.responseJSON.result)
+          }
+          throw new Error('Request Failed');
         }
-      })
-      .fail((response) => {
-        //HANDLE: Improve error handling
-        reject(new Error('Request failed'));
-      });
+      }
+    })
   });
 };

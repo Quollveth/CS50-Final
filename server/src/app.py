@@ -95,25 +95,21 @@ def register():
     if not username or not password or not email:
         return jsonify({
             'result':RegistResult.INVALID.value,
-            'error':'Missing required field'
         }), 400
 
     if not validateUsername(username):
         return jsonify({
             'result':RegistResult.INVALID.value,
-            'error':'Invalid username'
         }), 400
 
     if not validadePassword(password):
         return jsonify({
             'result':RegistResult.INVALID.value,
-            'error':'Invalid password'
         }), 400
 
     if not validateEmail(email):
         return jsonify({
             'result':RegistResult.INVALID.value,
-            'error':'Invalid email'
         }), 400
 
     # Check if username already exists
@@ -121,7 +117,7 @@ def register():
         return jsonify({
             'result':RegistResult.EXISTS.value
         }), 400
-    
+
     # Assemble object
     userData = User(
         name=username.lower(),

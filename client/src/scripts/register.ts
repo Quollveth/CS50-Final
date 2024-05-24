@@ -1,30 +1,26 @@
 import $ from 'jquery';
 
 import { registerUser } from './helpers/server-talker';
-import { UserData, RegistResult, usernameExists } from './helpers/server-talker';
+import {
+  UserData,
+  RegistResult,
+  usernameExists,
+} from './helpers/server-talker';
 //                          ^?
-
-
-async function sendRegisterForm(data: UserData): Promise<RegistResult> {
-  //HANDLE: This should be a try catch
-  const result = await usernameExists(data.username);
-  if (result) {
-    return 'EXISTS';
-  }
-  return await registerUser(data);
-}
 
 // Only alphanumerical characters
 const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
 // Simple email validator from https://regexr.com/3e48o
-const validateEmail = (str: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
+const validateEmail = (str: string) =>
+  /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
 /*
-  * At least 8 characters long
-  * One uppercase letter
-  * One lowercase letter
-  * One digit
-*/
-const validatePassword = (str: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
+ * At least 8 characters long
+ * One uppercase letter
+ * One lowercase letter
+ * One digit
+ */
+const validatePassword = (str: string) =>
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
 
 /**
  * Visual feedback for registration fields
@@ -56,17 +52,17 @@ $(function () {
   const confirmField = $('#confirmPassword') as JQuery<HTMLInputElement>;
 
   // Password must contain X textbox
-  const passwordData = $('#password-data') as JQuery<HTMLDivElement>
-  passwordField.on('input',()=>{
+  const passwordData = $('#password-data') as JQuery<HTMLDivElement>;
+  passwordField.on('input', () => {
     passwordData.removeClass('hidden');
-  })
-  passwordField.on('blur',()=>{
+  });
+  passwordField.on('blur', () => {
     passwordData.addClass('hidden');
-  })
+  });
 
   // Is username in use button
   const checkButton = $('#check-user') as JQuery<HTMLButtonElement>;
-  const takenLabel = $('#username-taken-label') as JQuery<HTMLLabelElement>
+  const takenLabel = $('#username-taken-label') as JQuery<HTMLLabelElement>;
 
   // Hide label when username updates
   userField.on('input', () => {
@@ -74,12 +70,15 @@ $(function () {
   });
 
   const updateLabel = (text: string, className: string) => {
-    takenLabel.removeClass('hidden valid invalid').addClass(className).text(text);
-  }
+    takenLabel
+      .removeClass('hidden valid invalid')
+      .addClass(className)
+      .text(text);
+  };
 
   checkButton.on('click', async () => {
     const username = userField.val() as string;
-    
+
     if (!validateUsername(username)) {
       updateLabel('Invalid username', 'invalid');
       return;
@@ -122,15 +121,16 @@ $(function () {
     const data: UserData = {
       username: userField.val() as string,
       email: emailField.val() as string,
-      password: passwordField.val() as string
+      password: passwordField.val() as string,
     };
 
     // Handle possible results
     //HANDLE: This should be a try catch
-    const result = await sendRegisterForm(data);
+    const result = await registerUser(data);
+
     switch (result) {
       case 'EXISTS':
-        alert('Username already in use!');
+        alert('Username already taken!');
         break;
       case 'INVALID':
         alert('Invalid Data');
@@ -139,9 +139,6 @@ $(function () {
         alert('Registration Successful');
         window.location.href = '/index';
         break;
-      default:
-        //HANDLE: Improve error handling
-        alert('Unexpected error occurred');
     }
   });
 });
