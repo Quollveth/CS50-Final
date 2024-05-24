@@ -3,6 +3,9 @@ import os
 import uuid
 from enum import Enum
 
+# Library imports
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # Flask imports
 from flask import Flask, jsonify, render_template, request, url_for, redirect
 from flask_cors import CORS
@@ -46,6 +49,16 @@ def validate():
     }),200
 
 
+def userExists(username):
+    user = username.lower()
+
+    usernames = db.session\
+        .query(User)\
+        .filter(User.name == user)\
+        .all()
+    
+    return len(usernames) > 0
+
 # Verify if username exists
 @app.route("/check-user", methods=["POST"])
 def check_user():
@@ -54,20 +67,7 @@ def check_user():
     if not toCheck:
         return '',400
 
-    #toCheck = toCheck.lower()
-    #FIXME: Convert username to all lowercase to prevent duplicates
-    #TODO: Ensure user data is following the same pattern 
-
-    print(f'Checking if username \'{toCheck}\' exists')
-
-    usernames = db.session\
-        .query(User)\
-        .filter(User.name == toCheck)\
-        .all()
-
-    exists = len(usernames) > 0
-
-    print(f'Username exists: {exists}')
+    exists = userExists(toCheck)
 
     return jsonify({
         'exists':exists
@@ -117,7 +117,20 @@ def register():
         }), 400
 
     # Check if username already exists
-    # TODO:Perform DB Query
+    if userExists(username):
+        return jsonify({
+            'result':RegistResult.EXISTS.value
+        }), 400
+    
+    # Assemble object
+    userData = User(
+        name=username.lower(),
+        email=email.lower(),
+        phash=generate_password_hash(password)
+    )
+
+    # DB Insertion
+    db.insert(userData)
 
     return jsonify({
         'result':RegistResult.SUCCESS.value

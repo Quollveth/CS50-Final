@@ -19,6 +19,15 @@ class User(Base):
         self.email = email
 
 class MySQL:
+
+    @property
+    def session(self):
+        return self._session
+
+    @session.setter
+    def session(self, any):
+        raise AttributeError("Cannot overwrite session attribute")
+
     def __init__(self, url):
         """Simple wrapper around SQLAlchemy for MySQL database
 
@@ -36,10 +45,7 @@ class MySQL:
 
         self._session = factory()
 
-    @property
-    def session(self):
-        return self._session
+    def insert(self,object):
+        self._session.add(object)
+        self._session.commit()
 
-    @session.setter
-    def session(self, any):
-        raise AttributeError("Cannot overwrite session attribute")
