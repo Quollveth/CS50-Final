@@ -6,7 +6,7 @@ import { UserData, RegistResult, usernameExists } from './helpers/server-talker'
 
 
 async function sendRegisterForm(data: UserData): Promise<RegistResult> {
-  //TODO: This should be a try catch
+  //HANDLE: This should be a try catch
   const result = await usernameExists(data.username);
   if (result) {
     return 'EXISTS';
@@ -94,8 +94,8 @@ $(function () {
       updateLabel('Invalid username', 'invalid');
       return;
     }
-    
-    //TODO: This should be a try catch
+
+    //HANDLE: This should be a try catch
     const result = await usernameExists(username);
     if (!result) {
       updateLabel('Username available', 'valid');
@@ -136,7 +136,7 @@ $(function () {
     };
 
     // Handle possible results
-    //TODO: This should be a try catch
+    //HANDLE: This should be a try catch
     const result = await sendRegisterForm(data);
     switch (result) {
       case 'EXISTS':
@@ -150,7 +150,7 @@ $(function () {
         window.location.href = '/index';
         break;
       default:
-        //TODO: Improve error handling
+        //HANDLE: Improve error handling
         alert('Unexpected error occurred');
     }
   });

@@ -10,7 +10,7 @@ export const validateSession = (
         resolve(response);
       })
       .fail((response) => {
-        //TODO: Improve error handling
+        //HANDLE: Improve error handling
         reject(new Error(`Request failed`));
       });
   });
@@ -40,7 +40,7 @@ export const usernameExists = (username:string): Promise<boolean> => {
       resolve(response.exists)
     })
     .fail((response) => {
-      //TODO: Improve error handling
+      //HANDLE: Improve error handling
       reject(new Error('Request failed'));
     })
   })
@@ -55,7 +55,7 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
         }
       })
       .fail((response) => {
-        //TODO: Improve error handling
+        //HANDLE: Improve error handling
         reject(new Error('Request failed'));
       });
   });
