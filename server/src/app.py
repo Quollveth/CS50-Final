@@ -7,13 +7,13 @@ from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Flask imports
-from flask import Flask, jsonify, render_template, request, url_for, redirect
+from flask import Flask, jsonify, render_template, request, url_for, redirect, session
 from flask_cors import CORS
 from flask_session import Session
 
 # Project imports
 from helpers.sql_helper import MySQL, User
-from helpers.validation import validateUsername, validadePassword, validateEmail
+from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 
 # Server setup
@@ -124,10 +124,31 @@ def register():
 
 @app.route("/login",methods=['POST'])
 def login():
+    session.clear()
+
     username = request.form.get('username')
     password = request.form.get('password')
 
+    user = db.session\
+        .query(User)\
+        .filter(User.name == username)\
+        .first()
+
+    if not user:
+        return jsonify({
+            'result':'INVALID'
+        }),400
+
+    if not check_password_hash(user.phash,password):
+        return jsonify({
+            'result':'INVALID'
+        }),400
+
+    session['user'] = user.uid
+
+    # Create session
     return '',200
+
 
 # Entrypoint
 if __name__ == "__main__":

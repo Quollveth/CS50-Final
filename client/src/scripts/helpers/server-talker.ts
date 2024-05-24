@@ -59,7 +59,7 @@ export const loginUser = (user:UserData): Promise<string> => {
       url:`${SERVER_IP}${Routes.login}`,
       method: 'POST',
       data: user,
-      success: (response) => resolve(response),
+      success: (response) => resolve(response.result),
       error: (xhr) => {
         //HANDLE: Improve error handling
         if(xhr.status == 400){
