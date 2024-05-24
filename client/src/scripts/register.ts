@@ -47,16 +47,6 @@ function validateField(
 
 // On document load
 $(function () {
-  // Already have an account? Go to login page
-  const changeFormBtn = document.getElementById(
-    'change-button'
-  ) as HTMLButtonElement;
-  changeFormBtn.addEventListener('click', () => {
-    window.location.href = 'login.html';
-    return;
-  });
-
-  // Actual registration stuff goes here
   const userForm = document.getElementById('registerForm') as HTMLFormElement;
 
   // All fields
