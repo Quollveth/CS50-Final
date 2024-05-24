@@ -1,6 +1,5 @@
 # Python standard library imports
 import os
-import uuid
 from enum import Enum
 
 # Library imports
@@ -37,6 +36,11 @@ dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 db = MySQL(dbConnection)
 
 # Server initialization finished
+
+#HACK
+@app.route("/",methods=["POST","GET"])
+def redirect():
+    return render_template('redir.html')
 
 def userExists(username):
     user = username.lower()
@@ -148,6 +152,13 @@ def login():
 
     # Create session
     return '',200
+
+
+
+@app.route("/index")
+@login_required
+def index():
+    return '', 200
 
 
 # Entrypoint

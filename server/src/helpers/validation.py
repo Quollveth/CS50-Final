@@ -12,7 +12,7 @@ login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user") is None:
-            return redirect("/login")
+            return redirect("/")
         return f(*args, **kwargs)
 
     return decorated_function
