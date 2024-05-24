@@ -3,10 +3,11 @@ import $ from 'jquery';
 import { registerUser } from './helpers/server-talker';
 import {
   UserData,
+//  ^?
   RegistResult,
+//  ^?
   usernameExists,
 } from './helpers/server-talker';
-//                          ^?
 
 // Only alphanumerical characters
 const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
@@ -137,7 +138,7 @@ $(function () {
         break;
       case 'SUCCESS':
         alert('Registration Successful');
-        window.location.href = '/';
+        window.location.href = '/login';
         break;
     }
   });
