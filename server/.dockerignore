@@ -1,7 +1,4 @@
-bin/
-include/
-lib/
-lib64
+.venv
 flask_session/
 **/__pycache__/
 db-schema.sql

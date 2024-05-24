@@ -4,10 +4,7 @@ run-client.sh
 client/node_modules/
 client/dist/
 
-server/bin/
-server/lib/
-server/lib64
-server/include/
+server/.venv
 server/__pycache__/
 server/flask_session/
 flask_session/
