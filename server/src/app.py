@@ -38,17 +38,6 @@ db = MySQL(dbConnection)
 
 # Server initialization finished
 
-
-# Validade server side session
-@app.route("/validate", methods=["POST"])
-def validate():
-    print(f'Validating token')
-    #TODO: Validate Session lmao
-    return jsonify({
-        'valid':False,
-    }),200
-
-
 def userExists(username):
     user = username.lower()
 
@@ -132,6 +121,13 @@ def register():
         'result':RegistResult.SUCCESS.value
     }), 200
 
+
+@app.route("/login",methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    return '',200
 
 # Entrypoint
 if __name__ == "__main__":
