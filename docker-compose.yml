@@ -6,7 +6,7 @@ services:
     ports: 
       - 8080:8080
     networks:
-      - db_network
+      - cs50_final_network
     environment:
       DB_USER: root
       DB_PASS: password
@@ -32,13 +32,13 @@ services:
       - './.mysql-data/dashboard:/var/lib/mysql'
       - './init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
-      - db_network
+      - cs50_final_network
 
 volumes:
   db_data:
     driver: local
 
 networks:
-  db_network:
+  cs50_final_network:
       driver: bridge
-      name: db_network
+      name: cs50_final_network
