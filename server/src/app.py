@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_session import Session
 
 # Project imports
-from helpers.sql_helper import MySQL
+from helpers.sql_helper import MySQL, User
 from helpers.validation import validateUsername, validadePassword, validateEmail
 
 
@@ -36,25 +36,43 @@ db = MySQL(dbConnection)
 # Server initialization finished
 
 
-@app.route("/test", methods=["GET", "POST"])
-def test():
-    print("running")
-
-    
-    # Perform database query
-    
-
-    return jsonify('success'), 200
-
-
 # Validade server side session
 @app.route("/validate", methods=["POST"])
 def validate():
     print(f'Validating token')
+    #TODO: Validate Session lmao
     return jsonify({
         'valid':False,
-        'token':'session token'
     }),200
+
+
+# Verify if username exists
+@app.route("/check-user", methods=["POST"])
+def check_user():
+    toCheck = request.form.get('username')
+
+    if not toCheck:
+        return '',400
+
+    #toCheck = toCheck.lower()
+    #FIXME: Convert username to all lowercase to prevent duplicates
+    #TODO: Ensure user data is following the same pattern 
+
+    print(f'Checking if username \'{toCheck}\' exists')
+
+    usernames = db.session\
+        .query(User)\
+        .filter(User.name == toCheck)\
+        .all()
+
+    exists = len(usernames) > 0
+
+    print(f'Username exists: {exists}')
+
+    return jsonify({
+        'exists':exists
+    }),200
+
 
 class RegistResult(Enum):
     INVALID = 'INVALID' #Invalid data
