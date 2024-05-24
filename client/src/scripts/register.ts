@@ -137,7 +137,7 @@ $(function () {
         break;
       case 'SUCCESS':
         alert('Registration Successful');
-        window.location.href = '/index';
+        window.location.href = '/';
         break;
     }
   });
