@@ -6,7 +6,7 @@ $invalid-field: red;
 
 form.user-form {
   max-width: 400px;
-  margin: 0 auto;
+  margin: 15px auto;
   padding: 20px;
   border-radius: 8px;
 }
@@ -42,7 +42,7 @@ form.user-form {
 label.user-form {
   display: block;
   margin-bottom: 5px;
-  &#change-label{
+  &#change-label {
     font-size: x-small;
   }
 }
@@ -78,18 +78,18 @@ button.user-form {
   cursor: pointer;
 }
 
-.lightMode form.user-form {
+.lightMode {
+  form.user-form {
     background-color: $form-bg-light;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.lightMode button.user-form {
-    background-color: $form-button-bg-light;
-    color: $form-button-text-light;
-    @include darken-on-hover($form-button-bg-light)
-}
-
-.lightMode button.user-form#change-button {
-  background-color: $form-button-swap-bg-light;
-  @include darken-on-hover($form-button-swap-bg-light)
+  }
+  button.user-form {
+    background-color: $button-bg-light;
+    color: $button-text-light;
+    @include darken-on-hover($button-bg-light);
+  }
+  button.user-form#change-button {
+    background-color: $form-button-swap-bg-light;
+    @include darken-on-hover($form-button-swap-bg-light);
+  }
 }

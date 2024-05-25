@@ -1,6 +1,10 @@
+// Global variables for ease of editing
 @import './styles.scss';
-@import './user-form.scss';
 @import './mixins.scss';
+
+// Pages
+@import './user-form.scss'; // Login and register
+@import './index.scss';
 
 .hidden {
   display: none;
@@ -8,7 +12,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
 }
 
 body.lightMode {

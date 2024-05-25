@@ -1,12 +1,23 @@
 @import 'styles.scss'; //Contains global style variables
 
+// Darken or lighten a button as it is hovered over
 @mixin darken-on-hover($color){
     &:hover {
-        background-color: darken($color,$hover-darken-amount);
+        background-color: darken($color,$hover-change-amount);
     }
 }
 @mixin lighten-on-hover($color){
     &:hover {
-        background-color: lighten($color,$hover-darken-amount);
+        background-color: lighten($color,$hover-change-amount);
+    }
+}
+
+
+// Set link color for all states
+@mixin link_color($color){
+    text-decoration: none;
+    color: $color;
+    &:visited {
+        color: $color;
     }
 }

@@ -1,11 +1,17 @@
-// Main styles
-$hover-darken-amount: 20%;
+$hover-change-amount: 20%;
+// How much the color lighthens or darkens when hovering over a button
+// Used in mixins.scss
 
+// Main colors, applies globally unless overwritten
 $bg-color-light: #f0f0f0;
 $text-color-light: #000000;
 
-// User form styles
+// Buttons
+$button-bg-light: #007bff;
+$button-text-light: #fff;
+
+// Login/Register
 $form-bg-light: #fff;
-$form-button-bg-light: #007bff;
-$form-button-text-light: #fff;
-$form-button-swap-bg-light: #0029b1;
+$form-button-swap-bg-light: #0029b1; // The button that changes between log in and register form
+
+// Index page
