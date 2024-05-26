@@ -66,6 +66,20 @@
   }
 }
 
+.notif-box {
+  position: relative;
+  > .notif-text {
+    position: absolute;
+    bottom:0px;
+    right: 0px;
+    padding: 1px;
+    border-radius: 3px;
+    font-size: smaller;
+    background-color: $notif-bg-color;
+    color: $notif-color;
+  }
+}
+
 @media screen and (max-width: 700px) {
   #sidebar {
     width: 100%;
