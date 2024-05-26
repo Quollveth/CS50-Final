@@ -2,13 +2,30 @@
 @import './mixins.scss';
 
 #index-page {
-  > #sidebar {
+
+  > #notification{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+
+    height: $notif-bar-height;
+
+    text-align: center;
+    font-size: small;
+    background-color: $notification-light-bg;
+    color: $notification-light-text;
+  }
+
+  #sidebar {
     margin: 0;
     padding: 0;
     width: 200px;
     position: fixed;
     height: 100%;
     overflow: auto;
+    z-index: 10;
 
     > a {
       display: block;
@@ -17,10 +34,35 @@
     }
   }
 
-  > #content {
-    margin-left: 200px;
+  #topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $topbar-height;
+    z-index: 5;
+    
+    > #buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 2px;
+
+      > a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+      }
+    }
+  }
+
+  #content {
     padding: 1px 16px;
-    height: 1000px;
+    margin-left: 200px;
+
+    > div {
+      margin-top: $topbar-height;
+    }
   }
 }
 
