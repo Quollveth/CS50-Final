@@ -12,7 +12,7 @@ from flask_session import Session
 
 # Project imports
 from helpers.sql_helper import MySQL, User
-from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
+from helpers.validation import validateUsername, validadePassword, validateEmail
 
 
 # Server setup
