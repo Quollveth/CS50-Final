@@ -1,22 +1,4 @@
 import $ from 'jquery';
-import { SERVER_IP } from '../constants';
-
-
-$.ajax({
-    url: SERVER_IP+'/get-user',
-    method: 'GET',
-    xhrFields: {
-        withCredentials: true,
-    },
-    success: (response) => {
-        console.log(response);
-    },
-    error: (error) => {
-        console.error(error);
-    }
-});
-
-
 
 const alert_btn = $('#alert-btn');
 const msg_btn = $('#msg-btn');
