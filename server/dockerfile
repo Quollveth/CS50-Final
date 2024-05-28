@@ -1,7 +1,15 @@
 FROM python:3.9-slim-buster
+
+# Install system-level dependencies for MySQL client
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY ./requirements.txt /app
 RUN pip install -r requirements.txt
+
 COPY . .
 EXPOSE 8080
 ENV FLASK_APP=app.py
