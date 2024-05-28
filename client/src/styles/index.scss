@@ -35,10 +35,32 @@
       justify-self: flex-end;
     }
 
-    a {
+    a:not(#username) {
       display: block;
       padding: 16px;
       text-decoration: none;
+    }
+
+    #userData{
+      padding: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      #profilePic {
+        border-radius: 100px;
+        box-shadow: 0 0 5px #0002;
+        cursor: pointer;
+      }
+
+      #username {
+        padding: 1px;
+        font-size: 18px;
+        text-wrap:wrap;
+        text-align: center;
+        cursor: default;
+      }
     }
   }
 
@@ -104,7 +126,8 @@
 
 .lightMode #sidebar {
     background-color: darken($bg-color-light,10%);
-    a{
+    a:not(#username){
+        cursor: pointer;
         @include link_color($text-color-light);
         &:hover:not(.active){
             @include darken-on-hover($button-bg-light);

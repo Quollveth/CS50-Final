@@ -3,8 +3,9 @@ import { SERVER_IP, Routes } from '../../constants';
 
 export type UserData = {
   username: string;
-  password: string;
+  password: string|undefined; // String when sending it to the server, undefined when getting it back
   email?: string;
+  picture?: string;
 };
 
 const RegisRes = {
@@ -73,4 +74,30 @@ export const loginUser = (user:UserData): Promise<string> => {
       }
     })
   });
+}
+
+// This function returns all data except for the password, it's the caller's job to filter
+export const getUserData = (): Promise<UserData> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url:`${SERVER_IP}${Routes.getUserData}`,
+      method:'GET',
+      xhrFields: {
+        withCredentials: true
+      },
+      success: (response) => {
+        const uData:UserData = {
+          username:response.user,
+          password:undefined,
+          email:response.email,
+          picture:response.image
+        }
+        resolve(uData);
+      },
+      //HANDLE: Improve error handling
+      error: (e)=> {
+        reject(e);
+      }
+    })
+  })
 }

@@ -3,4 +3,5 @@ export const Routes = {
   login: '/login', // Login form
   register: '/register', // Registration form
   checkUser: '/check-user', // Check if username exists
+  getUserData: '/get-udata', // Gets all saved user data
 } as const;

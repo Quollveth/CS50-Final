@@ -1,5 +1,9 @@
 import $ from 'jquery';
 
+import { getUserData, type UserData } from './helpers/server-talker';
+
+/* INITIALIZE NOTIFICTION EVENTS */
+
 const alert_btn = $('#alert-btn');
 const msg_btn = $('#msg-btn');
 const settings_btn = $('#settings-btn');
@@ -44,6 +48,8 @@ const addAlert = ():void => {
 alert_btn.on('click',()=>{
     alert_notif.addClass('hidden');
     hideNotification();
+
+    //TODO: Get user alerts
 })
 
 let messages = 0;
@@ -63,4 +69,14 @@ const addMessage = ():void => {
 msg_btn.on('click',()=>{
     message_notif.addClass('hidden');
     hideNotification();
+
+    //TODO: Get user messages
+})
+
+/* FETCH USER DATA AND PUT IT ON SIDEBAR */
+const profilePic = $('#profilePic');
+const usernameText = $('#username');
+
+getUserData().then((data) => {
+    usernameText.text(data.username);
 })
