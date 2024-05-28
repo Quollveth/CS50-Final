@@ -19,7 +19,11 @@ from helpers.validation import validateUsername, validadePassword, validateEmail
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True,
+    resources={r"/*": {"origins": "*"}}
+)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -149,6 +153,26 @@ def login():
     # Create session
     return '',200
 
+@app.route('/get-user',methods=['GET'])
+def get_user():
+    uid = session.get('user',None)
+    if not uid:
+        return '',400
+
+    uname = db.session\
+        .query(User)\
+        .filter(User.uid == uid)\
+        .first()
+
+    if not uname:
+        return '',400
+
+    response = jsonify({
+        'id':uid,
+        'name':uname.name
+    })
+
+    return response, 200
 
 # Entrypoint
 if __name__ == "__main__":
