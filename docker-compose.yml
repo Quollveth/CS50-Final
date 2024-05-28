@@ -8,11 +8,16 @@ services:
     networks:
       - cs50_final_network
     environment:
-      DB_USER: root
-      DB_PASS: password
-      DB_NAME: dashboard
       DB_HOST: database
       DB_PORT: 3306
+      # From .env file
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      - './docker-volume/server:/server-data'
+    depends_on:
+      - database
 
   database:
     image: mysql:5.7
@@ -20,16 +25,17 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: 'dashboard'   
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'      
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: ${DB_NAME}   
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      # Yes this is not best practice 🤷‍♀️ but it is a personal project only
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
     ports:
       - '3306:3306'
     expose:
       - '3306'
     volumes:
-      - './.mysql-data/dashboard:/var/lib/mysql'
+      - './docker-volume/.mysql-data/dashboard:/var/lib/mysql'
       - './init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
       - cs50_final_network
