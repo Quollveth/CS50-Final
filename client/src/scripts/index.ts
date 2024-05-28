@@ -64,14 +64,3 @@ msg_btn.on('click',()=>{
     message_notif.addClass('hidden');
     hideNotification();
 })
-
-
-addAlert();
-addAlert();
-addAlert();
-
-addMessage();
-addMessage();
-addMessage();
-addMessage();
-addMessage();
