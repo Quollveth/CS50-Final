@@ -117,9 +117,12 @@
         }
 
         &#sidebar-logout {
-          background-color: $button-bg-warn-light;
-          color: $button-text-warn-light;
-          @include darken-on-hover($button-bg-warn-light);
+//          background-color: $button-bg-warn-light;
+          @include link_color($text-color-light);
+          &:hover {
+            color: $button-text-warn-light;
+            background-color: $button-bg-warn-light;
+          }
         }
     }
 }
