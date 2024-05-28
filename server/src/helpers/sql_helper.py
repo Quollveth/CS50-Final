@@ -11,7 +11,6 @@ class User(Base):
     name = Column("name", VARCHAR(50), nullable=False)
     phash = Column("hash", Text, nullable=False)
     email = Column("email", Text, nullable=False)
-    token = Column("last_token", Text, nullable=True)
 
     def __init__(self, name, phash, email):
         self.name = name

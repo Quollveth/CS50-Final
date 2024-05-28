@@ -4,5 +4,3 @@ export const Routes = {
   register: '/register', // Registration form
   checkUser: '/check-user', // Check if username exists
 } as const;
-
-export const SESSION_COOKIE_NAME = 'Session';
