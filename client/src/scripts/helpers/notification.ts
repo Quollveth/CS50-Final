@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 export const notifColors = {
     ERROR: '#ff4d4d',
     SUCCESS: '#4dff4d',

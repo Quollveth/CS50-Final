@@ -8,6 +8,24 @@ export type UserData = {
   picture?: string;
 };
 
+
+// Health check
+export const HealthCheck = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.healthCheck}`,
+      method: 'GET',
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: () => resolve(false)
+    })
+  });
+}
+
+
 const RegisRes = {
   INVALID: 'INVALID', // Invalid data
   EXISTS: 'EXISTS', // User already exists
