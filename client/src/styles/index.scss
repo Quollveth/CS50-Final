@@ -25,7 +25,7 @@
       text-decoration: none;
     }
 
-    #userData{
+    #userData {
       padding: 10px;
       margin-bottom: 20px;
       display: flex;
@@ -35,14 +35,14 @@
       #profilePic {
         border-radius: 100px;
         box-shadow: 0 0 5px #0002;
-        cursor: pointer;
+        cursor: default;
         max-width: 60px;
       }
 
       #username {
         padding: 1px;
         font-size: 18px;
-        text-wrap:wrap;
+        text-wrap: wrap;
         text-align: center;
         cursor: default;
       }
@@ -69,6 +69,23 @@
         text-decoration: none;
       }
     }
+
+    #settings-dropdown {
+      position: absolute;
+      top: $topbar-height;
+      right: 0;
+      flex-direction: column;
+      gap: 5px;
+      margin-left: 10px;
+      z-index: 10;
+
+      @include rounded_list(15px);
+
+      a {
+        padding: 10px;
+        text-decoration: none;
+      }
+    }
   }
 
   #content {
@@ -85,7 +102,7 @@
   position: relative;
   > .notif-text {
     position: absolute;
-    bottom:0px;
+    bottom: 0px;
     right: 0px;
     padding: 1px;
     border-radius: 3px;
@@ -109,28 +126,40 @@
   }
 }
 
-.lightMode #sidebar {
-    background-color: darken($bg-color-light,10%);
-    a:not(#username){
-        cursor: pointer;
-        @include link_color($text-color-light);
-        &:hover:not(.active){
-            @include darken-on-hover($button-bg-light);
-            @include link_color($button-text-light);
-            color: $button-text-light;
-        }
-        &.active {
-            background-color: $button-bg-light;
-            @include link_color($button-text-light);
-        }
-
-        &#sidebar-logout {
-//          background-color: $button-bg-warn-light;
-          @include link_color($text-color-light);
-          &:hover {
-            color: $button-text-warn-light;
-            background-color: $button-bg-warn-light;
-          }
-        }
+.lightMode #settings-dropdown {
+  background-color: $settings-light-bg-color;
+  color: $settings-light-text-color;
+  a {
+    background-color: $settings-light-bg-color;
+    color: $settings-light-text-color;
+    &:hover {
+      background-color: $settings-light-hover-color;
+      color: $settings-light-hover-text-color;
     }
+  }
+  #logout-btn {
+    //background-color: $button-bg-warn-light;
+    @include link_color($text-color-light);
+    &:hover {
+      color: $button-text-warn-light;
+      background-color: $button-bg-warn-light;
+    }
+  }
+}
+
+.lightMode #sidebar {
+  background-color: darken($bg-color-light, 10%);
+  a:not(#username) {
+    cursor: pointer;
+    @include link_color($text-color-light);
+    &:hover:not(.active) {
+      @include darken-on-hover($button-bg-light);
+      @include link_color($button-text-light);
+      color: $button-text-light;
+    }
+    &.active {
+      background-color: $button-bg-light;
+      @include link_color($button-text-light);
+    }
+  }
 }

@@ -6,6 +6,10 @@ $hover-change-amount: 20%;
 $bg-color-light: #f0f0f0;
 $text-color-light: #000000;
 
+// Global notification
+$notification-light-bg: #838383;
+$notification-light-text: #000000;
+
 // Buttons
 $button-bg-light: #007bff;
 $button-text-light: #fff;
@@ -24,5 +28,7 @@ $notif-bar-height: 20px;
 $notif-bg-color: #ff0000;
 $notif-color: #ffffff;
 
-$notification-light-bg: #838383;
-$notification-light-text: #000000;
+$settings-light-bg-color: #c7c7c7;
+$settings-light-text-color: #000000;
+$settings-light-hover-color: #d0d0d0;
+$settings-light-hover-text-color: $settings-light-text-color;

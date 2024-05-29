@@ -21,3 +21,17 @@
         color: $color;
     }
 }
+
+
+// Rounds corners of child elements to align in a list
+@mixin rounded_list($amount){
+    border-radius: $amount;
+    :first-child {
+      border-top-left-radius: $amount;
+      border-top-right-radius: $amount;
+    }
+    :last-child {
+      border-bottom-left-radius: $amount;
+      border-bottom-right-radius: $amount;
+    }
+}
