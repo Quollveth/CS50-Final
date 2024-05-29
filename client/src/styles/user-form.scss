@@ -13,6 +13,7 @@ form.user-form {
 
 // Special container for checking if username exists
 form.user-form {
+  margin-top: 30px;
   > #username-container {
     display: flex;
     flex-direction: column;
