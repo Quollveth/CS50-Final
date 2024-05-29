@@ -6,7 +6,7 @@ from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Flask imports
-from flask import Flask, jsonify, request, session, make_response, send_file
+from flask import Flask, jsonify, request, send_from_directory, session, make_response, send_file
 from flask_cors import CORS, cross_origin
 
 # Project imports
@@ -15,8 +15,10 @@ from helpers.validation import validateUsername, validadePassword, validateEmail
 
 
 # Server setup
-basedir = os.path.abspath(os.path.dirname(__file__))
-app = Flask(__name__)
+app_dir = os.path.abspath(os.path.dirname(__file__)) # ./server/src
+basedir = os.path.join(app_dir, '..', '..') # ./
+
+app = Flask(__name__) 
 
 # Load environment variables
 if not os.getenv('IN_DOCKER',False):
@@ -53,6 +55,9 @@ db_port = os.getenv("DB_PORT")
 dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 
 db = MySQL(dbConnection)
+
+# Extras
+app.config['STATIC_FOLDER'] = f'{os.path.abspath(basedir)}/static/'
 
 
 # Server initialization finished
@@ -192,14 +197,17 @@ def get_user_data():
         .filter(User.uid == uid)\
         .first()
 
-    uData = jsonify({
+    return jsonify({
         'username':user.name,
         'email':user.email,
-    })
+        'picture':f'{user.picture}.png'
+    }),200
 
-    response = make_response(uData)
-    response.headers['Content-Type'] = 'application/json'
-    return response,200
+
+@app.route('/image/<path:filename>',methods=['GET'])
+def serve_image(filename):
+    return send_from_directory(app.config['STATIC_FOLDER'],filename)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, ssl_context=(cert_pem, key_pem), port=5000)

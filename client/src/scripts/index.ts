@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $, { get } from 'jquery';
 
 import type { Notification_Color } from './helpers/helpers';
 import type { UserData } from './helpers/server-talker';
@@ -68,7 +68,11 @@ logout_btn.on('click',()=>{
 const profilePic = $('#profilePic');
 const usernameText = $('#username');
 
-getUserData().then((data) => {
-    console.log(data)
-    $('#username').text(capitalize(data.username));
-})
+const getData = async () => {
+    const data = await getUserData();
+    console.log(data);
+    usernameText.text(capitalize(data.username));
+    profilePic.attr('src', data.picture!);
+}
+
+getData();

@@ -4,18 +4,19 @@ from sqlalchemy.orm import sessionmaker, registry
 
 Base = declarative_base()
 
-
 class User(Base):
     __tablename__ = "Users"
     uid = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", VARCHAR(50), nullable=False)
     phash = Column("hash", Text, nullable=False)
     email = Column("email", Text, nullable=False)
+    picture = Column("picture", Text, nullable=False)
 
     def __init__(self, name, phash, email):
         self.name = name
         self.phash = phash
         self.email = email
+        self.picture = 'DEFAULT' # Means default picture
 
 class MySQL:
 
