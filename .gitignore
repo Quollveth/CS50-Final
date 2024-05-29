@@ -14,3 +14,5 @@ flask_session/
 *.code-workspace
 
 .env
+testing/
+docker-volume/

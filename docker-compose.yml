@@ -8,12 +8,16 @@ services:
     networks:
       - cs50_final_network
     environment:
+      IN_DOCKER: 'true'
       DB_HOST: database
       DB_PORT: 3306
       # From .env file
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
+      CERT_PATH: ${CERT_PATH}
+      KEY_PATH: ${KEY_PATH}
+
     volumes:
       - './docker-volume/server:/server-data'
     depends_on:
