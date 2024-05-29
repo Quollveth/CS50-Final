@@ -1,4 +1,4 @@
-export const SERVER_IP = 'http://127.0.0.1:8080';
+export const SERVER_IP = 'https://127.0.0.1:5000';
 export const Routes = {
   login: '/login', // Login form
   register: '/register', // Registration form

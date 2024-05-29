@@ -6,42 +6,61 @@ from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Flask imports
-from flask import Flask, jsonify, render_template, request, url_for, redirect, session
+from flask import Flask, jsonify, request, session, make_response, send_file
 from flask_cors import CORS
-from flask_session import Session
 
 # Project imports
 from helpers.sql_helper import MySQL, User
-from helpers.validation import validateUsername, validadePassword, validateEmail
+from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 
 # Server setup
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 
+# Load environment variables
+if not os.getenv('IN_DOCKER',False):
+    from dotenv import load_dotenv
+    load_dotenv()
+    os.environ['DB_HOST'] = '127.0.0.1'
+    os.environ['DB_PORT'] = '3306'
+
+
+# CORS, all origins
 CORS(
     app,
     supports_credentials=True,
     resources={r"/*": {"origins": "*"}}
 )
 
+# HTTPS stuff
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+cert_pem = os.getenv('CERT_PATH')
+key_pem = os.getenv('KEY_PATH')
+
+# Session
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+
 
 # Connect to database
-db_user = os.getenv("DB_USER", "root")
-db_pass = os.getenv("DB_PASS", "password")
-db_host = os.getenv("DB_HOST", "127.0.0.1")
-db_port = os.getenv("DB_PORT", "3306")
-db_name = os.getenv("DB_NAME", "dashboard")
+db_user = os.getenv("DB_USER")
+db_pass = os.getenv("DB_PASS")
+db_name = os.getenv("DB_NAME")
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
 
 dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 
 db = MySQL(dbConnection)
 
-# Server initialization finished
 
+# Server initialization finished
+@app.route("/", methods=["GET"])
+def hello():
+    return "Hello, world!",200
+
+# Check if username exists in the database
 def userExists(username):
     user = username.lower()
 
@@ -150,30 +169,39 @@ def login():
 
     session['user'] = user.uid
 
-    # Create session
     return '',200
 
-@app.route('/get-user',methods=['GET'])
-def get_user():
-    uid = session.get('user',None)
-    if not uid:
-        return '',400
 
-    uname = db.session\
+@app.route('/get-udata',methods=['GET'])
+@login_required
+def get_user_data():
+    uid = session.get("user")
+
+    return jsonify({'userid':uid}),200
+    user = db.session\
         .query(User)\
         .filter(User.uid == uid)\
         .first()
 
-    if not uname:
-        return '',400
-
-    response = jsonify({
-        'id':uid,
-        'name':uname.name
+    uData = jsonify({
+        'username':user.name,
+        'email':user.email,
     })
 
-    return response, 200
+    response = make_response(uData)
 
-# Entrypoint
+    fileData = send_file(
+        '/static/DEFAULT-PROFILE.jpeg',
+        as_attachment=True,
+        attachment_filename='profile_picture.jpeg'
+    )
+
+    response.data = fileData.get_data()
+
+    response.headers['Content-Disposition'] = fileData.headers['Content-Disposition']
+    response.headers['Content-Type'] = fileData.headers['Content-Type']
+
+    return response,200
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host='0.0.0.0', debug=True, ssl_context=(cert_pem, key_pem), port=5000)
