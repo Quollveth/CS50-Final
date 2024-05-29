@@ -13,9 +13,6 @@ $(function () {
         if (!result) {
             showNotification('Server is down', 'ERROR');
         }
-        else {
-            showNotification('Server is up', 'SUCCESS');
-        }
     });
 
     const userForm = document.getElementById('loginForm') as HTMLFormElement;

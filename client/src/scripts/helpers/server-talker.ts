@@ -50,6 +50,7 @@ export const usernameExists = (username:string): Promise<boolean> => {
   })
 }
 
+// Register a new user
 export const registerUser = (user: UserData): Promise<RegistResult> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -72,6 +73,7 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
   });
 };
 
+// Login a user
 export const loginUser = (user:UserData): Promise<string> => {
   return new Promise((resolve,reject) => {
     $.ajax({
@@ -99,7 +101,23 @@ export const loginUser = (user:UserData): Promise<string> => {
   });
 }
 
+// Logout a user
+export const logoutUser = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url:`${SERVER_IP}${Routes.logout}`,
+      method: 'GET',
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: () => resolve(false)
+    })
+  });
+}
 
+// Get user data
 export const getUserData = (): Promise<UserData> => {
   return new Promise((resolve, reject) => {
     $.ajax({

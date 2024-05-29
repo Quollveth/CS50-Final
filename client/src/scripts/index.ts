@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 import type { Notification_Color } from './helpers/helpers';
 import type { UserData } from './helpers/server-talker';
-import { getUserData } from './helpers/server-talker';
+import { getUserData, logoutUser } from './helpers/server-talker';
 import { showNotification, hideNotification, isNotificationVisible, capitalize } from './helpers/helpers';
 
 /* INITIALIZE NOTIFICTION EVENTS */
@@ -51,6 +51,17 @@ msg_btn.on('click',()=>{
     hideNotification();
 
     //TODO: Get user messages
+})
+
+
+/* LOG OUT BUTTON */
+const logout_btn = $('#sidebar-logout');
+logout_btn.on('click',()=>{
+    logoutUser().then((result) => {
+        if(result){
+            window.location.href = 'login.html';
+        }
+    })
 })
 
 /* FETCH USER DATA AND PUT IT ON SIDEBAR */

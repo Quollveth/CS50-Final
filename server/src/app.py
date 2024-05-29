@@ -56,9 +56,9 @@ db = MySQL(dbConnection)
 
 
 # Server initialization finished
-@app.route("/", methods=["GET"])
+@app.route("/health", methods=["GET"])
 def hello():
-    return "Hello, world!",200
+    return "",200
 
 # Check if username exists in the database
 def userExists(username):
@@ -86,6 +86,7 @@ def check_user():
     }),200
 
 
+#### Registration
 class RegistResult(Enum):
     INVALID = 'INVALID' #Invalid data
     EXISTS = 'EXISTS' # User already exists
@@ -145,6 +146,7 @@ def register():
     }), 200
 
 
+##### Login
 @app.route("/login",methods=['POST'])
 def login():
     session.clear()
@@ -172,8 +174,15 @@ def login():
     return '',200
 
 
+##### Logout
+@app.route("/logout",methods=['GET'])
+def logout():
+    session.clear()
+    return '',200
+
+
+#### User data
 @app.route('/get-udata',methods=['GET'])
-@cross_origin(supports_credentials=True)
 @login_required
 def get_user_data():
     uid = session.get("user")
