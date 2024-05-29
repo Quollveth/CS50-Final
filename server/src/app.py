@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Flask imports
 from flask import Flask, jsonify, request, session, make_response, send_file
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 # Project imports
 from helpers.sql_helper import MySQL, User
@@ -173,11 +173,11 @@ def login():
 
 
 @app.route('/get-udata',methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required
 def get_user_data():
     uid = session.get("user")
 
-    return jsonify({'userid':uid}),200
     user = db.session\
         .query(User)\
         .filter(User.uid == uid)\
@@ -189,18 +189,7 @@ def get_user_data():
     })
 
     response = make_response(uData)
-
-    fileData = send_file(
-        '/static/DEFAULT-PROFILE.jpeg',
-        as_attachment=True,
-        attachment_filename='profile_picture.jpeg'
-    )
-
-    response.data = fileData.get_data()
-
-    response.headers['Content-Disposition'] = fileData.headers['Content-Disposition']
-    response.headers['Content-Type'] = fileData.headers['Content-Type']
-
+    response.headers['Content-Type'] = 'application/json'
     return response,200
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
 import $ from 'jquery';
 
-import type { Notification_Color } from './helpers/notification';
+import type { Notification_Color } from './helpers/helpers';
 import type { UserData } from './helpers/server-talker';
 import { getUserData } from './helpers/server-talker';
-import { showNotification, hideNotification, isNotificationVisible } from './helpers/notification';
+import { showNotification, hideNotification, isNotificationVisible, capitalize } from './helpers/helpers';
 
 /* INITIALIZE NOTIFICTION EVENTS */
 
@@ -59,4 +59,5 @@ const usernameText = $('#username');
 
 getUserData().then((data) => {
     console.log(data)
+    $('#username').text(capitalize(data.username));
 })

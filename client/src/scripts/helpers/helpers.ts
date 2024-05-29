@@ -1,5 +1,10 @@
 import $ from 'jquery';
 
+/* Notification handling
+ * Notification is part of the template and thus available in all pages
+ *
+*/
+
 export const notifColors = {
     ERROR: '#ff4d4d',
     SUCCESS: '#4dff4d',
@@ -7,7 +12,6 @@ export const notifColors = {
     WARNING: '#ffcc00'
 } as const;
 export type Notification_Color = keyof typeof notifColors;
-
 
 let notif_visible = false;
 const notifBar = $('#global-notification');
@@ -33,3 +37,6 @@ export const hideNotification = ():void => {
 }
 
 export const isNotificationVisible = ():boolean => notif_visible;
+
+
+export const capitalize = (s:string):string => s.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');

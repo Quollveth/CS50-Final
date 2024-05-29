@@ -2,8 +2,8 @@ import $ from 'jquery';
 
 import type { UserData } from './helpers/server-talker';
 import { loginUser, HealthCheck } from './helpers/server-talker';
-import type { Notification_Color } from './helpers/notification';
-import { showNotification, hideNotification } from './helpers/notification';
+import type { Notification_Color } from './helpers/helpers';
+import { showNotification, hideNotification } from './helpers/helpers';
 
 // On document load
 $(function () {
