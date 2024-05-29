@@ -12,3 +12,5 @@ flask_session/
 
 .mysql-data/
 *.code-workspace
+
+.env
