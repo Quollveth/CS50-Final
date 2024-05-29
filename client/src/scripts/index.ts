@@ -1,6 +1,8 @@
 import $ from 'jquery';
 
-import { getUserData, type UserData } from './helpers/server-talker';
+import type { Notification_Color } from './helpers/notification';
+import type { UserData } from './helpers/server-talker';
+import { getUserData } from './helpers/server-talker';
 import { showNotification, hideNotification, isNotificationVisible } from './helpers/notification';
 
 /* INITIALIZE NOTIFICTION EVENTS */
@@ -13,7 +15,7 @@ let alerts = 0;
 const alert_notif = $('#alert-notif');
 const addAlert = ():void => {
     if(!isNotificationVisible()){
-        showNotification('New Alert!');
+        showNotification('New Alert!', 'INFO');
     }
     if(alert_notif.hasClass('hidden')){
         alert_notif.removeClass('hidden');
@@ -34,7 +36,7 @@ let messages = 0;
 const message_notif = $('#message-notif');
 const addMessage = ():void => {
     if(!isNotificationVisible()){
-        showNotification('New Message!');
+        showNotification('New Message!', 'INFO');
     }
     if(message_notif.hasClass('hidden')){
         message_notif.removeClass('hidden');
