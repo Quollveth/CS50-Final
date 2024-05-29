@@ -2,22 +2,6 @@
 @import './mixins.scss';
 
 #index-page {
-
-  > #notification{
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 100%;
-
-    height: $notif-bar-height;
-
-    text-align: center;
-    font-size: small;
-    background-color: $notification-light-bg;
-    color: $notification-light-text;
-  }
-
   #sidebar {
     display: flex;
     flex-direction: column;

@@ -55,11 +55,15 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
 };
 
 export const loginUser = (user:UserData): Promise<string> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve,reject) => {
     $.ajax({
       url:`${SERVER_IP}${Routes.login}`,
       method: 'POST',
       data: user,
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true,
       success: (response) => resolve(response.result),
       error: (xhr) => {
         //HANDLE: Improve error handling
@@ -67,16 +71,17 @@ export const loginUser = (user:UserData): Promise<string> => {
           // Is it a expected error?
           if(xhr.responseJSON.result){
             resolve(xhr.responseJSON.result)
+            return;
           }
-          throw new Error('Request Failed');
+          reject(new Error('Request Failed'));
         }
-        throw new Error('Request Failed');
+        reject(new Error('Request Failed'));
       }
     })
   });
 }
 
-// This function returns all data except for the password, it's the caller's job to filter
+
 export const getUserData = (): Promise<UserData> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -85,14 +90,9 @@ export const getUserData = (): Promise<UserData> => {
       xhrFields: {
         withCredentials: true
       },
+      crossDomain: true,
       success: (response) => {
-        const uData:UserData = {
-          username:response.user,
-          password:undefined,
-          email:response.email,
-          picture:response.image
-        }
-        resolve(uData);
+        resolve(response);
       },
       //HANDLE: Improve error handling
       error: (e)=> {

@@ -20,3 +20,18 @@ body.lightMode {
   background-color:$bg-color-light;
   color:$text-color-light;
 }
+
+.lightMode #global-notification{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+
+  height: $notif-bar-height;
+
+  text-align: center;
+  font-size: small;
+  background-color: $notification-light-bg;
+  color: $notification-light-text;
+}

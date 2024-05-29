@@ -7,6 +7,9 @@
     <title><%= htmlWebpackPlugin.options.templateParameters.title %></title>
   </head>
   <body class="lightMode">
+    <div id="global-notification" class="hidden">
+      <a id="global-notification-text">You got mail!</a>
+    </div>
     <%= htmlWebpackPlugin.options.templateParameters.content %>
     <%= htmlWebpackPlugin.options.templateParameters.sourceFile %>
   </body>
