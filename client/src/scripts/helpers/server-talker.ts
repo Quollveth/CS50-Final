@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { SERVER_IP, Routes } from '../../constants';
 
 export type UserData = {

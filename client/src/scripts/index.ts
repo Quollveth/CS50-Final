@@ -1,5 +1,3 @@
-import $, { get } from 'jquery';
-
 import type { Notification_Color } from './helpers/helpers';
 import type { UserData } from './helpers/server-talker';
 import { getUserData, logoutUser } from './helpers/server-talker';

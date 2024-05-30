@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 /* Notification handling
  * Notification is part of the template and thus available in all pages
  *

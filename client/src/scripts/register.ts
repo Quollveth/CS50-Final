@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import { registerUser } from './helpers/server-talker';
 import {
   UserData,
