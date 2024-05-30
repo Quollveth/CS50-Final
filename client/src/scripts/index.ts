@@ -55,7 +55,7 @@ msg_btn.on('click',()=>{
 
 
 /* LOG OUT BUTTON */
-const logout_btn = $('#sidebar-logout');
+const logout_btn = $('#logout-btn');
 logout_btn.on('click',()=>{
     logoutUser().then((result) => {
         if(result){
@@ -70,9 +70,23 @@ const usernameText = $('#username');
 
 const getData = async () => {
     const data = await getUserData();
-    console.log(data);
     usernameText.text(capitalize(data.username));
     profilePic.attr('src', data.picture!);
 }
-
 getData();
+
+
+/* TOGGLE SETTINGS */
+const settings = $('#settings-btn');
+const settingsMenu = $('#settings-dropdown');
+const settingsArea = $('#settings-area');
+
+settings.on('mouseenter',()=>{
+    settingsMenu.removeClass('hidden');
+});
+//This is a hack and we'll agree to not tell anyone
+settingsArea.on('mouseleave',()=>{
+    settingsMenu.addClass('hidden');
+});
+
+

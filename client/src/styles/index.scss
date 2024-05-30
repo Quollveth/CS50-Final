@@ -67,6 +67,7 @@
         display: block;
         padding: 10px;
         text-decoration: none;
+        cursor: pointer;
       }
     }
 
@@ -76,15 +77,28 @@
       right: 0;
       flex-direction: column;
       gap: 5px;
-      margin-left: 10px;
+      margin-right: 10px;
       z-index: 10;
 
       @include rounded_list(15px);
 
       a {
         padding: 10px;
+        padding-right: 50px;
         text-decoration: none;
       }
+    }
+
+    //This is a hack and we'll agree to not tell anyone
+    #settings-area{
+      position: absolute;
+      top: $topbar-height;
+      right: 0;
+      z-index: 9;
+      margin-right: 10px;
+      background-color: #0000;
+      width: 200px;
+      height: 150px;
     }
   }
 
