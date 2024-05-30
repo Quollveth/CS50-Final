@@ -5,6 +5,7 @@
 // Pages
 @import './user-form.scss'; // Login and register
 @import './index.scss';
+@import './edit-profile.scss';
 
 .hidden {
   display: none;
@@ -19,6 +20,15 @@ body {
 body.lightMode {
   background-color:$bg-color-light;
   color:$text-color-light;
+}
+
+#darken {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .lightMode #global-notification{
