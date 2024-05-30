@@ -4,7 +4,7 @@ import type { Notification_Color } from './helpers/helpers';
 import type { UserData } from './helpers/server-talker';
 import { getUserData, logoutUser } from './helpers/server-talker';
 import { showNotification, hideNotification, isNotificationVisible, capitalize } from './helpers/helpers';
-import { loadEditModal } from './edit-profile';
+import { loadModal } from './helpers/helpers';
 
 /* INITIALIZE NOTIFICTION EVENTS */
 
@@ -92,5 +92,5 @@ settingsArea.on('mouseleave',()=>{
 
 
 $('#profile-btn').on('click',()=>{
-    loadEditModal($('#modal-holder'));
+    loadModal('/components/edit-profile.html',$('#modal-holder'));
 })

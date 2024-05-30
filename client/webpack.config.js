@@ -3,12 +3,12 @@ const PROJ_NAME = 'Dashboard';
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const pages = [
   './src/scripts/index',
   './src/scripts/login',
   './src/scripts/register',
-  './src/scripts/edit-profile'
 ]
 
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
@@ -71,6 +71,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/'),
   },
   plugins: [
-
+    new CopyPlugin({
+      patterns: [
+        { from: "src/components/*.html", to: "components/" },
+      ],
+    }),
   ].concat(generateHTMLPlugins())
 };

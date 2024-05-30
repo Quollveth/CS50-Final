@@ -40,3 +40,15 @@ export const isNotificationVisible = ():boolean => notif_visible;
 
 
 export const capitalize = (s:string):string => s.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+export const loadModal = async(modal:string,parent:JQuery<HTMLElement>):Promise<void> => {
+
+    // Function has been disabled for webpack is pissing me off again reasons
+    return;
+
+    const currentURL = window.location.href;
+    const directoryPath = currentURL.substring(0, currentURL.lastIndexOf('/'));
+    $.get(`${directoryPath}/${modal}`).then((html)=>{
+        parent.html(html);
+    })
+}

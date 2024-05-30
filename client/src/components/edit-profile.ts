@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import { validateUsername, validateField } from './register';
-import { usernameExists, getUserData, updateUserData } from './helpers/server-talker';
-import { showNotification, hideNotification } from './helpers/helpers';
+import { validateUsername, validateField } from '../scripts/register';
+import { usernameExists, getUserData, updateUserData } from '../scripts/helpers/server-talker';
+import { showNotification, hideNotification } from '../scripts/helpers/helpers';
 
 const checkUsername = async (name:string)=>{
     const username = name;
@@ -73,7 +73,7 @@ export function loadEditModal(parent:JQuery<HTMLElement>){
     modalParent = parent;
     const currentURL = window.location.href;
     const directoryPath = currentURL.substring(0, currentURL.lastIndexOf('/'));
-    $.get(`${directoryPath}/edit-profile.html`).then((html)=>{
+    $.get(`${directoryPath}/components/edit-profile.html`).then((html)=>{
         modalParent.html(html);
         start_modal();
     })
