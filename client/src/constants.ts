@@ -9,5 +9,6 @@ export const Routes = {
   register: '/register', // Registration form
   checkUser: '/check-user', // Check if username exists
   getUserData: '/get-udata', // Gets all saved user data
-  logout: '/logout' // Logout
+  logout: '/logout', // Logout
+  updateUserData: '/update-udata', // Update user data
 } as const;

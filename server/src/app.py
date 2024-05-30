@@ -204,6 +204,19 @@ def get_user_data():
     }),200
 
 
+#### Update user data
+@app.route('/update-udata',methods=['POST'])
+@login_required
+def update_user_data():
+    uid = session.get("user")
+
+    print('Received update request:')
+    keys = request.form.keys()
+    for key in keys:
+        print(f'{key}:{request.form.get(key)}')
+    
+    return '',200
+
 @app.route('/image/<path:filename>',methods=['GET'])
 def serve_image(filename):
     return send_from_directory(app.config['STATIC_FOLDER'],filename)

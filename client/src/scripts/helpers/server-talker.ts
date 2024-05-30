@@ -144,3 +144,25 @@ export const getUserData = (): Promise<UserData> => {
     });
   });
 };
+
+// Update user data
+export const updateUserData = (
+  data: {
+    username:string,
+    picture:File
+  }
+): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.updateUserData}`,
+      method: 'POST',
+      data: data,
+      xhrFields: {
+        withCredentials: true,
+      },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: (e) => reject(e),
+    });
+  });
+};

@@ -1,7 +1,18 @@
 import $ from 'jquery';
 import { validateUsername, validateField } from './register';
-import { usernameExists, getUserData } from './helpers/server-talker';
+import { usernameExists, getUserData, updateUserData } from './helpers/server-talker';
 import { showNotification, hideNotification } from './helpers/helpers';
+
+const checkUsername = async (name:string)=>{
+    const username = name;
+    const result = await usernameExists(username);
+    if(!result){
+        showNotification('Username available', 'SUCCESS');
+    }
+    else{
+        showNotification('Username already in use', 'ERROR');
+    }
+}
 
 let modalParent:JQuery<HTMLElement>;
 function start_modal(){
@@ -34,20 +45,27 @@ function start_modal(){
     const nameIn = $('#username-input') as JQuery<HTMLInputElement>;
     validateField(nameIn, validateUsername);
 
-    $('#check-name').on('click',async ()=>{
-        const username = nameIn.val() as string;
-        const result = await usernameExists(username);
-        if(!result){
-            showNotification('Username available', 'SUCCESS');
-        }
-        else{
-            showNotification('Username already in use', 'ERROR');
-        }
-    })
+    $('#check-name').on('click',async ()=>{checkUsername(nameIn.val() as string)});
 
     //Save
     $('save-profile').on('click',()=>{
+        const username = nameIn.val() as string;
+        const picture = $('#profile-pic-input').prop('files')[0];
 
+        const data = {
+            username,
+            picture
+        }
+/*
+        updateUserData(data).then((result)=>{
+            if(result){
+                showNotification('Profile Updated', 'SUCCESS');
+            }
+            else{
+                showNotification('Server Error', 'ERROR');
+            }
+        })
+        */
     })
 }
 
