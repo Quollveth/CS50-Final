@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { validateUsername, validateField } from '../scripts/register';
 import { usernameExists, getUserData, updateUserData } from '../scripts/helpers/server-talker';
 import { showNotification, hideNotification } from '../scripts/helpers/helpers';
