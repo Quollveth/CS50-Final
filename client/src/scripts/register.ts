@@ -10,7 +10,7 @@ import {
 } from './helpers/server-talker';
 
 // Only alphanumerical characters
-const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
+export const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
 // Simple email validator from https://regexr.com/3e48o
 const validateEmail = (str: string) =>
   /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
@@ -29,7 +29,7 @@ const validatePassword = (str: string) =>
  * @param validationFn function to validate, must receive string and return boolean
  * @sideEffect input receives valid or invalid class
  */
-function validateField(
+export function validateField(
   field: JQuery<HTMLInputElement>,
   validationFn: (arg0: string) => boolean
 ) {
