@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import { validateUsername, validateField } from './register';
-import { usernameExists } from './helpers/server-talker';
-import type { Notification_Color } from './helpers/helpers';
+import { usernameExists, getUserData } from './helpers/server-talker';
 import { showNotification, hideNotification } from './helpers/helpers';
 
 let modalParent:JQuery<HTMLElement>;
@@ -14,6 +13,11 @@ function start_modal(){
         modalParent.empty();
         hideNotification();
         window.location.reload();
+    })
+
+    // Get current image
+    getUserData().then((data)=>{
+        $('#profile-pic').attr('src', data.picture!);
     })
 
     // Upload image
@@ -39,6 +43,11 @@ function start_modal(){
         else{
             showNotification('Username already in use', 'ERROR');
         }
+    })
+
+    //Save
+    $('save-profile').on('click',()=>{
+
     })
 }
 
