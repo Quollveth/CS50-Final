@@ -5,16 +5,20 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
 const CopyPlugin = require("copy-webpack-plugin");
 
-const pages = [
-  './src/scripts/index',
-  './src/scripts/login',
-  './src/scripts/register',
-]
 
+
+//// Helper functions
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
 const removeExtension = (path) => path.substring(0,path.lastIndexOf('.'));
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
+
+//// Get all pages
+const pageFiles = fs.readdirSync('./src/pages').filter(file => file.endsWith('.html'));
+const pages = pageFiles.map(page => removeExtension(page));
+
+
+//// Generate HTML plugin instances for each page
 const generateHTMLPlugins = () => {
   const arr = [];
 
@@ -37,29 +41,30 @@ const generateHTMLPlugins = () => {
   return arr;
 };
 
+
+//// Generate all entrypoints
 const generateEntries = () => {
   const obj = {};
   pages.forEach(page => {
-    console.log()
-    obj[getPageName(page)] = page+'.ts';
+    obj[getPageName(page)] = `/src/scripts/${page}.ts`;
   })
-  // Add entries for TypeScript files in the components folder
-  const componentFiles = fs.readdirSync('./src/components').filter(file => file.endsWith('.ts'));
-  componentFiles.forEach(file => {
-    const componentName = path.basename(file, '.ts');
-    obj[`components/${componentName}`] = `./src/components/${file}`;
-  });
   return obj;
 }
 
+
+//// Actual build happens here
 module.exports = {
   entry: generateEntries(),
+
+  // Cache the build for faster rebuilds
   cache: {
     type: 'filesystem',
     buildDependencies: {
       config: [__filename]
     }
   },
+
+  // Use webpack loader, sass is built by itself
   module: {
     rules: [
       {
@@ -72,10 +77,14 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js']
   },
+
+  // Output to dist folder, each page has its own js file
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
+
+  // Plugins
   plugins: [
     new CopyPlugin({
       patterns: [
