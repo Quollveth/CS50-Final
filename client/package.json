@@ -6,7 +6,7 @@
     "clear": "rm -rf dist/*",
     "build:sass": "sass src/styles/main.scss dist/styles.css",
     "watch:sass": "sass --watch src/styles/main.scss dist/styles.css",
-    "build:webpack": "webpack --mode production",
+    "build:webpack": "webpack --mode development",
     "copy-assets": "cp -r src/assets dist/",
     "build": "npm run clear && npm run copy-assets && npm run build:sass && npm run build:webpack"
   },
@@ -25,6 +25,7 @@
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.1",
     "html-webpack-plugin": "^5.6.0",
+    "inline-source-webpack-plugin": "^3.0.1",
     "prettier": "^3.2.5",
     "sass": "^1.77.1",
     "sass-loader": "^14.2.1",

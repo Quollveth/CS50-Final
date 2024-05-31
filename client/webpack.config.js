@@ -3,6 +3,7 @@ const PROJ_NAME = 'Dashboard';
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
+const InlineSourceWebpackPlugin = require('inline-source-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 
@@ -17,6 +18,9 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 const pageFiles = fs.readdirSync('./src/pages').filter(file => file.endsWith('.html'));
 const pages = pageFiles.map(page => removeExtension(page));
 
+//// Get all components
+const componentFiles = fs.readdirSync('./src/components').filter(file => file.endsWith('.html'));
+const components = componentFiles.map(component => removeExtension(component));
 
 //// Generate HTML plugin instances for each page
 const generateHTMLPlugins = () => {
@@ -42,12 +46,44 @@ const generateHTMLPlugins = () => {
 };
 
 
+//// Generate HTML plugin instances for each component
+const generateComponentHTMLPlugins = () => {
+  const arr = [];
+
+  components
+   .map(component => component + '.html')
+   .forEach(component => {
+      
+      arr.push(
+        new HtmlWebpackPlugin({
+          filename: `components/${component}`,
+          template:'src/component-template.html',
+          templateParameters:{
+            componentName: capitalize(removeExtension(component)),
+            componentContent: fs.readFileSync(`src/components/${removeExtension(component)}.html`),
+            componentSource: `<script inline inline-asset="${removeExtension(component)}.js" inline-asset-delete></script>`
+          }
+        })
+      )
+      
+    })
+  return arr;
+};
+
+
 //// Generate all entrypoints
 const generateEntries = () => {
   const obj = {};
+  // Entries for pages
   pages.forEach(page => {
     obj[getPageName(page)] = `/src/scripts/${page}.ts`;
   })
+
+  // Entries for components
+  components.forEach(component => {
+    obj[`components/${component}`] = `/src/components/${component}.ts`;
+  })
+
   return obj;
 }
 
@@ -81,15 +117,23 @@ module.exports = {
   // Output to dist folder, each page has its own js file
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist')
   },
 
   // Plugins
   plugins: [
+    /*
     new CopyPlugin({
       patterns: [
         { from: "src/components/*.html", to: "components/[name].[ext]" },
       ],
-    }),
-  ].concat(generateHTMLPlugins())
+    })
+    */
+    new InlineSourceWebpackPlugin({
+      compress: true,
+      noAssetMatch: 'warn'
+    })
+  ]
+  .concat(generateHTMLPlugins())
+  .concat(generateComponentHTMLPlugins())
 };
