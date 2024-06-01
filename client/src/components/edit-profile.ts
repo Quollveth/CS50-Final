@@ -50,6 +50,12 @@ function start_modal() {
         return;
       }
 
+      if (file.type !== 'image/png'){
+        showNotification('Image must be in png format', 'ERROR');
+        imageInput.val('');
+        return;
+      }
+
       $('#profile-pic').attr('src', e.target!.result as string);
     };
     reader.readAsDataURL(file);
