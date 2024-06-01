@@ -7,38 +7,7 @@ import {
   usernameExists,
 } from './helpers/server-talker';
 
-// Only alphanumerical characters
-export const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
-// Simple email validator from https://regexr.com/3e48o
-const validateEmail = (str: string) =>
-  /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(str);
-/*
- * At least 8 characters long
- * One uppercase letter
- * One lowercase letter
- * One digit
- */
-const validatePassword = (str: string) =>
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
-
-/**
- * Visual feedback for registration fields
- * @param field field to validate
- * @param validationFn function to validate, must receive string and return boolean
- * @sideEffect input receives valid or invalid class
- */
-export function validateField(
-  field: JQuery<HTMLInputElement>,
-  validationFn: (arg0: string) => boolean
-) {
-  field.on('input', () => {
-    if (validationFn(field.val() as string)) {
-      field.addClass('valid-input').removeClass('invalid-input');
-    } else {
-      field.addClass('invalid-input').removeClass('valid-input');
-    }
-  });
-}
+import { validateUsername,validateEmail,validatePassword, validateField } from './helpers/helpers';
 
 // On document load
 $(function () {
