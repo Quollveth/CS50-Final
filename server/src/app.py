@@ -6,6 +6,7 @@ import uuid
 
 # Library imports
 from werkzeug.security import generate_password_hash, check_password_hash
+from PIL import Image
 
 # Flask imports
 from flask import Flask, jsonify, request, send_from_directory, session, make_response, send_file
@@ -221,6 +222,30 @@ def update_user_data():
         binaryData = base64.b64decode(image)
         with open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png','wb') as f:
             f.write(binaryData)
+
+            # Check if image is valid
+            try:
+                img = Image.open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
+
+                print(img.format)
+
+                if img.format != 'PNG':
+                    os.remove(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
+                    imageId = 'DEFAULT'
+                    print('Image must be a png')
+                    return '',400
+
+                # Resize image
+                img = img.thumbnail((600,600))
+                img.close()
+
+            except Exception as e:
+                print(e)
+                os.remove(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
+                imageId = 'DEFAULT'
+                print('Invalid file type')
+                return '',400
+
     else:
         imageId = curr.picture
 
@@ -228,13 +253,14 @@ def update_user_data():
 
     if username:
         if not validateUsername(username):
+            print('Invalid username')
             return '',400
 
-        if userExists(username):
+        if userExists(username) and username.lower() != curr.name.lower():
+            print('Username already exists')
             return '',400
     else:
         username = curr.name
-
 
     # Update user data
     new_data = {
