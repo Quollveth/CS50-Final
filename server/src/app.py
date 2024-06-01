@@ -167,12 +167,12 @@ def login():
 
     if not user:
         return jsonify({
-            'result':'INVALID'
+            'result':False
         }),400
 
     if not check_password_hash(user.phash,password):
         return jsonify({
-            'result':'INVALID'
+            'result':False
         }),400
 
     session['user'] = user.uid

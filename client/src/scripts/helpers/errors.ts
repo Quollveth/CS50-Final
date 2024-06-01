@@ -25,7 +25,6 @@ export class ServerError extends CustomError {
     }
 }
 
-
 /**
  * Error to be thrown when a user is not authenticated.
  */
@@ -39,6 +38,7 @@ export class AuthError extends ServerError {
     }
 }
 
+export type ServerErrorType = ServerError | AuthError;
 /**
  * Automatically throws the proper error based on the response status.
  * @param xhr XMLHttpRequest or any object with status and responseJSON properties.
@@ -48,7 +48,7 @@ export class AuthError extends ServerError {
 export const throwServerError = (
     xhr: { status: number; responseJSON?: { result?: any } },
     expected?: number[]
-): ServerError|null => {
+): ServerErrorType|null => {
     if (expected && expected.includes(xhr.status)) {
         return null;
     }

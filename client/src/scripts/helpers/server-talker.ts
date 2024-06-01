@@ -9,7 +9,11 @@ export type UserData = {
   picture?: string;
 };
 
-// Health check
+/**
+ * Health check
+ * @returns did server respond
+ * @throws never
+ */
 export const HealthCheck = (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -32,8 +36,10 @@ const RegisRes = {
 } as const;
 export type RegistResult = (typeof RegisRes)[keyof typeof RegisRes];
 
-/** Checks if a username already exists in the server
- * @returns Promise resolving to wether or not the given username exists
+/** 
+ * Checks if a username already exists in the server
+ * @returns boolean
+ * @throws ServerError
  */
 export const usernameExists = (username: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
@@ -49,7 +55,12 @@ export const usernameExists = (username: string): Promise<boolean> => {
   });
 };
 
-// Register a new user
+/**
+ * Register new user
+ * @param user User data
+ * @returns RegistResult
+ * @throws server error
+ */
 export const registerUser = (user: UserData): Promise<RegistResult> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -70,8 +81,13 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
   });
 };
 
-// Login a user
-export const loginUser = (user: UserData): Promise<string> => {
+/**
+ * Login a user
+ * @param user User data
+ * @returns successfull login boolean
+ * @throws server error
+ */
+export const loginUser = (user: UserData): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.login}`,
@@ -95,7 +111,12 @@ export const loginUser = (user: UserData): Promise<string> => {
   });
 };
 
-// Logout a user
+/**
+ * Logout user
+ * @returns nothing
+ * @throws auth error on unauthenticated user
+ * @throws server error
+ */
 export const logoutUser = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -111,7 +132,12 @@ export const logoutUser = (): Promise<void> => {
   });
 };
 
-// Get user data
+/**
+ * Logout user
+ * @returns UserData object of logged in user
+ * @throws auth error on unauthenticated user
+ * @throws server error
+ */
 export const getUserData = (): Promise<UserData> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -139,7 +165,13 @@ export const getUserData = (): Promise<UserData> => {
   });
 };
 
-// Update user data
+/**
+ * Updates data of logged in user
+ * @param data New user data
+ * @returns successfull update boolean
+ * @throws auth error on unauthenticated user
+ * @throws server error
+ */
 export const updateUserData = (
   data: {
     username:string,
@@ -147,7 +179,6 @@ export const updateUserData = (
   }
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
-    console.log('something is happening');
     $.ajax({
       url: `${SERVER_IP}${Routes.updateUserData}`,
       method: 'POST',
@@ -158,13 +189,24 @@ export const updateUserData = (
       crossDomain: true,
       success: () => resolve(true),
       error: (xhr) => {
-        reject(throwServerError(xhr))        
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        reject(err);      
       },
     });
   });
 };
 
-// Validate password
+/**
+ * Validates password of logged in user
+ * @returns match boolean
+ * @throws auth error on unauthenticated user
+ * @throws server error
+ */
 export const validatePassword = (password: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
@@ -189,7 +231,13 @@ export const validatePassword = (password: string): Promise<boolean> => {
   });
 }
 
-// Delete user
+/**
+ * Deletes profile of logged in user
+ * @param password Password of user
+ * @returns successfull deletion boolean
+ * @throws auth error on unauthenticated user
+ * @throws server error
+ */
 export const deleteUser = (password:string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
