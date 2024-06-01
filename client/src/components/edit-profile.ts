@@ -4,7 +4,8 @@ import {
   updateUserData,
 } from '../scripts/helpers/server-talker';
 import { showNotification, hideNotification } from '../scripts/helpers/helpers';
-import { validateUsername, validateField } from '../scripts/helpers/helpers';
+import { validateUsername, validateField, readImage } from '../scripts/helpers/helpers';
+import { FileError } from '../scripts/helpers/errors';
 
 const checkUsername = async (name: string) => {
   const username = name;
@@ -17,8 +18,7 @@ const checkUsername = async (name: string) => {
 };
 
 function start_modal() {
-    const modalParent = $('#profile-edit-page').parent();
-
+  const modalParent = $('#profile-edit-page').parent();
 
   // Make file upload work
   $('#upload-pic').on('click', () => $('#profile-pic-input').trigger('click'));
@@ -33,6 +33,7 @@ function start_modal() {
   // Get current image
   getUserData().then((data) => {
     $('#profile-pic').attr('src', data.picture!);
+    $('#username-input').val(data.username as string);
   });
 
   // Upload image
@@ -54,27 +55,44 @@ function start_modal() {
   });
 
   //Save
-  $('save-profile').on('click', () => {
+  $('#save-profile').on('click', async () => {
     const username = nameIn.val() as string;
-    const picture = $('#profile-pic-input').prop('files')[0];
+    const imageData = $('#profile-pic-input').prop('files')[0];
 
-    const data = {
-      username,
-      picture,
-    };
-    /*
-        updateUserData(data).then((result)=>{
-            if(result){
-                showNotification('Profile Updated', 'SUCCESS');
-            }
-            else{
-                showNotification('Server Error', 'ERROR');
-            }
-        })
-        */
+    if (!validateUsername(username)) {
+      showNotification('Invalid username', 'ERROR');
+      return;
+    }
+
+    let picture = '';
+    try{
+      picture = await readImage(imageData);
+    }
+    catch(e){
+      if(e instanceof FileError){
+        if(imageData !== undefined){
+          showNotification('Failed to read image', 'ERROR');
+          return;
+        }
+        else{/* Ignore and move on */}
+      }
+
+      //HANDLE: Better error handling
+    }
+
+    console.log({ username, picture });
+
+    const result = await updateUserData({ username, picture });
+    if(result){
+      showNotification('Profile updated', 'SUCCESS');
+    }
+    else{
+      showNotification('Server Error', 'ERROR');
+    }
+
   });
 }
 
-$(()=>{
-    start_modal();
-})
+$(() => {
+  start_modal();
+});

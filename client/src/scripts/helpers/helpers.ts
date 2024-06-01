@@ -1,3 +1,14 @@
+//// Miscellaneous
+
+// Specifies the string is expected to be base64 encoded binary data
+export type base64string = string;
+
+// Capitalize first letter of each word
+export const capitalize = (s: string): string =>
+  s.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+
+
 /* Notification handling
  * Notification is part of the template and thus available in all pages
  *
@@ -15,7 +26,8 @@ let notif_visible = false;
 const notifBar = $('#global-notification');
 export const showNotification = (
   text: string,
-  color: Notification_Color
+  color: Notification_Color,
+  timeout = 3000
 ): void => {
   if (!notif_visible) {
     notif_visible = true;
@@ -26,6 +38,9 @@ export const showNotification = (
   }
   notifBar.css('background-color', notifColors[color]);
   $('#global-notification-text').text(text);
+  setTimeout(() => {
+    hideNotification();
+  }, timeout);
 };
 
 export const hideNotification = (): void => {
@@ -41,11 +56,6 @@ export const hideNotification = (): void => {
 
 export const isNotificationVisible = (): boolean => notif_visible;
 
-export const capitalize = (s: string): string =>
-  s
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
 
 /**
  * Visual feedback for input fields
@@ -66,6 +76,8 @@ export function validateField(
   });
 }
 
+//// Validation functions
+
 // Only alphanumerical characters
 export const validateUsername = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
 // Simple email validator from https://regexr.com/3e48o
@@ -82,7 +94,33 @@ export const validatePassword = (str: string) =>
 
 
 
+//// File reading
+/**
+ * Read image file as base64 string
+ * @param file provided by file input
+ * @returns image data encoded in base64
+ */
+export const readImage = (file: File): Promise<base64string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataURL = e.target!.result as string;
+      if (dataURL === null) {
+        reject(new Error('Failed to read file'));
+      }
+      const base64String = dataURL.split(',')[1];
+      resolve(base64String);
+    };
+    reader.onerror = (e) => {
+      reject(e);
+    };
 
+    reader.readAsDataURL(file);
+  });
+}
+
+
+//// Modal handling
 
 export const loadModal = async (
   modal: string,

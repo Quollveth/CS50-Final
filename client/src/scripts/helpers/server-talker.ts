@@ -1,4 +1,5 @@
 import { SERVER_IP, Routes } from '../../constants';
+import type { base64string } from './helpers';
 
 export type UserData = {
   username: string;
@@ -148,10 +149,11 @@ export const getUserData = (): Promise<UserData> => {
 export const updateUserData = (
   data: {
     username:string,
-    picture:File
+    picture:base64string;
   }
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
+    console.log('something is happening');
     $.ajax({
       url: `${SERVER_IP}${Routes.updateUserData}`,
       method: 'POST',
