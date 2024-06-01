@@ -1,5 +1,6 @@
 import { SERVER_IP, Routes } from '../../constants';
 import type { base64string } from './helpers';
+import { throwServerError, AuthError, ServerError } from './errors';
 
 export type UserData = {
   username: string;
@@ -43,8 +44,7 @@ export const usernameExists = (username: string): Promise<boolean> => {
         resolve(response.exists);
       })
       .fail(() => {
-        //HANDLE: Improve error handling
-        reject(new Error('Request failed'));
+        reject(new ServerError('Request failed'));
       });
   });
 };
@@ -58,15 +58,13 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
       data: user,
       success: (response) => resolve(response.result),
       error: (xhr, error) => {
-        //HANDLE: Improve error handling
-        if (xhr.status == 400) {
-          // Is it a expected error?
-          if (xhr.responseJSON.result) {
-            resolve(xhr.responseJSON.result);
-          }
-          throw new Error('Request Failed');
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(xhr.responseJSON.result);
+          return;
         }
-        throw new Error('Request Failed');
+        reject(err);
       },
     });
   });
@@ -85,23 +83,20 @@ export const loginUser = (user: UserData): Promise<string> => {
       crossDomain: true,
       success: (response) => resolve(response.result),
       error: (xhr) => {
-        //HANDLE: Improve error handling
-        if (xhr.status == 400) {
-          // Is it a expected error?
-          if (xhr.responseJSON.result) {
-            resolve(xhr.responseJSON.result);
-            return;
-          }
-          reject(new Error('Request Failed'));
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(xhr.responseJSON.result);
+          return;
         }
-        reject(new Error('Request Failed'));
+        reject(err)
       },
     });
   });
 };
 
 // Logout a user
-export const logoutUser = (): Promise<boolean> => {
+export const logoutUser = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.logout}`,
@@ -110,8 +105,8 @@ export const logoutUser = (): Promise<boolean> => {
         withCredentials: true,
       },
       crossDomain: true,
-      success: () => resolve(true),
-      error: () => resolve(false),
+      success: () => resolve(),
+      error: (xhr) => reject(throwServerError(xhr)),
     });
   });
 };
@@ -137,13 +132,8 @@ export const getUserData = (): Promise<UserData> => {
 
         resolve(data);
       },
-      //HANDLE: Improve error handling
       error: (xhr) => {
-        if(xhr.status == 401){
-          window.location.href = 'login.html';
-          return;
-        }
-        reject(new Error('Request Failed'));
+        reject(throwServerError(xhr))        
       },
     });
   });
@@ -167,7 +157,9 @@ export const updateUserData = (
       },
       crossDomain: true,
       success: () => resolve(true),
-      error: (e) => reject(e),
+      error: (xhr) => {
+        reject(throwServerError(xhr))        
+      },
     });
   });
 };
@@ -183,8 +175,16 @@ export const validatePassword = (password: string): Promise<boolean> => {
         withCredentials: true,
       },
       crossDomain: true,
-      success: (response) => resolve(response.result),
-      error: () => resolve(false),
+      success: (response) => resolve(true),
+      error: (xhr) => {
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        reject(err);    
+      },
     });
   });
 }
@@ -201,7 +201,9 @@ export const deleteUser = (password:string): Promise<boolean> => {
       data: { password: password},
       crossDomain: true,
       success: () => resolve(true),
-      error: () => resolve(false),
+      error: (xhr) => {
+        reject(throwServerError(xhr))        
+      },
     });
   });
 }
