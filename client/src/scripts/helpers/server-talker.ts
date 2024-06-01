@@ -138,8 +138,12 @@ export const getUserData = (): Promise<UserData> => {
         resolve(data);
       },
       //HANDLE: Improve error handling
-      error: (e) => {
-        reject(e);
+      error: (xhr) => {
+        if(xhr.status == 401){
+          window.location.href = 'login.html';
+          return;
+        }
+        reject(new Error('Request Failed'));
       },
     });
   });
@@ -167,3 +171,36 @@ export const updateUserData = (
     });
   });
 };
+
+// Validate password
+export const validatePassword = (password: string): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.validatePassword}`,
+      method: 'POST',
+      data: { password },
+      xhrFields: {
+        withCredentials: true,
+      },
+      crossDomain: true,
+      success: (response) => resolve(response.result),
+      error: () => resolve(false),
+    });
+  });
+}
+
+// Delete user
+export const deleteUser = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.deleteUser}`,
+      method: 'DELETE',
+      xhrFields: {
+        withCredentials: true,
+      },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: () => resolve(false),
+    });
+  });
+}

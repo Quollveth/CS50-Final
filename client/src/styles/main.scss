@@ -8,7 +8,7 @@
 @import './edit-profile.scss';
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 body {

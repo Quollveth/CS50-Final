@@ -14,5 +14,18 @@
             <button id="check-name">Check</button>
         </div>
     </div>
-    <button class="user-form" id="save-profile">Save</button>
+    <div id="buttons">
+        <button class="user-form" id="save-profile">Save</button>
+        <button class="user-form delete-btn" id="delete-profile">Dele profile</button>
+    </div>
+    <div class="hidden" id="confirm-delete">
+        <strong>You are about to delete your profile!</strong>
+        <div>
+            <p>Type your password to confirm</p>
+            <div>
+                <input class="user-form" type="password" id="password-input" placeholder="Password">
+                <button class="user-form delete-btn" id="confirm-delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>

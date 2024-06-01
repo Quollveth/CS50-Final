@@ -11,6 +11,8 @@ export const Routes = {
   getUserData: '/get-udata', // Gets all saved user data
   logout: '/logout', // Logout
   updateUserData: '/update-udata', // Update user data
+  validatePassword: '/validate-password', // Validate password
+  deleteUser: '/delete-user', // Delete user
 } as const;
 
 export const maxImageSize = 5 * 1024 * 1024; // 5MB

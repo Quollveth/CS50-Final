@@ -12,7 +12,7 @@
 }
 
 #profile-edit-page {
-  top: 20%;
+  top: 5%;
   left: 40%;
   position: absolute;
   z-index: 2;
@@ -27,7 +27,7 @@
   justify-content: center;
   gap: 20px;
 
-  #close-btn{
+  #close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -42,32 +42,38 @@
     gap: 20px;
   }
 
-  #username-container {
-    position: relative;
+  #buttons {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 50px;
-    width: 180px;
-    input {
-      position: absolute;
-      width: calc(100% - 16px);
-      margin-bottom: 0;
-      z-index: 3;
-    }
-    button {
-      position: absolute;
-      align-self: flex-end;
-      height: 32px;
-      width: min-content;
-      margin-top: 2px;
-      margin-right: 0;
-      border: none;
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      z-index: 4;
-      cursor: pointer;
-    }
+    gap: 20px;
+    flex-direction: row-reverse;
+  }
+}
+
+#profile-edit-page #username-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 50px;
+  width: 180px;
+  input {
+    position: absolute;
+    width: calc(100% - 16px);
+    margin-bottom: 0;
+    z-index: 3;
+  }
+  button {
+    position: absolute;
+    align-self: flex-end;
+    height: 32px;
+    width: min-content;
+    margin-top: 2px;
+    margin-right: 0;
+    border: none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    z-index: 4;
+    cursor: pointer;
   }
 }
 
@@ -112,6 +118,21 @@
   }
 }
 
+#profile-edit-page #confirm-delete {
+  margin-top: 50px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > div {
+      display: flex;
+      gap: 10px;
+    }
+  }
+}
+
 .lightMode {
   #profile-edit-page {
     background-color: $form-bg-light;
@@ -122,6 +143,12 @@
         background-color: $button-text-light;
         @include darken-on-hover($button-text-light);
       }
+    }
+
+    .delete-btn {
+      background-color: $button-bg-warn-light;
+      color: $button-text-warn-light;
+      @include darken-on-hover($button-bg-warn-light);
     }
   }
 }

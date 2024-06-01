@@ -2,9 +2,15 @@ import {
   usernameExists,
   getUserData,
   updateUserData,
+  validatePassword,
+  deleteUser,
 } from '../scripts/helpers/server-talker';
 import { showNotification, hideNotification } from '../scripts/helpers/helpers';
-import { validateUsername, validateField, readImage } from '../scripts/helpers/helpers';
+import {
+  validateUsername,
+  validateField,
+  readImage,
+} from '../scripts/helpers/helpers';
 import { FileError } from '../scripts/helpers/errors';
 import { maxImageSize } from '../constants';
 
@@ -43,14 +49,13 @@ function start_modal() {
     const file = imageInput.prop('files')[0];
     const reader = new FileReader();
     reader.onload = (e) => {
-
       if (file.size > maxImageSize) {
         showNotification('Image too large', 'ERROR');
         imageInput.val('');
         return;
       }
 
-      if (file.type !== 'image/png'){
+      if (file.type !== 'image/png') {
         showNotification('Image must be in png format', 'ERROR');
         imageInput.val('');
         return;
@@ -80,16 +85,16 @@ function start_modal() {
     }
 
     let picture = '';
-    try{
+    try {
       picture = await readImage(imageData);
-    }
-    catch(e){
-      if(e instanceof FileError){
-        if(imageData !== undefined){
+    } catch (e) {
+      if (e instanceof FileError) {
+        if (imageData !== undefined) {
           showNotification('Failed to read image', 'ERROR');
           return;
+        } else {
+          /* Ignore and move on */
         }
-        else{/* Ignore and move on */}
       }
 
       //HANDLE: Better error handling
@@ -98,13 +103,37 @@ function start_modal() {
     console.log({ username, picture });
 
     const result = await updateUserData({ username, picture });
-    if(result){
+    if (result) {
       showNotification('Profile updated', 'SUCCESS');
-    }
-    else{
+    } else {
       showNotification('Server Error', 'ERROR');
     }
+  });
 
+  // Delete profile
+  $('#delete-profile').on('click', () => {
+    $('#confirm-delete').removeClass('hidden');
+  });
+
+  $('#confirm-delete-btn').on('click', async () => {
+    // Validate password
+    const password = $('#password-input').val() as string;
+    const result = await validatePassword(password);
+    if (!result) {
+      showNotification('Incorrect password', 'ERROR');
+      return;
+    }
+
+    // Delete profile
+    const delResult = await deleteUser();
+    if (delResult) {
+      showNotification('Profile deleted', 'SUCCESS');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 2000);
+    } else {
+      showNotification('Server Error', 'ERROR');
+    }
   });
 }
 
