@@ -1,1 +1,0 @@
-$('#test-b').on('click',()=>{$('#test-b').text('Hello World!')});

@@ -53,11 +53,11 @@ const generateComponentHTMLPlugins = () => {
   components
    .map(component => component + '.html')
    .forEach(component => {
-      
       arr.push(
         new HtmlWebpackPlugin({
-          filename: `components/${component}`,
           template:'src/component-template.html',
+          filename: `components/${component}`,
+          inject: false,
           templateParameters:{
             componentName: capitalize(removeExtension(component)),
             componentContent: fs.readFileSync(`src/components/${removeExtension(component)}.html`),
@@ -122,13 +122,6 @@ module.exports = {
 
   // Plugins
   plugins: [
-    /*
-    new CopyPlugin({
-      patterns: [
-        { from: "src/components/*.html", to: "components/[name].[ext]" },
-      ],
-    })
-    */
     new InlineSourceWebpackPlugin({
       compress: true,
       noAssetMatch: 'warn'
