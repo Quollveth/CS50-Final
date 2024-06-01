@@ -1,6 +1,8 @@
 # Python standard library imports
 import os
 from enum import Enum
+import base64
+import uuid
 
 # Library imports
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -69,12 +71,13 @@ def hello():
 def userExists(username):
     user = username.lower()
 
-    usernames = db.session\
-        .query(User)\
-        .filter(User.name == user)\
-        .all()
+    usernames = db.get_usernames()
+
+    for name in usernames:
+        if user == name[0]:
+            return True
     
-    return len(usernames) > 0
+    return False
 
 # Verify if username exists
 @app.route("/check-user", methods=["POST"])
@@ -159,10 +162,7 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    user = db.session\
-        .query(User)\
-        .filter(User.name == username)\
-        .first()
+    user = db.get_user_data(username=username.lower())
 
     if not user:
         return jsonify({
@@ -192,10 +192,7 @@ def logout():
 def get_user_data():
     uid = session.get("user")
 
-    user = db.session\
-        .query(User)\
-        .filter(User.uid == uid)\
-        .first()
+    user = db.get_user_data(uid=uid)
 
     return jsonify({
         'username':user.name,
@@ -210,11 +207,39 @@ def get_user_data():
 def update_user_data():
     uid = session.get("user")
 
-    print('Received update request:')
-    keys = request.form.keys()
-    for key in keys:
-        print(f'{key}:{request.form.get(key)}')
-    
+    # Get current data
+    curr = db.get_user_data(uid=uid)
+
+    # Save image to static folder
+    image = request.form.get('picture')
+    if image:
+        imageId = str(uuid.uuid4())
+        binaryData = base64.b64decode(image)
+        with open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png','wb') as f:
+            f.write(binaryData)
+    else:
+        imageId = curr.picture
+
+    username = request.form.get('username')
+
+    if username:
+        if not validateUsername(username):
+            return '',400
+
+        if userExists(username):
+            return '',400
+    else:
+        username = curr.name
+
+
+    # Update user data
+    new_data = {
+        'name':username,
+        'picture':imageId,
+    }
+
+    db.update_user(uid,new_data)
+
     return '',200
 
 @app.route('/image/<path:filename>',methods=['GET'])

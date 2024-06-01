@@ -16,3 +16,6 @@ flask_session/
 .env
 testing/
 docker-volume/
+
+static/
+!static/DEFAULT.png

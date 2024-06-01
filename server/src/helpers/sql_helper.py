@@ -19,6 +19,19 @@ class User(Base):
         self.picture = 'DEFAULT' # Means default picture
 
 class MySQL:
+    """
+    A simple wrapper around SQLAlchemy for MySQL database.
+
+    Attributes:
+    - session: The session object for database querying.
+
+    Methods:
+    - __init__(self, url): Initializes the MySQL object.
+    - get_usernames(self): Retrieves all usernames from the database.
+    - insert(self, object): Inserts an object into the database.
+    - get_user_data(self, uid=None, username=None): Retrieves user data from the database.
+    - update_user(self, uid, new_data): Updates user data in the database.
+    """
 
     @property
     def session(self):
@@ -29,11 +42,14 @@ class MySQL:
         raise AttributeError("Cannot overwrite session attribute")
 
     def __init__(self, url):
-        """Simple wrapper around SQLAlchemy for MySQL database
+        """
+        Initializes the MySQL object.
 
-        Keyword arguments:
-        connection -- user:password@host:port/name
-        Return: MySQL Object for database querying
+        Args:
+        - url: The connection URL for the MySQL database.
+
+        Returns:
+        - MySQL object for database querying.
         """
         fullUrl = (
             "mysql://" + url + "?charset=utf8"
@@ -45,7 +61,59 @@ class MySQL:
 
         self._session = factory()
 
-    def insert(self,object):
+    def get_usernames(self):
+        """
+        Retrieves all usernames from the database.
+
+        Returns:
+        - A list of usernames.
+        """
+        return self._session.query(User.name).all()
+
+    def insert(self, object):
+        """
+        Inserts an object into the database.
+
+        Args:
+        - object: The object to be inserted into the database.
+        """
         self._session.add(object)
         self._session.commit()
 
+    def get_user_data(self, uid=None, username=None):
+        """
+        Retrieves user data from the database.
+
+        Args:
+        - uid: The ID of the user to retrieve.
+        - username: The username of the user to retrieve.
+
+        Returns:
+        - The User object corresponding to the specified ID or username.
+        """
+        if uid and username:
+            raise ValueError("Cannot specify both uid and username")
+
+        if uid:
+            return self._session.query(User).filter_by(uid=uid).first()
+        if username:
+            return self._session.query(User).filter_by(name=username).first()
+
+        raise ValueError("Must specify either uid or username")
+
+    def update_user(self, uid, new_data):
+        """
+        Updates user data in the database.
+
+        Args:
+        - uid: The ID of the user to update.
+        - new_data: A dictionary containing the new data for the user.
+        """
+        user = self._session.query(User).filter_by(uid=uid).first()
+
+        if not user:
+            raise ValueError(f"User with ID {uid} not found.")
+
+        for key, value in new_data.items():
+            setattr(user, key, value)
+            self._session.commit()
