@@ -7,7 +7,7 @@ import {
   usernameExists,
 } from './helpers/server-talker';
 
-import { validateUsername,validateEmail,validatePassword, validateField } from './helpers/helpers';
+import { validateUsername,validateEmail,validatePassword, validateField, showNotification } from './helpers/helpers';
 
 // On document load
 $(function () {
@@ -52,12 +52,16 @@ $(function () {
       return;
     }
 
-    //HANDLE: This should be a try catch
-    const result = await usernameExists(username);
-    if (!result) {
-      updateLabel('Username available', 'valid');
-    } else {
-      updateLabel('Username already in use', 'invalid');
+    try {
+      const result = await usernameExists(username);
+      if (!result) {
+        updateLabel('Username available', 'valid');
+      } else {
+        updateLabel('Username already in use', 'invalid');
+      }
+    }
+    catch (e: any) {
+      showNotification(e.message, 'ERROR');
     }
   });
 
@@ -93,20 +97,25 @@ $(function () {
     };
 
     // Handle possible results
-    //HANDLE: This should be a try catch
-    const result = await registerUser(data);
 
-    switch (result) {
-      case 'EXISTS':
-        alert('Username already taken!');
-        break;
-      case 'INVALID':
-        alert('Invalid Data');
-        break;
-      case 'SUCCESS':
-        alert('Registration Successful');
-        window.location.href = '/login';
-        break;
+    try {
+      const result = await registerUser(data);
+
+      switch (result) {
+        case 'EXISTS':
+          alert('Username already taken!');
+          break;
+        case 'INVALID':
+          alert('Invalid Data');
+          break;
+        case 'SUCCESS':
+          alert('Registration Successful');
+          window.location.href = '/login';
+          break;
+      }
+    }
+    catch (e:any) {
+      showNotification(e.message, 'ERROR');
     }
   });
 });

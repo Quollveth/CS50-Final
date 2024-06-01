@@ -1,7 +1,6 @@
 import type { UserData } from './helpers/server-talker';
 import { loginUser, HealthCheck } from './helpers/server-talker';
-import type { Notification_Color } from './helpers/helpers';
-import { showNotification, hideNotification } from './helpers/helpers';
+import { showNotification } from './helpers/helpers';
 
 // On document load
 $(function () {
@@ -21,22 +20,24 @@ $(function () {
 
     userForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-    
-        const data = {
+
+        const data:UserData = {
             username: userField.val() as string,
             password: passwordField.val() as string
         };
 
-        const result = await loginUser(data);
-
-        //HANDLE: This should be a try catch
-        if (result === 'INVALID') {
-            alert('Invalid username or password');
-            location.reload();
-            return;
+        try {
+            const result = await loginUser(data);            
+            if (result === false) {
+                showNotification('Invalid username or password', 'ERROR');
+                passwordField.val('');
+                return;
+            }            
+            window.location.href = 'index.html'
         }
-
-        window.location.href = 'index.html'
+        catch (e: any){
+            showNotification(e.message, 'ERROR');
+        }
     });
-    
+
 });

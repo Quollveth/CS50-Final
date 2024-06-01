@@ -57,9 +57,7 @@ msg_btn.on('click',()=>{
 const logout_btn = $('#logout-btn');
 logout_btn.on('click',()=>{
     logoutUser().then((result) => {
-        if(result){
-            window.location.href = 'login.html';
-        }
+        window.location.href = 'login.html';
     })
 })
 

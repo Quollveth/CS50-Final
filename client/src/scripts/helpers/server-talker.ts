@@ -101,7 +101,7 @@ export const loginUser = (user: UserData): Promise<boolean> => {
       error: (xhr) => {
         const err = throwServerError(xhr, [400]);
         if(err == null){
-          // Expected error
+          // Expected error, invalid credentials
           resolve(xhr.responseJSON.result);
           return;
         }
