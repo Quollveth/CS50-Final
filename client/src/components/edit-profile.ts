@@ -120,19 +120,21 @@ function start_modal() {
     const password = $('#password-input').val() as string;
     const result = await validatePassword(password);
     if (!result) {
+      // Delete profile
+      const delResult = await deleteUser(password);
+      if (delResult) {
+        showNotification('Profile deleted', 'SUCCESS');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+          return;
+        }, 2000);
+      } else {
+        showNotification('Server Error', 'ERROR');
+        return;
+      }
+    } else {
       showNotification('Incorrect password', 'ERROR');
       return;
-    }
-
-    // Delete profile
-    const delResult = await deleteUser();
-    if (delResult) {
-      showNotification('Profile deleted', 'SUCCESS');
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2000);
-    } else {
-      showNotification('Server Error', 'ERROR');
     }
   });
 }

@@ -117,3 +117,18 @@ class MySQL:
         for key, value in new_data.items():
             setattr(user, key, value)
             self._session.commit()
+
+    def delete_user(self,uid):
+        """
+        Deletes a user from the database.
+
+        Args:
+        - uid: The ID of the user to delete.
+        """
+        user = self._session.query(User).filter_by(uid=uid).first()
+
+        if not user:
+            raise ValueError(f"User with ID {uid} not found.")
+
+        self._session.delete(user)
+        self._session.commit()

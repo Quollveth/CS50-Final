@@ -190,14 +190,15 @@ export const validatePassword = (password: string): Promise<boolean> => {
 }
 
 // Delete user
-export const deleteUser = (): Promise<boolean> => {
+export const deleteUser = (password:string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.deleteUser}`,
-      method: 'DELETE',
+      method: 'POST',
       xhrFields: {
         withCredentials: true,
       },
+      data: { password: password},
       crossDomain: true,
       success: () => resolve(true),
       error: () => resolve(false),

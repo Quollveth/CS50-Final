@@ -270,6 +270,40 @@ def update_user_data():
 
     return '',200
 
+
+#### Validate password
+@app.route('/validate-password',methods=['POST'])
+@login_required
+def validate_password():
+    uid = session.get("user")
+
+    password = request.form.get('password')
+
+    if not password:
+        return '',400
+    
+    user = db.get_user_data(uid=uid)
+    if not check_password_hash(user.phash,password):
+        return '',400
+
+    return '',200
+
+
+
+#### Delete user
+@app.route('/delete-user',methods=['POST'])
+@login_required
+def delete_user():
+    uid = session.get("user")
+    password = request.form.get('password')
+    user = db.get_user_data(uid=uid)
+    if not check_password_hash(user.phash,password):
+        return '',400
+
+    db.delete_user(uid)
+
+    return '',200
+
 @app.route('/image/<path:filename>',methods=['GET'])
 def serve_image(filename):
     return send_from_directory(app.config['STATIC_FOLDER'],filename)
