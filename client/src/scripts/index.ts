@@ -1,5 +1,3 @@
-import type { Notification_Color } from './helpers/helpers';
-import type { UserData } from './helpers/server-talker';
 import { getUserData, logoutUser } from './helpers/server-talker';
 import { showNotification, hideNotification, isNotificationVisible, capitalize } from './helpers/helpers';
 import { loadModal } from './helpers/helpers';
@@ -8,7 +6,6 @@ import { loadModal } from './helpers/helpers';
 
 const alert_btn = $('#alert-btn');
 const msg_btn = $('#msg-btn');
-const settings_btn = $('#settings-btn');
 
 let alerts = 0;
 const alert_notif = $('#alert-notif');
@@ -56,9 +53,14 @@ msg_btn.on('click',()=>{
 /* LOG OUT BUTTON */
 const logout_btn = $('#logout-btn');
 logout_btn.on('click',()=>{
-    logoutUser().then((result) => {
-        window.location.href = 'login.html';
-    })
+    try {
+        logoutUser().then((result) => {
+            window.location.href = 'login.html';
+        });
+    }
+    catch(e:any){
+        showNotification(e.message, 'ERROR');
+    }
 })
 
 /* FETCH USER DATA AND PUT IT ON SIDEBAR */
@@ -70,8 +72,13 @@ const getData = async () => {
     usernameText.text(capitalize(data.username));
     profilePic.attr('src', data.picture!);
 }
-getData();
 
+try {
+    getData();
+}
+catch(e:any){
+    showNotification(e.message, 'ERROR');
+}
 
 /* TOGGLE SETTINGS */
 const settings = $('#settings-btn');
@@ -88,5 +95,11 @@ settingsArea.on('mouseleave',()=>{
 
 
 $('#profile-btn').on('click',()=>{
-    loadModal('/components/edit-profile.html',$('#modal-holder'));
+    // This is an async operation and has to be in a try catch
+    try {
+        loadModal('/components/edit-profile.html',$('#modal-holder'));
+    }
+    catch(e:any){
+        showNotification(e.message, 'ERROR');
+    }
 })
