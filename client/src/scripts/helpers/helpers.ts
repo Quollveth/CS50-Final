@@ -22,27 +22,8 @@ export const notifColors = {
 } as const;
 export type Notification_Color = keyof typeof notifColors;
 
-let notif_visible = false;
-const notifBar = $('#global-notification');
-export const showNotification = (
-  text: string,
-  color: Notification_Color,
-  timeout = 3000
-): void => {
-  if (!notif_visible) {
-    notif_visible = true;
-    notifBar.removeClass('hidden');
-    const notif_height = notifBar.css('height');
-    $('#page').css('margin-top', notif_height);
-    $('#topbar').css('margin-top', notif_height);
-  }
-  notifBar.css('background-color', notifColors[color]);
-  $('#global-notification-text').text(text);
-  setTimeout(() => {
-    hideNotification();
-  }, timeout);
-};
 
+// Hide notification
 export const hideNotification = (): void => {
   if (!notif_visible) {
     return;
@@ -54,6 +35,47 @@ export const hideNotification = (): void => {
   $('#topbar').css('margin-top', 0);
 };
 
+
+let notif_visible = false;
+const notifBar = $('#global-notification');
+let notifTimeoutId:NodeJS.Timeout | null = null;
+
+/**
+ * Creates a new notification with given text
+ * @param text 
+ * @param color 
+ * @param timeout duration of notification in ms, defaults to 3000
+ */
+export const showNotification = (
+  text: string,
+  color: Notification_Color,
+  timeout = 3000
+): void => {
+
+  // If not already visible, show notification
+  if (!notif_visible) {
+    notif_visible = true;
+    notifBar.removeClass('hidden');
+    const notif_height = notifBar.css('height');
+    $('#page').css('margin-top', notif_height);
+    $('#topbar').css('margin-top', notif_height);
+  }
+
+  // Set color and text
+  notifBar.css('background-color', notifColors[color]);
+  $('#global-notification-text').text(text);
+
+  // Reset timeout and apply new timeout
+  if (notifTimeoutId) {
+    clearTimeout(notifTimeoutId);
+  }
+
+  notifTimeoutId = setTimeout(() => {
+    hideNotification();
+  }, timeout);
+};
+
+// Check if notification is visible
 export const isNotificationVisible = (): boolean => notif_visible;
 
 
