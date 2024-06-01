@@ -194,6 +194,10 @@ def get_user_data():
 
     user = db.get_user_data(uid=uid)
 
+    # Ensure image exists
+    if not os.path.exists(f'{app.config["STATIC_FOLDER"]}/{user.picture}.png'):
+        user.picture = 'DEFAULT'
+
     return jsonify({
         'username':user.name,
         'email':user.email,
