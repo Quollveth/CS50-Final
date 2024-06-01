@@ -6,6 +6,7 @@ import {
 import { showNotification, hideNotification } from '../scripts/helpers/helpers';
 import { validateUsername, validateField, readImage } from '../scripts/helpers/helpers';
 import { FileError } from '../scripts/helpers/errors';
+import { maxImageSize } from '../constants';
 
 const checkUsername = async (name: string) => {
   const username = name;
@@ -19,9 +20,10 @@ const checkUsername = async (name: string) => {
 
 function start_modal() {
   const modalParent = $('#profile-edit-page').parent();
+  const imageInput = $('#profile-pic-input') as JQuery<HTMLInputElement>;
 
   // Make file upload work
-  $('#upload-pic').on('click', () => $('#profile-pic-input').trigger('click'));
+  $('#upload-pic').on('click', () => imageInput.trigger('click'));
 
   // Close button
   $('#close-btn').on('click', () => {
@@ -37,10 +39,17 @@ function start_modal() {
   });
 
   // Upload image
-  $('#profile-pic-input').on('change', () => {
-    const file = $('#profile-pic-input').prop('files')[0];
+  imageInput.on('change', () => {
+    const file = imageInput.prop('files')[0];
     const reader = new FileReader();
     reader.onload = (e) => {
+
+      if (file.size > maxImageSize) {
+        showNotification('Image too large', 'ERROR');
+        imageInput.val('');
+        return;
+      }
+
       $('#profile-pic').attr('src', e.target!.result as string);
     };
     reader.readAsDataURL(file);
@@ -57,7 +66,7 @@ function start_modal() {
   //Save
   $('#save-profile').on('click', async () => {
     const username = nameIn.val() as string;
-    const imageData = $('#profile-pic-input').prop('files')[0];
+    const imageData = imageInput.prop('files')[0];
 
     if (!validateUsername(username)) {
       showNotification('Invalid username', 'ERROR');
