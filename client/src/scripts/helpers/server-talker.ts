@@ -250,7 +250,13 @@ export const deleteUser = (password:string): Promise<boolean> => {
       crossDomain: true,
       success: () => resolve(true),
       error: (xhr) => {
-        reject(throwServerError(xhr))        
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        reject(err);      
       },
     });
   });

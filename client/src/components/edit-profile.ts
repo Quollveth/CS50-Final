@@ -11,7 +11,7 @@ import {
   validateField,
   readImage,
 } from '../scripts/helpers/helpers';
-import { FileError } from '../scripts/helpers/errors';
+import { AuthError, FileError, ServerError } from '../scripts/helpers/errors';
 import { maxImageSize } from '../constants';
 
 const checkUsername = async (name: string) => {
@@ -63,7 +63,13 @@ function start_modal() {
 
       $('#profile-pic').attr('src', e.target!.result as string);
     };
-    reader.readAsDataURL(file);
+    try {
+      reader.readAsDataURL(file);
+    }
+    catch(e){
+      showNotification('Failed to read image', 'ERROR');
+      imageInput.val('');
+    }
   });
 
   // Username check
@@ -96,8 +102,8 @@ function start_modal() {
           /* Ignore and move on */
         }
       }
-
-      //HANDLE: Better error handling
+      // Other error, rethrow, in theory shouldn't happen 🤷‍♀️
+      throw e;
     }
 
     console.log({ username, picture });
@@ -118,9 +124,9 @@ function start_modal() {
   $('#confirm-delete-btn').on('click', async () => {
     // Validate password
     const password = $('#password-input').val() as string;
-    const result = await validatePassword(password);
-    if (!result) {
-      // Delete profile
+
+
+    try {
       const delResult = await deleteUser(password);
       if (delResult) {
         showNotification('Profile deleted', 'SUCCESS');
@@ -129,11 +135,12 @@ function start_modal() {
           return;
         }, 2000);
       } else {
-        showNotification('Server Error', 'ERROR');
+        showNotification('Incorrect Password', 'ERROR');
         return;
       }
-    } else {
-      showNotification('Incorrect password', 'ERROR');
+    }
+    catch (e:any){
+      showNotification(e.message, 'ERROR');
       return;
     }
   });
