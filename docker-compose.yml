@@ -39,7 +39,7 @@ services:
     expose:
       - '3306'
     volumes:
-      - './docker-volume/.mysql-data/dashboard:/var/lib/mysql'
+      - './docker-volume/.mysql-data/${DB_NAME}:/var/lib/mysql'
       - './init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
       - cs50_final_network
