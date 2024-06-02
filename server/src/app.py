@@ -3,7 +3,7 @@ import os
 from enum import Enum
 from base64 import b64decode
 import uuid
-from shutil import copyfile
+from shutil import move
 
 # Library imports
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,12 +18,14 @@ from helpers.sql_helper import MySQL, User
 from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 
-# Environment variables and paths
+#### Initial setup
 IN_DOCKER = os.getenv('IN_DOCKER',False)
 
 # The database information comes from docker as it is set in the docker-compose file
 # If we are not in docker, we create these variables ourselves, and load the .env file to get the others
 if not IN_DOCKER:
+    print('\nRunning outside of docker\n')
+
     from dotenv import load_dotenv
     load_dotenv() # Get the .env file for database info
 
@@ -31,7 +33,16 @@ if not IN_DOCKER:
     os.environ['DB_HOST'] = '127.0.0.1'
     os.environ['DB_PORT'] = '3306'
 
-IN_DEBUG = os.getenv('IN_DEBUG',False)
+is_debug = os.getenv('IN_DEBUG',None)
+IN_DEBUG = is_debug == 'True'
+
+if IN_DEBUG:
+    def print(*args):
+        import builtins
+        builtins.print('\033[91mDEBUG:', *args, '\033[0m')
+    print('\nRunning in debug mode!\n')
+
+#### Paths setup
 
 ## Docker paths
 # ./
@@ -54,28 +65,46 @@ IN_DEBUG = os.getenv('IN_DEBUG',False)
 app_dir = os.path.abspath(os.path.dirname(__file__))
 base_dir = os.path.abspath(os.path.join(app_dir, '..', '..',)) # Go down two directories
 
-if not IN_DOCKER:
-    static_dir = os.path.abspath(f'{(base_dir)}/static')    # From base go up to static
-
 if IN_DOCKER:
     static_dir = os.path.abspath(f'{(base_dir)}server-data/static/')  # From base go up to server-data and then to static
-
+else:
+    static_dir = os.path.abspath(f'{(base_dir)}/static/')    # From base go up to static
 
 if IN_DEBUG:
     print(f'App dir: {app_dir}')
     print(f'Base dir: {base_dir}')
     print(f'Static dir: {static_dir}')
 
-
 # Default profile image has to be in static folder for the CDN to work
 # Docker can't copy to the volume during build, so we create the folder and copy the image here
 if IN_DOCKER:
-    if not os.path.exists(f'{base_dir}/static'):
-        os.mkdir(f'{base_dir}/static/')
-    if os.path.exists(f'{base_dir}/static/DEFAULT.png'):
-        copyfile(f'{base_dir}/app/static/DEFAULT.png',f'{static_dir}/DEFAULT.png')
+    if not os.path.exists(static_dir):
+        # Static folder won't exist on first run
+        os.makedirs(static_dir)
+        if IN_DEBUG:
+            print('Created static folder')
+
+    source_file = os.path.abspath(os.path.join(base_dir, 'app', 'static', 'DEFAULT.png'))
+    destination_file = os.path.join(static_dir, 'DEFAULT.png')
+
+    if IN_DEBUG:
+        print(f'Source: {source_file}')
+        print(f'Destination: {destination_file}')
+
+    try:
+        move(source_file, destination_file)
+        if IN_DEBUG:
+            print('Moved default image to static folder')
+
+    except Exception as e:
+        print(e)
+        print('Failed to move default image to static folder')
 
 #### Inital setup finished, server initializes here
+
+if IN_DEBUG:
+    print()
+    print('Initial setup finished, server initializing\n')
 
 app = Flask(__name__)
 
@@ -91,6 +120,9 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 cert_pem = app_dir + '/localhost.pem'
 key_pem = app_dir + '/localhost.key'
 
+if IN_DEBUG:
+    print(f'Cert: {cert_pem}')
+    print(f'Key: {key_pem}')
 
 # Session
 app.config["SESSION_PERMANENT"] = False
@@ -106,12 +138,19 @@ db_port = os.getenv("DB_PORT")
 
 dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 
+if IN_DEBUG:
+    print(f'DB Connection: {dbConnection}')
+
 db = MySQL(dbConnection)
 
 
 # Extras
 app.config['STATIC_FOLDER'] = static_dir
 
+
+if IN_DEBUG:
+    print()
+    print('Server initialized\n')
 
 #### Server initialization finished
 
