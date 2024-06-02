@@ -11,14 +11,12 @@ const env = dotenv.config({ path: path.resolve(__dirname, '../.env') });
 if (!env) {
   throw new Error('No .env file found');
 }
+const PROJ_NAME = env.parsed.PROJ_NAME;
 
 //// Helper functions
 const getPageName = (path) => path.substring(path.lastIndexOf('/')+1);
 const removeExtension = (path) => path.substring(0,path.lastIndexOf('.'));
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
-
-
-const PROJ_NAME = capitalize(env.parsed.DB_NAME);
 
 
 //// Get all pages
