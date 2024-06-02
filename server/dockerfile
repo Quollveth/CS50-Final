@@ -6,11 +6,18 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Setup project
 WORKDIR /app
-COPY ./requirements.txt /app
+COPY ./server/requirements.txt /app
 RUN pip install -r requirements.txt
 
-COPY . .
-EXPOSE 8080
+# Copy project files
+RUN mkdir -p /server-data/static
+COPY ./../static/DEFAULT.png /app/static/DEFAULT.png
+COPY ./server .
+
+# Run the application
+EXPOSE 5000
 ENV FLASK_APP=app.py
+
 CMD ["python","src/app.py"]

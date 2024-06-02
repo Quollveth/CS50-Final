@@ -2,9 +2,11 @@ version: '3.8'
 services:
   server:
     container_name: Server
-    build: ./server/
-    ports: 
-      - 8080:8080
+    build: 
+      context: .
+      dockerfile: ./server/dockerfile
+    ports:
+      - 5000:5000
     networks:
       - cs50_final_network
     environment:
@@ -15,8 +17,8 @@ services:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
-      CERT_PATH: ${CERT_PATH}
-      KEY_PATH: ${KEY_PATH}
+      SECRET_KEY: ${SECRET_KEY}
+      IN_DEBUG: ${IN_DEBUG}
 
     volumes:
       - './docker-volume/server:/server-data'

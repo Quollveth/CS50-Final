@@ -1,8 +1,9 @@
 # Python standard library imports
 import os
 from enum import Enum
-import base64
+from base64 import b64decode
 import uuid
+from shutil import copyfile
 
 # Library imports
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,19 +18,66 @@ from helpers.sql_helper import MySQL, User
 from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 
-# Server setup
-app_dir = os.path.abspath(os.path.dirname(__file__)) # ./server/src
-basedir = os.path.join(app_dir, '..', '..') # ./
+# Environment variables and paths
+IN_DOCKER = os.getenv('IN_DOCKER',False)
 
-app = Flask(__name__) 
-
-# Load environment variables
-if not os.getenv('IN_DOCKER',False):
+# The database information comes from docker as it is set in the docker-compose file
+# If we are not in docker, we create these variables ourselves, and load the .env file to get the others
+if not IN_DOCKER:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv() # Get the .env file for database info
+
+    # Create missing environment variables that should come from docker
     os.environ['DB_HOST'] = '127.0.0.1'
     os.environ['DB_PORT'] = '3306'
 
+IN_DEBUG = os.getenv('IN_DEBUG',False)
+
+## Docker paths
+# ./
+#  \_ app
+#    \_ src
+#      \_ app.py
+#  \_ server-data
+#    \_ static
+
+
+## Local paths
+# ./
+#  \_ server
+#    \_ src
+#      \_ app.py
+#  \_ static
+
+## We can only get app_dir, where the app.py is located
+## We need to know where the base directory and the static folder are
+app_dir = os.path.abspath(os.path.dirname(__file__))
+base_dir = os.path.abspath(os.path.join(app_dir, '..', '..',)) # Go down two directories
+
+if not IN_DOCKER:
+    static_dir = os.path.abspath(f'{(base_dir)}/static')    # From base go up to static
+
+if IN_DOCKER:
+    static_dir = os.path.abspath(f'{(base_dir)}server-data/static/')  # From base go up to server-data and then to static
+
+
+if IN_DEBUG:
+    print(f'App dir: {app_dir}')
+    print(f'Base dir: {base_dir}')
+    print(f'Static dir: {static_dir}')
+
+
+# Default profile image has to be in static folder for the CDN to work
+# Docker can't copy to the volume during build, so we create the folder and copy the image here
+if IN_DOCKER:
+    if not os.path.exists(f'{base_dir}/static'):
+        os.mkdir(f'{base_dir}/static/')
+    if os.path.exists(f'{base_dir}/static/DEFAULT.png'):
+        copyfile(f'{base_dir}/app/static/DEFAULT.png',f'{static_dir}/DEFAULT.png')
+
+#### Inital setup finished, server initializes here
+
+app = Flask(__name__)
 
 # CORS, all origins
 CORS(
@@ -40,8 +88,9 @@ CORS(
 
 # HTTPS stuff
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-cert_pem = os.getenv('CERT_PATH')
-key_pem = os.getenv('KEY_PATH')
+cert_pem = app_dir + '/localhost.pem'
+key_pem = app_dir + '/localhost.key'
+
 
 # Session
 app.config["SESSION_PERMANENT"] = False
@@ -59,11 +108,13 @@ dbConnection = "{}:{}@{}:{}/{}".format(db_user,db_pass,db_host,db_port,db_name)
 
 db = MySQL(dbConnection)
 
+
 # Extras
-app.config['STATIC_FOLDER'] = f'{os.path.abspath(basedir)}/static/'
+app.config['STATIC_FOLDER'] = static_dir
 
 
-# Server initialization finished
+#### Server initialization finished
+
 @app.route("/health", methods=["GET"])
 def hello():
     return "",200
@@ -219,7 +270,7 @@ def update_user_data():
     image = request.form.get('picture')
     if image:
         imageId = str(uuid.uuid4())
-        binaryData = base64.b64decode(image)
+        binaryData = b64decode(image)
         with open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png','wb') as f:
             f.write(binaryData)
 
