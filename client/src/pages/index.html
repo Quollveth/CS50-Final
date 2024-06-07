@@ -1,4 +1,5 @@
 <section id="index-page">
+  <button id="reload-page" style="display: none; position: fixed;"></button>
   <div id="page">
     <section id="sidebar">
       <div>
@@ -6,9 +7,9 @@
           <img id="profilePic" style="height:60px; width:60px;" src="https://placehold.co/60" />
           <a id="username">Placeholder</a>
         </div>
-        <a id="sidebar-home" class="active" href="#home">Overview</a>
-        <a id="sidebar-finance" href="#news">Finance</a>
-        <a id="sidebar-customers" href="#contact">Customers</a>
+        <a id="sidebar-home" class="active" href="#home">Home</a>
+        <a id="sidebar-page1" href="#news">Page 1</a>
+        <a id="sidebar-page2" href="#contact">Page 2</a>
       </div>
     </section>
     <section id="content">
@@ -49,7 +50,8 @@
       </section>
       <div>
         <section id="modal-holder"></section>
-        <h1>Hello World!</h1>
+        <div style="width: 1100px; height: 600px;" id="subpage">
+        </div>
       </div>
     </section>
   </div>

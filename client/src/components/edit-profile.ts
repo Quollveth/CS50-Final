@@ -32,10 +32,21 @@ function start_modal() {
   $('#upload-pic').on('click', () => imageInput.trigger('click'));
 
   // Close button
-  $('#close-btn').on('click', () => {
+  const closeModal = () => {
     modalParent.empty();
     hideNotification();
-    window.location.reload();
+
+    // A hack to refresh the page
+    $('#reload-page').trigger('click');
+  }
+
+  $('#close-btn').on('click', () => {
+    closeModal();
+  });
+
+  // Close modal on click outside
+  $('#darken').on('click', () => {
+    closeModal();
   });
 
   // Get current image

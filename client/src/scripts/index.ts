@@ -73,13 +73,6 @@ const getData = async () => {
     profilePic.attr('src', data.picture!);
 }
 
-try {
-    getData();
-}
-catch(e:any){
-    showNotification(e.message, 'ERROR');
-}
-
 /* TOGGLE SETTINGS */
 const settings = $('#settings-btn');
 const settingsMenu = $('#settings-dropdown');
@@ -95,11 +88,66 @@ settingsArea.on('mouseleave',()=>{
 
 
 $('#profile-btn').on('click',()=>{
-    // This is an async operation and has to be in a try catch
+    loadModal('/components/edit-profile.html',$('#modal-holder'));
+})
+
+
+
+// Sidebar pages
+const pages = {
+    home: $('#sidebar-home'),
+    page1: $('#sidebar-page1'),
+    page2: $('#sidebar-page2')
+} as const;
+type Page = keyof typeof pages;
+
+let currentPage:Page = 'home';
+
+const loadSubpage = (page:Page):void => {
+    pages[currentPage].removeClass('active');
+    pages[page].addClass('active');
+    currentPage = page;
+
+    switch(page){
+        case 'home':
+            loadModal('/components/subpage-0.html',$('#subpage'));
+            break;
+        case 'page1':
+            loadModal('/components/subpage-1.html',$('#subpage'));
+            break;
+        case 'page2':
+            loadModal('/components/subpage-2.html',$('#subpage'));
+            break;
+    }
+}
+
+
+$('#sidebar-home').on('click',()=>{
+    loadSubpage('home');
+});
+
+$('#sidebar-page1').on('click',()=>{
+    loadSubpage('page1');
+});
+
+$('#sidebar-page2').on('click',()=>{
+    loadSubpage('page2');
+});
+
+
+
+$(()=>{
+   loadPage();
+})
+$('#reload-page').on('click',()=>{
+    loadPage();
+});
+function loadPage(){
+    loadSubpage(currentPage);
     try {
-        loadModal('/components/edit-profile.html',$('#modal-holder'));
+        getData();
     }
     catch(e:any){
         showNotification(e.message, 'ERROR');
     }
-})
+}
