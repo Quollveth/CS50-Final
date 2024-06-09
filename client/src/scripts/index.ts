@@ -96,8 +96,7 @@ $('#profile-btn').on('click',()=>{
 // Sidebar pages
 const pages = {
     home: $('#sidebar-home'),
-    page1: $('#sidebar-page1'),
-    page2: $('#sidebar-page2')
+    writer: $('#sidebar-writer'),
 } as const;
 type Page = keyof typeof pages;
 
@@ -110,13 +109,10 @@ const loadSubpage = (page:Page):void => {
 
     switch(page){
         case 'home':
-            loadModal('/components/subpage-0.html',$('#subpage'));
+            loadModal('/components/subpage-home.html',$('#subpage'));
             break;
-        case 'page1':
-            loadModal('/components/subpage-1.html',$('#subpage'));
-            break;
-        case 'page2':
-            loadModal('/components/subpage-2.html',$('#subpage'));
+        case 'writer':
+            loadModal('/components/subpage-writer.html',$('#subpage'));
             break;
     }
 }
@@ -126,12 +122,8 @@ $('#sidebar-home').on('click',()=>{
     loadSubpage('home');
 });
 
-$('#sidebar-page1').on('click',()=>{
-    loadSubpage('page1');
-});
-
-$('#sidebar-page2').on('click',()=>{
-    loadSubpage('page2');
+$('#sidebar-writer').on('click',()=>{
+    loadSubpage('writer');
 });
 
 
