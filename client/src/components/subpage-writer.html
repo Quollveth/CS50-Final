@@ -1,3 +1,42 @@
-<div style="width: 100%; height: 100%; background-color: aqua;">
-    <h1>Welcome to page 1</h1>
+<div style="width: 100%; height: 100%">
+  <div id="orders">
+    <div id="orders-carousel" class="carousel">
+      <div class="carousel-inner">
+        <div id="order-1" class="carousel-item active">
+          <div class="card-body">
+            <h5 class="card-title">Order 1</h5>
+            <div class="card-content"></div>
+          </div>
+        </div>
+        <div id="order-2" class="carousel-item">
+          <div class="card-body">
+            <h5 class="card-title">Order 2</h5>
+            <div class="card-content"></div>
+          </div>
+        </div>
+        <div id="order-3" class="carousel-item">
+          <div class="card-body">
+            <h5 class="card-title">Order 3</h5>
+            <div class="card-content"></div>
+          </div>
+        </div>
+        <div id="order-4" class="carousel-item">
+          <div class="card-body">
+            <h5 class="card-title">Order 4</h5>
+            <div class="card-content"></div>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control prev">❮</button>
+      <button class="carousel-control next">❯</button>
+    </div>
+  </div>
+  <script>
+    const items = document.getElementsByClassName('card-content');
+    const data =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id condimentum enim. Donec ac neque diam. Suspendisse non imperdiet odio, in auctor elit. Maecenas varius pharetra fermentum. Integer condimentum mauris diam, vel viverra metus efficitur ac. Proin vel erat ut magna efficitur dignissim. Pellentesque libero velit, pharetra sed porta vel, consectetur ut quam. Nulla nec pretium lacus.';
+    for (item in items) {
+      items[item].innerHTML = data;
+    }
+  </script>
 </div>
