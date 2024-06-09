@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const fs = require('fs');
 const InlineSourceWebpackPlugin = require('inline-source-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
 
 //// Load environment variables
 const env = dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -26,6 +25,10 @@ const pages = pageFiles.map(page => removeExtension(page));
 //// Get all components
 const componentFiles = fs.readdirSync('./src/components').filter(file => file.endsWith('.html'));
 const components = componentFiles.map(component => removeExtension(component));
+
+//// Get all subpages
+const subpageFiles = fs.readdirSync('./src/subpages').filter(file => file.endsWith('.html'));
+const subpages = subpageFiles.map(subpage => removeExtension(subpage));
 
 //// Generate HTML plugin instances for each page
 const generateHTMLPlugins = () => {
@@ -50,6 +53,29 @@ const generateHTMLPlugins = () => {
   return arr;
 };
 
+//// Generate HTML plugin instances for each subpage
+const generateSubpageHTMLPlugins = () => {
+  const arr = [];
+
+  subpages
+   .map(subpage => subpage + '.html')
+   .forEach(subpage => {
+      arr.push(
+        new HtmlWebpackPlugin({
+          template:'src/component-template.html',
+          filename: `subpages/${subpage}`,
+          inject: false,
+          templateParameters:{
+            componentName: capitalize(removeExtension(subpage)),
+            componentContent: fs.readFileSync(`src/subpages/${removeExtension(subpage)}.html`),
+            componentSource: `<script inline inline-asset="${removeExtension(subpage)}.js" inline-asset-delete></script>`
+          }
+        })
+      )
+      
+    })
+  return arr;
+};
 
 //// Generate HTML plugin instances for each component
 const generateComponentHTMLPlugins = () => {
@@ -89,9 +115,13 @@ const generateEntries = () => {
     obj[`components/${component}`] = `/src/components/${component}.ts`;
   })
 
+  // Entries for subpages
+  subpages.forEach(subpage => {
+    obj[`subpages/${subpage}`] = `/src/subpages/${subpage}.ts`;
+  })
+
   return obj;
 }
-
 
 //// Actual build happens here
 module.exports = {
@@ -133,5 +163,6 @@ module.exports = {
     })
   ]
   .concat(generateHTMLPlugins())
+  .concat(generateSubpageHTMLPlugins())
   .concat(generateComponentHTMLPlugins())
 };

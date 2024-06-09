@@ -142,15 +142,15 @@ export const readImage = (file: File): Promise<base64string> => {
 }
 
 
-//// Modal handling
+//// Component handling
 
-export const loadModal = async (
-  modal: string,
+export const loadComponent = async (
+  componentPath: string,
   parent: JQuery<HTMLElement>
 ): Promise<void> => {
   const currentURL = window.location.href;
   const directoryPath = currentURL.substring(0, currentURL.lastIndexOf('/'));
-  $.get(`${directoryPath}/${modal}`).then((html) => {
+  $.get(`${directoryPath}/${componentPath}`).then((html) => {
     parent.html(html);
   });
 };

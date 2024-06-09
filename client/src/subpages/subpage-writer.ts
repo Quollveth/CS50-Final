@@ -23,7 +23,6 @@ const showSlide = (index: number, animate = true) => {
         });
     }
 }
-
 showSlide(orderIndex);
 
 $('.next').on('click', () => {
@@ -51,3 +50,35 @@ $('.prev').on('click', () => {
         showSlide(orderIndex);
     }
 });
+
+
+const createCard = (number: number) => {
+    let card = $('<div>',{
+        id: 'order-' + number,
+        class: 'carousel-item'
+    })
+    let cardBody = $('<div>',{
+        class: 'card-body'
+    })
+    let cardTitle = $('<h5>',{
+        class: 'card-title',
+        text: 'Order ' + number
+    })
+    let cardContent = $('<div>',{
+        class: 'card-content'
+    })
+
+    cardBody.append(cardTitle, cardContent);
+    card.append(cardBody);
+
+    return card;
+}
+
+
+'\
+<div id="order-1" class="carousel-item">\
+<div class="card-body">\
+  <h5 class="card-title">Order 1</h5>\
+  <div class="card-content"></div>\
+</div>\
+</div>'

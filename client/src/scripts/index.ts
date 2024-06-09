@@ -1,6 +1,6 @@
 import { getUserData, logoutUser } from './helpers/server-talker';
 import { showNotification, hideNotification, isNotificationVisible, capitalize } from './helpers/helpers';
-import { loadModal } from './helpers/helpers';
+import { loadComponent } from './helpers/helpers';
 
 /* INITIALIZE NOTIFICTION EVENTS */
 
@@ -88,7 +88,7 @@ settingsArea.on('mouseleave',()=>{
 
 
 $('#profile-btn').on('click',()=>{
-    loadModal('/components/edit-profile.html',$('#modal-holder'));
+    loadComponent('/components/edit-profile.html',$('#modal-holder'));
 })
 
 
@@ -109,10 +109,10 @@ const loadSubpage = (page:Page):void => {
 
     switch(page){
         case 'home':
-            loadModal('/components/subpage-home.html',$('#subpage'));
+            loadComponent('/subpages/subpage-home.html',$('#subpage'));
             break;
         case 'writer':
-            loadModal('/components/subpage-writer.html',$('#subpage'));
+            loadComponent('/subpages/subpage-writer.html',$('#subpage'));
             break;
     }
 }
