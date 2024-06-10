@@ -81,8 +81,7 @@ const settingsArea = $('#settings-area');
 settings.on('mouseenter',()=>{
     settingsMenu.removeClass('hidden');
 });
-//This is a hack and we'll agree to not tell anyone
-settingsArea.on('mouseleave',()=>{
+settingsMenu.on('mouseleave',()=>{
     settingsMenu.addClass('hidden');
 });
 

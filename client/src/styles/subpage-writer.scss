@@ -1,14 +1,20 @@
+@import './styles.scss';
+
 #subpage-writer{
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap:10px;
 
-    background-color: yellowgreen;
-
     #orders {
-        //background-color: aqua;
+        margin-top: $topbar-height;
         width: 100%;
+        max-height: 20%;
+
+        >*{
+            margin: auto;
+        }
     }
 }

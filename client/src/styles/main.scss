@@ -13,10 +13,14 @@
   display: none !important;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
-  padding: 0;
-  margin: 0;
 }
 
 body.lightMode {

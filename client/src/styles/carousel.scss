@@ -1,14 +1,12 @@
 .carousel {
     position: relative;
-    width: 80%;
-    max-width: 600px;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     .carousel-inner {
         display: flex;
         transition: transform 0.5s ease;
+
+        margin-left: 40px;
     }
 
     .carousel-item {
@@ -17,39 +15,56 @@
         padding: 10px;
         opacity: 1;
 
+        display: flex;
+        gap: 30px;
+
         .card-body {
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
 
+            min-width: 20%;
+            max-width: 20%;
+
+            border: solid 2px #33333320;
+
+            cursor: pointer;
+
+            &:hover {
+                border: solid 2px #80d7ff85;
+            }
+
             .card-title {
-                font-size: 1.5rem;
                 font-weight: bold;
+                word-wrap: break-word;
+                font-size: 1rem;
+
+                margin: 0px;
             }
             .card-content {
-                font-size: 1rem;
+                font-size: 0.8rem;
             }
         }
     }
 
     .carousel-control {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 5%;
-        height: 100%;
-        background-color: #000;
+        top: 0;
+        top: 25%;
+        height: 50px;
+        width: 50px;
         border: none;
-        color: #000;
-        opacity: 0;
-        text-align: center;
         cursor: pointer;
-        transition: opacity 0.3s;
 
+        border-radius: 100%;
+
+        background-color: #0000;
         &:hover {
-            color: #FFF;
-            opacity: 0.5;
+            background-color: #0003;
         }
 
         &.prev {

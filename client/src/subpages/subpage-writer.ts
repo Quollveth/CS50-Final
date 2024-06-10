@@ -4,6 +4,7 @@ import { capitalize } from '../scripts/helpers/helpers';
 //// Orders carousel
 let orderIndex = 0;
 let slides = $('.carousel-item');
+const ordersPerSlide = 4;
 
 const showSlide = (index: number, animate = true) => {
   const carouselInner = $('.carousel-inner');
@@ -74,15 +75,13 @@ const createCard = (order: Order) => {
     text: 'For ' + order.recipient,
   });
   const deadline = $('<p>', {
-    text: 'Deadline: ' + order.deadline,
+    text: 'Deadline: ' + order.deadline.substring(0,order.deadline.indexOf('T')),
   });
-  const detailsButton = $('<button>', {
-    id: 'order-' + order.id + '-btn',
-    class: 'order-carousel-details-btn',
-    text: 'Details for '+order.id,
-  });
+
+
+
   cardContent.append(recipient, deadline);
-  cardBody.append(cardTitle, cardContent, detailsButton);
+  cardBody.append(cardTitle, cardContent);
 
   return cardBody;
 };
@@ -118,8 +117,6 @@ const addCarouselItem = (
 };
 
 const buildCarousel = (orderList: Order[]) => {
-  const ordersPerSlide = 3;
-
   let ordersInSlide = 0;
   let currentSlide = addCarouselItem(null, false);
 
