@@ -3,6 +3,7 @@ run-client.sh
 
 client/node_modules/
 client/dist/
+client/orders/
 
 server/.venv
 server/__pycache__/

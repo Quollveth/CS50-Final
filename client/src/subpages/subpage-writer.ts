@@ -1,6 +1,8 @@
+import type { Order } from "../scripts/helpers/orders";
+
 //// Orders carousel
 let orderIndex = 0;
-const slides = $('.carousel-item');
+let slides = $('.carousel-item');
 
 const showSlide = (index: number, animate = true) => {
     const carouselInner = $('.carousel-inner');
@@ -52,33 +54,63 @@ $('.prev').on('click', () => {
 });
 
 
-const createCard = (number: number) => {
-    let card = $('<div>',{
-        id: 'order-' + number,
+const createCard = (order:Order) => {
+    const card = $('<div>',{
+        id: 'order-' + order.id,
         class: 'carousel-item'
     })
-    let cardBody = $('<div>',{
+    const cardBody = $('<div>',{
         class: 'card-body'
     })
-    let cardTitle = $('<h5>',{
+    const cardTitle = $('<h5>',{
         class: 'card-title',
-        text: 'Order ' + number
+        text: order.name
     })
-    let cardContent = $('<div>',{
-        class: 'card-content'
+    const cardContent = $('<div>',{
+        class: 'card-content',
     })
-
-    cardBody.append(cardTitle, cardContent);
+    const recipient = $('<p>',{
+        text: 'For ' + order.recipient
+    })
+    const deadline = $('<p>',{
+        text: 'Deadline: ' + order.deadline
+    })
+    const detailsButton = $('<button>',{
+        class: 'order-carousel-details-btn',
+        text: 'Details'
+    })
+    cardContent.append(recipient, deadline);
+    cardBody.append(cardTitle, cardContent, detailsButton);
     card.append(cardBody);
 
     return card;
 }
 
 
+
+// Fake data
+for (let i = 0; i < 8; i++) {
+    if(i > 10) break;
+    $.get(`../orders/order-${i}.json`).then((order) => {
+        console.log(order);
+        const card = createCard(order);
+        if (i === 0) {
+            card.addClass('active');
+        }
+        $('.carousel-inner').append(card);
+        slides = $('.carousel-item');
+    });
+}
+
+// Carousel item template
 '\
 <div id="order-1" class="carousel-item">\
 <div class="card-body">\
   <h5 class="card-title">Order 1</h5>\
-  <div class="card-content"></div>\
+  <div class="card-content">\
+    <p>For John Doe</p>\
+    <p>Deadline: 2021-01-01</p>\
+  </div>\
+  <button class="btn btn-primary">Details</button>\
 </div>\
 </div>'
