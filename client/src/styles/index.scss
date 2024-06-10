@@ -1,5 +1,13 @@
+//// These styles apply to all subpages of index
+/// Each one has it's own style scss file that is imported here
+
+//// Global styles
 @import './styles.scss';
 @import './mixins.scss';
+
+/// Subpages
+@import './carousel.scss';
+@import './subpage-writer.scss';
 
 #index-page {
   #sidebar {

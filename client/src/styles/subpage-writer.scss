@@ -1,0 +1,14 @@
+#subpage-writer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+
+    background-color: yellowgreen;
+
+    #orders {
+        //background-color: aqua;
+        width: 100%;
+    }
+}
