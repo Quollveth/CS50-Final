@@ -7,13 +7,13 @@
 @import './index.scss';
 @import './edit-profile.scss';
 
-
 // Global styles
 .hidden {
   display: none !important;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -24,11 +24,24 @@ body {
 }
 
 body.lightMode {
-  background-color:$bg-color-light;
-  color:$text-color-light;
+  background-color: $bg-color-light;
+  color: $text-color-light;
 }
 
-.lightMode #global-notification{
+.lightMode {
+  .separator {
+    &.horizontal {
+      border-bottom: 1px solid $separator-color;
+      width: 100%;
+    }
+    &.vertical {
+      border-left: 1px solid $separator-color;
+      height: 100%;
+    }
+  }
+}
+
+.lightMode #global-notification {
   position: fixed;
   top: 0;
   left: 0;

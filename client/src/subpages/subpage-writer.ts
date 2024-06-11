@@ -204,5 +204,4 @@ $(async () => {
 
 
   slides = $('.carousel-item');
-  console.log(slides);
 });

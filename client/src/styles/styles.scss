@@ -2,9 +2,10 @@ $hover-change-amount: 20%;
 // How much the color lighthens or darkens when hovering over a button
 // Used in mixins.scss
 
-// Main colors, applies globally unless overwritten
+//// Main colors, applies globally unless overwritten
 $bg-color-light: #f0f0f0;
 $text-color-light: #000000;
+$separator-color: #33333320;
 
 // Global notification
 $notification-light-bg: #838383;
@@ -17,11 +18,11 @@ $button-text-light: #fff;
 $button-bg-warn-light: #ff2121;
 $button-text-warn-light: $button-text-light;
 
-// Login/Register
+//// Login/Register Page
 $form-bg-light: #fff;
 $form-button-swap-bg-light: #0029b1; // The button that changes between log in and register form
 
-// Index page
+//// Index page
 $topbar-height: 35px;
 $notif-bar-height: 20px;
 
@@ -32,3 +33,16 @@ $settings-light-bg-color: #c7c7c7;
 $settings-light-text-color: #000000;
 $settings-light-hover-color: #d0d0d0;
 $settings-light-hover-text-color: $settings-light-text-color;
+
+//// Write Subpage
+// Carousel
+
+$carousel-control-color-light: #000000;
+$carousel-control-fade-amount: 0.8;
+$carousel-navigator-color-light: #8f8f8f;
+$carousel-navigator-selected-color-light: #727272;
+
+// Carousel card
+$carousel-card-border-light: #33333320;
+$carousel-card-border-selected-light: #80d7ff85;
+$carousel-card-text-light: #1d1d1d;
