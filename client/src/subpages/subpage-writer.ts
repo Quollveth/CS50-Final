@@ -18,8 +18,13 @@ const showSlide = (index: number, animate = true) => {
 
   carouselInner.css('transform', `translateX(${translateX}%)`);
 
+  // Update slides
   slides.removeClass('active');
   slides.eq(index).addClass('active');
+
+  // Update navigator
+  $('.carousel-nav-item').removeClass('active');
+  $('#car-nav-'+index).addClass('active');
 
   if (!animate) {
     requestAnimationFrame(() => {
@@ -116,6 +121,33 @@ const addCarouselItem = (
   return card;
 };
 
+
+const createNavigator = () => {
+  const navigator = $('<ul>',{
+    class: 'carousel-navigator'
+  });
+  slides = $('.carousel-item');
+  slides.each((i,e)=>{
+    const navItem = $('<li>',{
+      class: 'carousel-nav-item',
+      id: 'car-nav-'+i,
+    })
+    navigator.append(navItem);
+
+    if(i == 0){
+      navItem.addClass('active');
+    }
+
+    navItem.on('click',()=>{
+      orderIndex = i;
+      showSlide(i);
+    });
+  })
+
+  $('#orders-carousel').append(navigator);
+}
+
+
 const buildCarousel = (orderList: Order[]) => {
   let ordersInSlide = 0;
   let currentSlide = addCarouselItem(null, false);
@@ -138,6 +170,8 @@ const buildCarousel = (orderList: Order[]) => {
   if(ordersInSlide > 0){
     $('.carousel-inner').append(currentSlide);
   }
+
+  createNavigator();
 };
 
 // Fake data
