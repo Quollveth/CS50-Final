@@ -1,13 +1,8 @@
 import { SERVER_IP, Routes } from '../../constants';
 import type { base64string } from './helpers';
 import { throwServerError, AuthError, ServerError } from './errors';
-
-export type UserData = {
-  username: string;
-  password: string | undefined; // String when sending it to the server, undefined when getting it back
-  email?: string;
-  picture?: string;
-};
+import type { Document } from './documents';
+import type { Order } from './orders';
 
 /**
  * Health check
@@ -27,6 +22,15 @@ export const HealthCheck = (): Promise<boolean> => {
       error: () => resolve(false),
     });
   });
+};
+
+//// User Management
+
+export type UserData = {
+  username: string;
+  password: string | undefined; // String when sending it to the server, undefined when getting it back
+  email?: string;
+  picture?: string;
 };
 
 const RegisRes = {
@@ -259,5 +263,27 @@ export const deleteUser = (password:string): Promise<boolean> => {
         reject(err);      
       },
     });
+  });
+}
+
+
+//// Order Management
+
+export const getUserOrders = (): Promise<Order[]> => {
+  // Placeholder
+  return new Promise((resolve) => {
+    resolve([]);
+  });
+}
+
+
+
+
+//// Document Management
+
+export const getUserDocuments = (): Promise<Document[]> => {
+  // Placeholder
+  return new Promise((resolve) => {
+    resolve([]);
   });
 }

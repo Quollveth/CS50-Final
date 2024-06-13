@@ -1,6 +1,7 @@
 import type { Order } from '../scripts/helpers/orders';
 import { capitalize } from '../scripts/helpers/helpers';
 import type { Document } from '../scripts/helpers/documents';
+import { getUserOrders, getUserDocuments } from '../scripts/helpers/server-talker';
 
 //// Orders carousel
 let orderIndex = 0;
@@ -33,6 +34,9 @@ const showSlide = (index: number, animate = true) => {
     });
   }
 };
+
+$('.next').hide();
+$('.prev').hide();
 
 $('.next').on('click', () => {
   orderIndex++;
@@ -172,29 +176,11 @@ const buildCarousel = (orderList: Order[]) => {
     $('.carousel-inner').append(currentSlide);
   }
 
-  createNavigator();
-};
-
-// Fake data for carousel
-const getFakeOrders = async (): Promise<Order[]> => {
-  let promises: Promise<Order>[] = [];
-
-  for (let i = 0; i < 10; i++) {
-    if (i >= 10) {
-      alert('theres only 10 dumbass');
-      throw new Error('Index out of bounds');
-    }
-
-    const promise = new Promise<Order>((resolve, reject) => {
-      $.get(`../orders/order-${i}.json`)
-        .done((data) => resolve(data as Order))
-        .fail((jqXHR, status, e) => reject(e));
-    });
-    promises.push(promise);
+  if(slides.length > 1){
+    $('.next').show();
+    $('.prev').show();
+    createNavigator();
   }
-
-  const orders = await Promise.all(promises);
-  return orders;
 };
 
 
@@ -250,21 +236,38 @@ const showEditMenu = (e:JQuery.ClickEvent) => {
 
 
 
-$(async () => {
-  const fakeOrders = await getFakeOrders();
+//// Fetch data
+const populateOrders = async () => {
+  const orders = await getUserOrders();
+  if(orders.length == 0){
+    const noOrders = $('<h2>',{
+      id: 'no-orders-banner',
+      class: 'banner',
+      text: 'You have no accepted requests'
+    });
+    $('.carousel-inner').append(noOrders);
+    return;
+  }
 
-  buildCarousel(fakeOrders);
-  showSlide(0);
+  buildCarousel(orders);
+}
 
-  for(let i = 0; i < 20; i++){
-    const doc = createDocumentCard({
-      id: i,
-      title: 'Document '+(i+1),
-      thumbnail: 'https://placehold.co/150x200',
-      created: '2021-09-01',
-    } as Document)
-    $('#documents').append(doc);
-  };
 
-  slides = $('.carousel-item');
-});
+const populateDocuments = async () => {
+  const documents = await getUserDocuments();
+  if(documents.length == 0){
+    const noOrders = $('<h2>',{
+      id: 'no-documents-banner',
+      class: 'banner',
+      text: 'You have no uploaded documents'
+    });
+    $('#documents-holder').append(noOrders);
+    return;
+  }
+}
+
+$(()=>{
+  editMenu.hide();
+  populateOrders();
+  populateDocuments();
+})
