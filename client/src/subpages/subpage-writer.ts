@@ -1,5 +1,6 @@
 import type { Order } from '../scripts/helpers/orders';
 import { capitalize } from '../scripts/helpers/helpers';
+import type { Document } from '../scripts/helpers/documents';
 
 //// Orders carousel
 let orderIndex = 0;
@@ -174,7 +175,7 @@ const buildCarousel = (orderList: Order[]) => {
   createNavigator();
 };
 
-// Fake data
+// Fake data for carousel
 const getFakeOrders = async (): Promise<Order[]> => {
   let promises: Promise<Order>[] = [];
 
@@ -196,12 +197,56 @@ const getFakeOrders = async (): Promise<Order[]> => {
   return orders;
 };
 
+
+//// Document list
+const createDocumentCard = (document:Document) => {
+  const docCard = $('<div>',{
+    class:'document',
+    id:'document'+document.id,
+  });
+  const docTitle = $('<p>',{
+    class:'document-title',
+    text: document.title
+  });
+  const docImg = $('<img>',{
+    src: document.thumbnail,
+  });
+  const docBtn = $('<button>',{
+    class:'settings-btn'
+  });
+  const darken = $('<div>',{
+    class: 'document-darken'
+  });
+  const bottom = $('<div>',{
+    class: 'document-bottom'
+  })
+  docBtn.html('<img style="width: 25px; height: 25px" src="./assets/dots-horizontal-svgrepo-com.svg"/>');
+
+  bottom.append(docTitle,docBtn);
+  docCard.append(docImg,darken,bottom);
+
+  return docCard;
+}
+
+
+
+
+
 $(async () => {
   const fakeOrders = await getFakeOrders();
 
   buildCarousel(fakeOrders);
   showSlide(0);
 
+  for(let i = 0; i < 20; i++){
+    const doc = createDocumentCard({
+      id: i,
+      title: 'Document '+(i+1),
+      thumbnail: 'https://placehold.co/150x200',
+      created: '2021-09-01',
+    } as Document)
+    $('#documents-holder').append(doc);
+  };
 
   slides = $('.carousel-item');
 });
