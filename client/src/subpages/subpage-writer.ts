@@ -222,6 +222,10 @@ const createDocumentCard = (document:Document) => {
   })
   docBtn.html('<img style="width: 25px; height: 25px" src="./assets/dots-horizontal-svgrepo-com.svg"/>');
 
+  docBtn.on('click',(e)=>{
+    showEditMenu(e);
+  })
+
   bottom.append(docTitle,docBtn);
   docCard.append(docImg,darken,bottom);
 
@@ -229,6 +233,20 @@ const createDocumentCard = (document:Document) => {
 }
 
 
+const editMenu = $('#document-edit-menu');
+editMenu.on('mouseleave',()=>{
+  editMenu.hide();
+})
+
+const showEditMenu = (e:JQuery.ClickEvent) => {
+  const x = e.pageX;
+  const y = e.pageY;
+
+  editMenu.css('top',y);
+  editMenu.css('left',x);
+
+  editMenu.show();
+}
 
 
 
@@ -245,7 +263,7 @@ $(async () => {
       thumbnail: 'https://placehold.co/150x200',
       created: '2021-09-01',
     } as Document)
-    $('#documents-holder').append(doc);
+    $('#documents').append(doc);
   };
 
   slides = $('.carousel-item');

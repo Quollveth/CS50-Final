@@ -1,4 +1,5 @@
 @import './styles.scss';
+@import './mixins.scss';
 
 #subpage-writer {
   display: flex;
@@ -17,17 +18,40 @@
     }
   }
 
-  #documents-holder {
+  #document-edit-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+    z-index: 10;
+
+    @include rounded_list(15px);
+
+    a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      padding-right: 50px;
+      text-decoration: none;
+    }
+  }
+
+  #documents {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 30px;
 
     .document {
-      border: 1px solid black;
+      border: solid 1px $carousel-card-border-light;
       position: relative;
 
       width: 150px;
       height: 200px;
+
+      cursor:default;
 
       border-radius: 5px;
       .document-bottom {
@@ -35,9 +59,10 @@
         bottom: 0;
         width: 100%;
         height: 50px;
-        background-color: #FFF;
+        background-color: $carousel-card-bg-light;
         border-radius: 0 0 5px 5px;
         z-index: 2;
+
         .settings-btn {
           position: absolute;
           top: 0;
@@ -48,7 +73,7 @@
           padding: 0;
           margin-top: -2px;
 
-          opacity: 0.2;
+          opacity: 0.1;
 
           transition: opacity 0.2s ease-in-out;
           &:hover {
@@ -78,13 +103,39 @@
         width: 100%;
         height: 100%;
         background-color: #000000;
-        opacity: 0.2;
+        opacity: 0;
 
         transition: opacity 0.2s ease-in-out;
       }
-      &:hover .document-darken {
-        opacity: 0;
+      &:hover {
+        .settings-btn {
+          opacity: 0.4;
+        }
+        .document-darken {
+          opacity: 0.2;
+        }
       }
+    }
+  }
+}
+
+.lightMode #document-edit-menu {
+  background-color: $settings-light-bg-color;
+  color: $settings-light-text-color;
+  a {
+    background-color: $settings-light-bg-color;
+    color: $settings-light-text-color;
+    &:hover {
+      background-color: $settings-light-hover-color;
+      color: $settings-light-hover-text-color;
+    }
+  }
+  #document-delete {
+    //background-color: $button-bg-warn-light;
+    @include link_color($text-color-light);
+    &:hover {
+      color: $button-text-warn-light;
+      background-color: $button-bg-warn-light;
     }
   }
 }
