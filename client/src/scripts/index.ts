@@ -76,7 +76,6 @@ const getData = async () => {
 /* TOGGLE SETTINGS */
 const settings = $('#settings-btn');
 const settingsMenu = $('#settings-dropdown');
-const settingsArea = $('#settings-area');
 
 settings.on('mouseenter',()=>{
     settingsMenu.removeClass('hidden');
@@ -96,6 +95,7 @@ $('#profile-btn').on('click',()=>{
 const pages = {
     home: $('#sidebar-home'),
     writer: $('#sidebar-writer'),
+    hire: $('#sidebar-hire')
 } as const;
 type Page = keyof typeof pages;
 
@@ -113,6 +113,9 @@ const loadSubpage = (page:Page):void => {
         case 'writer':
             loadComponent('/subpages/subpage-writer.html',$('#subpage'));
             break;
+        case 'hire':
+            loadComponent('/subpages/subpage-hire.html',$('#subpage'));
+            break;
     }
 }
 
@@ -125,6 +128,9 @@ $('#sidebar-writer').on('click',()=>{
     loadSubpage('writer');
 });
 
+$('#sidebar-hire').on('click',()=>{
+    loadSubpage('hire');
+});
 
 
 $(()=>{

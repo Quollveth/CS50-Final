@@ -276,7 +276,12 @@ export const getUserOrders = (): Promise<Order[]> => {
   });
 }
 
-
+export const getAvailableOrders = (): Promise<Order[]> => {
+  // Placeholder
+  return new Promise((resolve) => {
+    resolve([]);
+  });
+}
 
 
 //// Document Management
