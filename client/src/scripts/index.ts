@@ -90,7 +90,6 @@ $('#profile-btn').on('click',()=>{
 })
 
 
-
 // Sidebar pages
 const pages = {
     home: $('#sidebar-home'),

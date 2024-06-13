@@ -283,6 +283,12 @@ export const getAvailableOrders = (): Promise<Order[]> => {
   });
 }
 
+export const placeNewOrder = (order: Order): Promise<boolean> => {
+  // Placeholder
+  return new Promise((resolve) => {
+    resolve(true);
+  });
+}
 
 //// Document Management
 
