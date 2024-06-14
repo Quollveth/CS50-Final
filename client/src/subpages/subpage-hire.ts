@@ -1,9 +1,17 @@
 import type { Order } from '../scripts/helpers/orders';
-import { getAvailableOrders } from '../scripts/helpers/server-talker';
-import { capitalize } from '../scripts/helpers/helpers';
-import { timeSince } from '../scripts/helpers/helpers';
+import { getAvailableOrders, getUserName } from '../scripts/helpers/server-talker';
+import { capitalize,timeSince } from '../scripts/helpers/helpers';
 
-const addOrderCard = (order: Order) => {
+const cachedNames: { [key: number]: string } = {};
+
+const addOrderCard = async (order: Order) => {
+
+    if(cachedNames[order.recipient] === undefined){
+      const name = await getUserName(order.recipient);
+      cachedNames[order.recipient] = name;
+    }
+    const recipientName = cachedNames[order.recipient];
+
     const cardBody = $('<div>', {
       id: 'order-' + order.id,
       class: 'card-body',
@@ -16,7 +24,7 @@ const addOrderCard = (order: Order) => {
       class: 'card-content',
     });
     const recipient = $('<p>', {
-      text: 'By:  ' + order.recipient,
+      text: 'By:   ' + capitalize(recipientName),
     });
     const deadline = $('<p>', {
       text: 'Deadline: ' + order.deadline,
@@ -45,9 +53,10 @@ const populateOrdersPage = async () => {
   }
 
 
-  orders.forEach((order) => {
+  orders.forEach(async (order) => {
     console.log(order);
-    $('#hiring-orders').append(addOrderCard(order));
+    const toAdd = await addOrderCard(order)
+    $('#hiring-orders').append(toAdd);
   });
 };
 

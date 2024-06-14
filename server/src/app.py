@@ -416,6 +416,20 @@ def delete_user():
     return '',200
 
 
+@app.route('/get-username',methods=['GET'])
+def get_username():
+    uid = request.args.get('id')
+    if not id:
+        return '',400
+
+    data = db.get_user_data(uid=uid)
+    if not data:
+        return '',400
+
+    return jsonify({
+        'username':data.name
+    }),200
+
 #### Order Management
 @app.route('/place-order',methods=['POST'])
 @login_required

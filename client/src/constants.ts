@@ -13,6 +13,7 @@ export const Routes = {
   updateUserData: '/update-udata', // Update user data
   validatePassword: '/validate-password', // Validate password
   deleteUser: '/delete-user', // Delete user
+  getUserName: '/get-username', // Get username of user with specified id
 
   /// Order management
   placeOrder: '/place-order', // Place new order

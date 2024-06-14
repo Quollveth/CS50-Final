@@ -266,6 +266,23 @@ export const deleteUser = (password:string): Promise<boolean> => {
   });
 }
 
+export const getUserName = (id:number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.getUserName}`,
+      method: 'GET',
+      xhrFields: {
+        withCredentials: true,
+      },
+      data: { id },
+      crossDomain: true,
+      success: (response) => resolve(response.username),
+      error: (xhr) => {
+        reject(throwServerError(xhr))        
+      },
+    });
+  });
+}
 
 //// Order Management
 
