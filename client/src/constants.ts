@@ -16,6 +16,7 @@ export const Routes = {
 
   /// Order management
   placeOrder: '/place-order', // Place new order
+  getAllOrders: '/get-all-orders', // Get all orders
 } as const;
 
 export const maxImageSize = 5 * 1024 * 1024; // 5MB

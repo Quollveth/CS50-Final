@@ -98,6 +98,8 @@ class MySQL:
         self._session.add(object)
         self._session.commit()
 
+        ## User related functions
+
     def get_usernames(self):
         """
         Retrieves all usernames from the database.
@@ -159,3 +161,14 @@ class MySQL:
 
         self._session.delete(user)
         self._session.commit()
+
+        ### Orders related functions
+
+    def get_orders(self):
+        """
+        Retrieves all orders from the database.
+
+        Returns:
+        - A list of orders.
+        """
+        return self._session.query(Order).all()

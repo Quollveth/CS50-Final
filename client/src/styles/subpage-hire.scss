@@ -14,4 +14,51 @@
         text-align: center;
         margin-top: 120px;
     }
+
+    #hiring-orders {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 30px;
+
+        margin-top: 50px;
+
+        .card-body {
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+
+            background-color: $hire-card-bg-light;
+            border: 1px solid $hire-card-border-light;
+            color: $hire-card-text-light;
+
+            cursor: pointer;
+
+            &:hover {
+                border: 1px solid $hire-card-hover-border-light;
+                background-color: darken($hire-card-bg-light, 5%);
+            }
+
+            .card-title {
+                font-weight: bold;
+                word-wrap: break-word;
+                font-size: 1rem;
+
+                margin: 0px;
+            }
+            .card-content {
+                font-size: 0.8rem;
+            }
+            .order-time {
+                font-size: 0.6rem;
+                align-self: flex-end;
+                margin-bottom: -2px;
+
+                font-weight: bold;
+                color: lighten($hire-card-text-light, 40%)
+            }
+        }
+    }
 }

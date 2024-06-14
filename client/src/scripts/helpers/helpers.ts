@@ -5,9 +5,32 @@ export type base64string = string;
 
 // Capitalize first letter of each word
 export const capitalize = (s: string): string =>
-  s.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  s
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 
+export const timeSince = (date: Date): string => {
+  const now = Date.now();
+  const past = date.getTime();
+  const elapsed = now - past; // difference in milliseconds
 
+  const seconds = Math.floor(elapsed / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return days + (days === 1 ? ' day' : ' days');
+  }
+  if (hours > 0) {
+    return hours + (hours === 1 ? ' hour' : ' hours');
+  }
+  if (minutes > 0) {
+    return minutes + (minutes === 1 ? ' minute' : ' minutes');
+  }
+  return seconds + (seconds === 1 ? ' second' : ' seconds');
+};
 
 /* Notification handling
  * Notification is part of the template and thus available in all pages
@@ -22,7 +45,6 @@ export const notifColors = {
 } as const;
 export type Notification_Color = keyof typeof notifColors;
 
-
 // Hide notification
 export const hideNotification = (): void => {
   if (!notif_visible) {
@@ -35,15 +57,14 @@ export const hideNotification = (): void => {
   $('#topbar').css('margin-top', 0);
 };
 
-
 let notif_visible = false;
 const notifBar = $('#global-notification');
-let notifTimeoutId:NodeJS.Timeout | null = null;
+let notifTimeoutId: NodeJS.Timeout | null = null;
 
 /**
  * Creates a new notification with given text
- * @param text 
- * @param color 
+ * @param text
+ * @param color
  * @param timeout duration of notification in ms, defaults to 3000
  */
 export const showNotification = (
@@ -51,7 +72,6 @@ export const showNotification = (
   color: Notification_Color,
   timeout = 3000
 ): void => {
-
   // If not already visible, show notification
   if (!notif_visible) {
     notif_visible = true;
@@ -77,7 +97,6 @@ export const showNotification = (
 
 // Check if notification is visible
 export const isNotificationVisible = (): boolean => notif_visible;
-
 
 /**
  * Visual feedback for input fields
@@ -114,8 +133,6 @@ export const validateEmail = (str: string) =>
 export const validatePassword = (str: string) =>
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(str);
 
-
-
 //// File reading
 /**
  * Read image file as base64 string
@@ -139,8 +156,7 @@ export const readImage = (file: File): Promise<base64string> => {
 
     reader.readAsDataURL(file);
   });
-}
-
+};
 
 //// Component handling
 

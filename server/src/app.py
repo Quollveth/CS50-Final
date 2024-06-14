@@ -467,6 +467,28 @@ def place_order():
     db.insert(order)
     return '',200
 
+@app.route('/get-all-orders',methods=['GET'])
+@login_required
+def get_all_orders():
+    orders = db.get_orders()
+
+    if not orders:
+        return '',400
+
+    order_list = []
+
+    for order in orders:
+        order_list.append({
+            'id':order.oid,
+            'name':order.name,
+            'description':order.description,
+            'deadline':order.deadline.strftime('%Y-%m-%d'),
+            'placed':order.placed.isoformat(),
+            'recipient':order.recipient,
+        })
+
+    return jsonify(order_list),200
+
 #### Static file serving
 
 @app.route('/image/<path:filename>',methods=['GET'])
