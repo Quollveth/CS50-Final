@@ -19,11 +19,12 @@ const submitNewOrder = async () => {
         deadline: deadline,
 
         placed: new Date().toISOString(),
-        recipient: 'NONE',
         taken: false,
         completed: false,
 
-        id: 0 // Will be assigned by the server
+        // Will be assigned by the server
+        recipient: 0, 
+        id: 0
     }
     placeNewOrder(order).then((success) => {
         if(success){

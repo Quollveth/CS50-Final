@@ -284,9 +284,26 @@ export const getAvailableOrders = (): Promise<Order[]> => {
 }
 
 export const placeNewOrder = (order: Order): Promise<boolean> => {
-  // Placeholder
-  return new Promise((resolve) => {
-    resolve(true);
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.placeOrder}`,
+      method: 'POST',
+      xhrFields: {
+        withCredentials: true,
+      },
+      data: {order},
+      crossDomain: true,
+      success: () => resolve(true),
+      error: (xhr) => {
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        reject(err);      
+      },
+    });
   });
 }
 

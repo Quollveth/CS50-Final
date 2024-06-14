@@ -1,8 +1,8 @@
 export type Order = {
-  id: number;
+  id: number; // Assigned by the server
   name: string;
   description: string;
-  recipient: string;
+  recipient: number; // Assigned by the server
   deadline: string;
   placed: string;
   taken: boolean;

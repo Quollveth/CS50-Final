@@ -1,4 +1,6 @@
 # Python standard library imports
+from datetime import datetime
+from dateutil.parser import isoparse
 import os
 from enum import Enum
 from base64 import b64decode
@@ -14,9 +16,8 @@ from flask import Flask, jsonify, request, send_from_directory, session, make_re
 from flask_cors import CORS, cross_origin
 
 # Project imports
-from helpers.sql_helper import MySQL, User
+from helpers.sql_helper import MySQL, User, Order
 from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
-
 
 #### Initial setup
 IN_DOCKER = os.getenv('IN_DOCKER',False)
@@ -147,7 +148,6 @@ db = MySQL(dbConnection)
 # Extras
 app.config['STATIC_FOLDER'] = static_dir
 
-
 if IN_DEBUG:
     print()
     print('Server initialized\n')
@@ -158,8 +158,13 @@ if IN_DEBUG:
 def hello():
     return "",200
 
+#### User Management
+
 # Check if username exists in the database
-def userExists(username):
+def userExists(username:str):
+    if not username:
+        return False
+
     user = username.lower()
 
     usernames = db.get_usernames()
@@ -167,7 +172,7 @@ def userExists(username):
     for name in usernames:
         if user == name[0]:
             return True
-    
+
     return False
 
 # Verify if username exists
@@ -193,11 +198,13 @@ class RegistResult(Enum):
 
 @app.route("/register", methods=["POST"])
 def register():
-    
-    print('Received register request:')
-    keys = request.form.keys()
-    for key in keys:
-        print(f'{key}:{request.form.get(key)}')
+
+
+    if IN_DEBUG:
+        keys = request.form.keys()
+        print('Received register request:')
+        for key in keys:
+            print(f'{key}:{request.form.get(key)}')
 
     username = request.form.get('username')
     password = request.form.get('password')
@@ -253,6 +260,17 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    if IN_DEBUG:
+        print('Received login request:')
+        keys = request.form.keys()
+        for key in keys:
+            print(f'{key}:{request.form.get(key)}')
+
+    if not username or not password:
+        return jsonify({
+            'result':False
+        }),400
+
     user = db.get_user_data(username=username.lower())
 
     if not user:
@@ -272,6 +290,7 @@ def login():
 
 ##### Logout
 @app.route("/logout",methods=['GET'])
+@login_required
 def logout():
     session.clear()
     return '',200
@@ -284,6 +303,9 @@ def get_user_data():
     uid = session.get("user")
 
     user = db.get_user_data(uid=uid)
+
+    if not user:
+        return '',400
 
     # Ensure image exists
     if not os.path.exists(f'{app.config["STATIC_FOLDER"]}/{user.picture}.png'):
@@ -379,7 +401,6 @@ def validate_password():
     return '',200
 
 
-
 #### Delete user
 @app.route('/delete-user',methods=['POST'])
 @login_required
@@ -393,6 +414,60 @@ def delete_user():
     db.delete_user(uid)
 
     return '',200
+
+
+#### Order Management
+@app.route('/place-order',methods=['POST'])
+@login_required
+def place_order():
+    uid = session.get("user")
+
+    if IN_DEBUG:
+        print('Received order request:')
+        keys = request.form.keys()
+        for key in keys:
+            print(f'{key}:{request.form.get(key)}')
+        print()
+
+    name = request.form.get('order[name]')
+    description = request.form.get('order[description]')
+    deadline_str = request.form.get('order[deadline]')
+    placed_str = request.form.get('order[placed]')
+
+    if IN_DEBUG:
+        if not name:
+            print('No name')
+        if not description:
+            print('No description')
+        if not deadline_str:
+            print('No deadline')
+        if not placed_str:
+            print('No placed')
+        print()
+
+    if not name or not description or not deadline_str or not placed_str:
+        return '',400
+
+    deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+    placed = isoparse(placed_str)
+    recipient = uid
+
+    order = Order(name,description,deadline,placed,recipient)
+
+    if IN_DEBUG:
+        print('Order object created')
+        print(f'Name: {order.name}')
+        print(f'Desc: {order.description}')
+        print(f'Deadline: {order.deadline}')
+        print(f'Placed:{order.placed}')
+        print(f'Creator: {order.recipient}')
+
+        print()
+
+    db.insert(order)
+    return '',200
+
+#### Static file serving
 
 @app.route('/image/<path:filename>',methods=['GET'])
 def serve_image(filename):

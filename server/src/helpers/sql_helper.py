@@ -1,22 +1,49 @@
-from sqlalchemy import create_engine, Column, VARCHAR, Integer, Text
+from sqlalchemy import create_engine, Column, VARCHAR, Integer, Text, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, registry
+from sqlalchemy.orm import sessionmaker, registry, relationship
 
 Base = declarative_base()
 
+class Order(Base):
+    __tablename__ = "orders"
+    oid = Column("id", Integer, primary_key=True, autoincrement=True)
+    name = Column("name", Text, nullable=False)
+    description = Column("description", Text, nullable=False)
+    deadline = Column("deadline", DateTime, nullable=False)
+    placed = Column("placed", DateTime, nullable=False)
+    taken = Column("taken",Integer, nullable=False)
+    completed = Column("completed",Integer, nullable=False)
+
+    recipient = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    user = relationship("User", back_populates="orders")
+
+    def __init__(self, name, description, deadline, placed, recipient):
+        self.name = name
+        self.description = description
+        self.deadline = deadline
+        self.placed = placed
+        self.recipient = recipient
+        self.taken = 0
+        self.completed = 0
+
+
 class User(Base):
-    __tablename__ = "Users"
+    __tablename__ = "users"
     uid = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", VARCHAR(50), nullable=False)
     phash = Column("hash", Text, nullable=False)
     email = Column("email", Text, nullable=False)
     picture = Column("picture", Text, nullable=False)
 
+    orders = relationship("Order", back_populates="user")
+
     def __init__(self, name, phash, email):
         self.name = name
         self.phash = phash
         self.email = email
         self.picture = 'DEFAULT' # Means default picture
+
 
 class MySQL:
     """
@@ -55,20 +82,11 @@ class MySQL:
             "mysql://" + url + "?charset=utf8"
         )
 
-        engine = create_engine(fullUrl)
+        engine = create_engine(fullUrl, pool_recycle=3600, pool_size=10, max_overflow=20, pool_timeout=30, )
         Base.metadata.create_all(bind=engine)
         factory = sessionmaker(bind=engine)
 
         self._session = factory()
-
-    def get_usernames(self):
-        """
-        Retrieves all usernames from the database.
-
-        Returns:
-        - A list of usernames.
-        """
-        return self._session.query(User.name).all()
 
     def insert(self, object):
         """
@@ -79,6 +97,15 @@ class MySQL:
         """
         self._session.add(object)
         self._session.commit()
+
+    def get_usernames(self):
+        """
+        Retrieves all usernames from the database.
+
+        Returns:
+        - A list of usernames.
+        """
+        return self._session.query(User.name).all()
 
     def get_user_data(self, uid=None, username=None):
         """
