@@ -35,10 +35,21 @@ const initWindow = async () => {
 
     const acceptButton = $('<button>').text('Accept').addClass('accept-button');
 
+    const closeButton = $('<button>').addClass('close-button');
+    closeButton.append($('<img>').attr('src','./assets/close-svgrepo-com.svg').css('width','20px'));
+
     timeSpacer.append(time,deadline);
-    orderCard.append(orderTitle, description, recipient, timeSpacer,acceptButton);
+    orderCard.append(orderTitle, description, recipient, timeSpacer,acceptButton,closeButton);
 
     $('#order-view-page').append(orderCard);
+
+    closeButton.on('click',()=>{
+        closeWindow();
+    });
+
+    acceptButton.on('click',()=>{
+        
+    });
 }
 
 $('#reset-button').on('click', () => {
