@@ -285,7 +285,10 @@ def login():
 
     session['user'] = user.uid
 
-    return '',200
+    return jsonify({
+        'result':True,
+        'uid':user.uid
+    }),200
 
 
 ##### Logout

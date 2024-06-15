@@ -91,7 +91,11 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
  * @returns successfull login boolean
  * @throws server error
  */
-export const loginUser = (user: UserData): Promise<boolean> => {
+export const loginUser = (user: UserData)
+: Promise<{
+  status: boolean;
+  userId: number;
+}> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.login}`,
@@ -101,12 +105,15 @@ export const loginUser = (user: UserData): Promise<boolean> => {
         withCredentials: true,
       },
       crossDomain: true,
-      success: (response) => resolve(response.result),
+      success: (response) => resolve({
+        status: response.result,
+        userId: response.uid,
+      }),
       error: (xhr) => {
         const err = throwServerError(xhr, [400]);
         if(err == null){
           // Expected error, invalid credentials
-          resolve(xhr.responseJSON.result);
+          resolve({status: false, userId: -1});
           return;
         }
         reject(err)

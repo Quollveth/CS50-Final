@@ -28,11 +28,12 @@ $(function () {
 
         try {
             const result = await loginUser(data);            
-            if (result === false) {
+            if (result.status === false) {
                 showNotification('Invalid username or password', 'ERROR');
                 passwordField.val('');
                 return;
             }            
+            localStorage.setItem('uid', result.userId.toString());
             window.location.href = 'index.html'
         }
         catch (e: any){
