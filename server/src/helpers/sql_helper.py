@@ -172,3 +172,15 @@ class MySQL:
         - A list of orders.
         """
         return self._session.query(Order).all()
+
+    def get_order_data(self, oid):
+        """
+        Retrieves order data from the database.
+
+        Args:
+        - oid: The ID of the order to retrieve.
+
+        Returns:
+        - The Order object corresponding to the specified ID.
+        """
+        return self._session.query(Order).filter_by(oid=oid).first()

@@ -168,5 +168,6 @@ export const loadComponent = async (
   const directoryPath = currentURL.substring(0, currentURL.lastIndexOf('/'));
   $.get(`${directoryPath}/${componentPath}`).then((html) => {
     parent.html(html);
+    $('#reset-button').trigger('click');
   });
 };

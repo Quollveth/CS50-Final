@@ -510,5 +510,26 @@ def serve_image(filename):
     return send_from_directory(app.config['STATIC_FOLDER'],filename)
 
 
+@app.route('/get-order',methods=['GET'])
+def get_order():
+    oid = request.args['id']
+    if not oid:
+        return '',400
+
+    order = db.get_order_data(oid=oid)
+    if not order:
+        return '',400
+
+    return jsonify({
+        'id'         :order.oid,
+        'name'        :order.name,
+        'description' :order.description,
+        'deadline'    :order.deadline.strftime('%Y-%m-%d'),
+        'placed'      :order.placed.isoformat(),
+        'recipient'   :order.recipient,
+        'taken'       :order.taken,
+        'completed'   :order.completed
+    }),200
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, ssl_context=(cert_pem, key_pem), port=5000)

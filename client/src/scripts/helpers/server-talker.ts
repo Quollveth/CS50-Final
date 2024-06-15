@@ -337,6 +337,24 @@ export const placeNewOrder = (order: Order): Promise<boolean> => {
   });
 }
 
+export const getOrderDetails = (id:number): Promise<Order> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.getOrderDetails}`,
+      method: 'GET',
+      xhrFields: {
+        withCredentials: true,
+      },
+      data: { id },
+      crossDomain: true,
+      success: (response) => resolve(response),
+      error: (xhr) => {
+        reject(throwServerError(xhr))        
+      },
+    });
+  });
+}
+
 //// Document Management
 
 export const getUserDocuments = (): Promise<Document[]> => {

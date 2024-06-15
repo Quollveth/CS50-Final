@@ -1,6 +1,6 @@
 import type { Order } from '../scripts/helpers/orders';
 import { getAvailableOrders, getUserName } from '../scripts/helpers/server-talker';
-import { capitalize,timeSince } from '../scripts/helpers/helpers';
+import { capitalize,timeSince,loadComponent } from '../scripts/helpers/helpers';
 
 const cachedNames: { [key: number]: string } = {};
 
@@ -52,10 +52,13 @@ const populateOrdersPage = async () => {
     return;
   }
 
-
   orders.forEach(async (order) => {
-    console.log(order);
     const toAdd = await addOrderCard(order)
+    toAdd.on('click',(e)=>{
+      $('.selected-order').removeClass('selected-order');
+      toAdd.addClass('selected-order');
+      loadComponent('./components/order-view.html',$('#modal-holder'));
+    });
     $('#hiring-orders').append(toAdd);
   });
 };
