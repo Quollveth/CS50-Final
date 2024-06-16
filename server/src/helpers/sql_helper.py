@@ -1,8 +1,16 @@
-from sqlalchemy import create_engine, Column, VARCHAR, Integer, Text, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, VARCHAR, Integer, Text, ForeignKey, DateTime, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, registry, relationship
 
 Base = declarative_base()
+
+
+user_orders = Table(
+    'user_orders', Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('order_id', Integer, ForeignKey('orders.id'), primary_key=True)
+)
+
 
 class Order(Base):
     __tablename__ = "orders"
@@ -16,7 +24,11 @@ class Order(Base):
 
     recipient = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    user = relationship("User", back_populates="orders")
+    users = relationship(
+        "User",
+        secondary=user_orders,
+        back_populates="orders"
+    )
 
     def __init__(self, name, description, deadline, placed, recipient):
         self.name = name
@@ -36,7 +48,11 @@ class User(Base):
     email = Column("email", Text, nullable=False)
     picture = Column("picture", Text, nullable=False)
 
-    orders = relationship("Order", back_populates="user")
+    orders = relationship(
+        "Order",
+        secondary=user_orders,
+        back_populates="users"
+    )
 
     def __init__(self, name, phash, email):
         self.name = name
@@ -97,6 +113,7 @@ class MySQL:
         """
         self._session.add(object)
         self._session.commit()
+        self._session.refresh(object)
 
         ## User related functions
 
@@ -107,7 +124,9 @@ class MySQL:
         Returns:
         - A list of usernames.
         """
-        return self._session.query(User.name).all()
+        usernames = self._session.query(User.name).all()
+        
+        return usernames
 
     def get_user_data(self, uid=None, username=None):
         """
@@ -184,3 +203,50 @@ class MySQL:
         - The Order object corresponding to the specified ID.
         """
         return self._session.query(Order).filter_by(oid=oid).first()
+
+    def update_order(self, oid, new_data):
+        """
+        Updates order data in the database.
+
+        Args:
+        - oid: The ID of the order to update.
+        - new_data: A dictionary containing the new data for the order.
+        """
+        order = self._session.query(Order).filter_by(oid=oid).first()
+
+        if not order:
+            raise ValueError(f"Order with ID {oid} not found.")
+
+        for key, value in new_data.items():
+            setattr(order, key, value)
+            self._session.commit()
+
+    def take_order(self,oid,uid):
+        """
+        Assigns a order to a user
+        Multiple users can take the same order
+
+        Keyword arguments:
+        oid -- Order ID
+        uid -- User ID
+
+        Raises:
+        ValueError -- If the order or user is not found
+        ValueError -- If the user is already associated with the order
+        """
+        order = self._session.query(Order).filter_by(oid=oid).first()
+        user = self._session.query(User).filter_by(uid=uid).first()
+
+        if not order:
+            raise ValueError(f"Order with ID {oid} not found.")
+
+        if not user:
+            raise ValueError(f"User with ID {uid} not found.")
+
+        if user not in order.users:
+            order.users.append(user)
+            self._session.commit()
+            return
+
+        raise ValueError(f"User with ID {uid} is already associated with order ID {oid}.")
+        

@@ -506,6 +506,27 @@ def get_all_orders():
 
     return jsonify(order_list),200
 
+@app.route('/take-in-order',methods=['POST'])
+@login_required
+def take_in_order():
+    oid = request.form.get('id')
+    uid = session.get("user")
+
+    if not oid:
+        return '',400
+    if not uid:
+        return '',400
+
+    order = db.get_order_data(oid=oid)
+    if not order:
+        return '',400
+    
+    db.take_order(oid,uid)
+
+    return  '',200
+
+
+
 #### Static file serving
 
 @app.route('/image/<path:filename>',methods=['GET'])

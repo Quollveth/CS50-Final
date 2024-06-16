@@ -2,15 +2,9 @@ import type { Order } from '../scripts/helpers/orders';
 import { getAvailableOrders, getUserName } from '../scripts/helpers/server-talker';
 import { capitalize,timeSince,loadComponent } from '../scripts/helpers/helpers';
 
-const cachedNames: { [key: number]: string } = {};
-
 const addOrderCard = async (order: Order) => {
 
-    if(cachedNames[order.recipient] === undefined){
-      const name = await getUserName(order.recipient);
-      cachedNames[order.recipient] = name;
-    }
-    const recipientName = cachedNames[order.recipient];
+    const recipientName = await getUserName(order.recipient);
 
     const cardBody = $('<div>', {
       id: 'order-' + order.id,

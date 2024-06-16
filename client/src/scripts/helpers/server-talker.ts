@@ -91,11 +91,7 @@ export const registerUser = (user: UserData): Promise<RegistResult> => {
  * @returns successfull login boolean
  * @throws server error
  */
-export const loginUser = (user: UserData)
-: Promise<{
-  status: boolean;
-  userId: number;
-}> => {
+export const loginUser = (user: UserData): Promise<{status: boolean;userId: number;}> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.login}`,
@@ -273,7 +269,14 @@ export const deleteUser = (password:string): Promise<boolean> => {
   });
 }
 
+const cachedNames: { [key: number]: string } = {};
 export const getUserName = (id:number): Promise<string> => {
+  if(cachedNames[id] != undefined){
+    return new Promise((resolve) => {
+      resolve(cachedNames[id]);
+    });
+  }
+
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.getUserName}`,
@@ -359,6 +362,30 @@ export const getOrderDetails = (id:number): Promise<Order> => {
         reject(throwServerError(xhr))        
       },
     });
+  });
+}
+
+export const takeInOrder = (oid:number): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.takeInOrder}`,
+      method: 'POST',
+      xhrFields: {
+        withCredentials: true,
+      },
+      data: { oid },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: (xhr) => {
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        reject(err);      
+      },
+    })
   });
 }
 

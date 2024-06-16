@@ -19,6 +19,7 @@ export const Routes = {
   placeOrder: '/place-order', // Place new order
   getAllOrders: '/get-all-orders', // Get all orders
   getOrderDetails: '/get-order', // Get details of a specific order
+  takeInOrder: '/take-in-order', // Take in an order
 } as const;
 
 export const maxImageSize = 5 * 1024 * 1024; // 5MB

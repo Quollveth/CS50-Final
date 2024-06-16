@@ -1,5 +1,6 @@
 import { getOrderDetails, getUserName } from "../scripts/helpers/server-talker";
 import { timeSince,capitalize } from "../scripts/helpers/helpers";
+import { showNotification } from "../scripts/helpers/helpers";
 
 const closeWindow = () => {
     $('.selected-order').removeClass('selected-order');
@@ -48,6 +49,12 @@ const initWindow = async () => {
     });
 
     acceptButton.on('click',()=>{
+        const loggedUser = localStorage.getItem('uid');
+        if(orderDetails.recipient == parseInt(loggedUser!)){
+            showNotification('You cannot accept your own request','ERROR');
+            closeWindow();
+            return;
+        }
         
     });
 }
