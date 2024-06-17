@@ -299,7 +299,20 @@ export const getUserName = (id:number): Promise<string> => {
 export const getUserOrders = (): Promise<Order[]> => {
   // Placeholder
   return new Promise((resolve) => {
-    resolve([]);
+    $.ajax({
+      url: `${SERVER_IP}${Routes.getUserOrders}`,
+      method: 'GET',
+      xhrFields: {
+        withCredentials: true,
+      },
+      crossDomain: true,
+      success: (response) => {
+        resolve(response);
+      },
+      error: (xhr) => {
+        throwServerError(xhr);
+      },
+    })
   });
 }
 

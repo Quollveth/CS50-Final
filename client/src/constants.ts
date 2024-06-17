@@ -20,6 +20,8 @@ export const Routes = {
   getAllOrders: '/get-all-orders', // Get all orders
   getOrderDetails: '/get-order', // Get details of a specific order
   takeInOrder: '/take-in-order', // Take in an order
+  getUserOrders: '/get-user-orders', // Get all orders of a specific user
+  getOrderUsers: '/get-order-users', // Get all users of a specific order
 } as const;
 
 export const maxImageSize = 5 * 1024 * 1024; // 5MB

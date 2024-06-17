@@ -206,6 +206,45 @@ class MySQL:
         """
         return self._session.query(Order).filter_by(oid=oid).first()
 
+    def get_user_orders(self,uid):
+        """
+        Retrieves all orders associated with a user
+        
+        Keyword arguments:
+        uid -- User ID
+
+        Returns:
+        A list of orders
+
+        Raises:
+        ValueError -- If the user is not found
+        """
+        user = self._session.query(User).filter(User.uid == uid).one_or_none()
+        if not user:
+            raise ValueError(f"User with id {uid} not found")
+
+        return user.orders
+    
+    def get_order_users(self,oid):
+        """
+        Retrieves all users associated with an order
+        
+        Keyword arguments:
+        oid -- Order ID
+
+        Returns:
+        A list of users
+
+        Raises:
+        ValueError -- If the order is not found
+        """
+        order = self._session.query(Order).filter(Order.oid == oid).one_or_none()
+        if not order:
+            raise ValueError(f"Order with id {oid} not found")
+
+        return order.users
+        
+
     def update_order(self, oid, new_data):
         """
         Updates order data in the database.

@@ -551,6 +551,32 @@ def take_in_order():
     return  '',200
 
 
+#### Get all orders assigned to user
+@app.route('/get-user-orders',methods=['GET'])
+@login_required
+def get_user_orders():
+    uid = session.get("user")
+
+    orders = db.get_user_orders(uid)
+    if not orders:
+        return '',400
+
+    order_list = []
+
+    for order in orders:
+        order_list.append({
+            'id':order.oid,
+            'name':order.name,
+            'description':order.description,
+            'deadline':order.deadline.strftime('%Y-%m-%d'),
+            'placed':order.placed.isoformat(),
+            'recipient':order.recipient,
+            'taken':order.taken,
+            'completed':order.completed
+        })
+
+    return jsonify(order_list),200
+
 ####### Static file serving
 
 @app.route('/image/<path:filename>',methods=['GET'])
