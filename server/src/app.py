@@ -158,7 +158,7 @@ if IN_DEBUG:
 def hello():
     return "",200
 
-#### User Management
+####### User Management
 
 # Check if username exists in the database
 def userExists(username:str):
@@ -433,7 +433,8 @@ def get_username():
         'username':data.name
     }),200
 
-#### Order Management
+####### Order Management
+
 @app.route('/place-order',methods=['POST'])
 @login_required
 def place_order():
@@ -484,6 +485,7 @@ def place_order():
     db.insert(order)
     return '',200
 
+#### Get all available orders
 @app.route('/get-all-orders',methods=['GET'])
 @login_required
 def get_all_orders():
@@ -506,34 +508,7 @@ def get_all_orders():
 
     return jsonify(order_list),200
 
-@app.route('/take-in-order',methods=['POST'])
-@login_required
-def take_in_order():
-    oid = request.form.get('id')
-    uid = session.get("user")
-
-    if not oid:
-        return '',400
-    if not uid:
-        return '',400
-
-    order = db.get_order_data(oid=oid)
-    if not order:
-        return '',400
-    
-    db.take_order(oid,uid)
-
-    return  '',200
-
-
-
-#### Static file serving
-
-@app.route('/image/<path:filename>',methods=['GET'])
-def serve_image(filename):
-    return send_from_directory(app.config['STATIC_FOLDER'],filename)
-
-
+#### Get specific order
 @app.route('/get-order',methods=['GET'])
 def get_order():
     oid = request.args['id']
@@ -554,6 +529,34 @@ def get_order():
         'taken'       :order.taken,
         'completed'   :order.completed
     }),200
+
+#### Assign order to user
+@app.route('/take-in-order',methods=['POST'])
+@login_required
+def take_in_order():
+    oid = request.form.get('oid')
+    uid = session.get("user")
+
+    if not oid:
+        return '',400
+    if not uid:
+        return '',400
+
+    order = db.get_order_data(oid=oid)
+    if not order:
+        return '',400
+
+    db.take_order(oid,uid)
+
+    return  '',200
+
+
+####### Static file serving
+
+@app.route('/image/<path:filename>',methods=['GET'])
+def serve_image(filename):
+    return send_from_directory(app.config['STATIC_FOLDER'],filename)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, ssl_context=(cert_pem, key_pem), port=5000)

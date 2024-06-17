@@ -1,4 +1,4 @@
-import { getOrderDetails, getUserName } from "../scripts/helpers/server-talker";
+import { getOrderDetails, getUserName, takeInOrder } from "../scripts/helpers/server-talker";
 import { timeSince,capitalize } from "../scripts/helpers/helpers";
 import { showNotification } from "../scripts/helpers/helpers";
 
@@ -55,7 +55,20 @@ const initWindow = async () => {
             closeWindow();
             return;
         }
-        
+
+        takeInOrder(orderDetails.id).then((success)=>{
+            if(success){
+                showNotification('Order accepted!','SUCCESS');
+                closeWindow();
+            }else{
+                showNotification('Something went wrong','ERROR');
+                closeWindow();
+            }
+        }).catch((err)=>{
+            showNotification(err,'ERROR');
+            closeWindow();
+        });
+
     });
 }
 

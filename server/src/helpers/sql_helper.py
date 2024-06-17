@@ -115,7 +115,7 @@ class MySQL:
         self._session.commit()
         self._session.refresh(object)
 
-        ## User related functions
+    ###### User related functions
 
     def get_usernames(self):
         """
@@ -125,7 +125,7 @@ class MySQL:
         - A list of usernames.
         """
         usernames = self._session.query(User.name).all()
-        
+
         return usernames
 
     def get_user_data(self, uid=None, username=None):
@@ -165,6 +165,7 @@ class MySQL:
         for key, value in new_data.items():
             setattr(user, key, value)
             self._session.commit()
+        self._session.refresh(user)
 
     def delete_user(self,uid):
         """
@@ -180,8 +181,9 @@ class MySQL:
 
         self._session.delete(user)
         self._session.commit()
+        self._session.refresh(user)
 
-        ### Orders related functions
+    ###### Orders related functions
 
     def get_orders(self):
         """
@@ -220,6 +222,7 @@ class MySQL:
         for key, value in new_data.items():
             setattr(order, key, value)
             self._session.commit()
+            self._session.refresh(order)
 
     def take_order(self,oid,uid):
         """
@@ -246,6 +249,7 @@ class MySQL:
         if user not in order.users:
             order.users.append(user)
             self._session.commit()
+            self._session.refresh(order)
             return
 
         raise ValueError(f"User with ID {uid} is already associated with order ID {oid}.")
