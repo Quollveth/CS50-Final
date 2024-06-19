@@ -334,7 +334,13 @@ class MySQL:
 
         self.__cache.invalidate_user(uid)
         with self.__factory() as session:
-            session.query(User).filter_by(uid=uid).update(newData)
+            session.query(User).filter_by(uid=uid).update({
+                User.uid: uid,
+                User.name: newData.name,
+                User.phash: newData.phash,
+                User.email: newData.email,
+                User.picture: newData.picture
+            })
             session.commit()
 
     def update_order(self, oid, newData):

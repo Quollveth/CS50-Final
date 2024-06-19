@@ -118,8 +118,8 @@ CORS(
 
 # HTTPS stuff
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-cert_pem = app_dir + '/localhost.pem'
-key_pem = app_dir + '/localhost.key'
+cert_pem = os.path.join(app_dir, 'localhost.pem')
+key_pem = os.path.join(app_dir, 'localhost.key')
 
 if IN_DEBUG:
     print(f'Cert: {cert_pem}')
@@ -323,59 +323,66 @@ def get_user_data():
 def update_user_data():
     uid = session.get("user")
 
-    # Get current data
-    curr = db.query_user(uid=uid)
+    if IN_DEBUG:
+        print(f'Received update request for user {uid}:')
+        keys = request.form.keys()
+        for key in keys:
+            print(f'{key}:{request.form.get(key)}')
+        print()
 
-    # Save image to static folder
-    image = request.form.get('picture')
-    # TODO: Have this receive a file instead of a base64 string
+    current_user = db.query_user(uid=uid)
+    if not current_user:
+        return '',400
+
+    username = request.form.get('username',current_user.name)
+    email = current_user.email
+    phash = current_user.phash
+
+    # Upload image
+    image = request.files.get('picture',None)
     if image:
-        imageId = str(uuid.uuid4())
-        binaryData = b64decode(image)
-        with open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png','wb') as f:
-            f.write(binaryData)
+        if IN_DEBUG:
+            print('Received image')
 
-            # Check if image is valid
+        if image.content_type != 'image/png':
+            if IN_DEBUG:
+                print('Invalid image type')
+            return '',400
+
+        newImageName = str(uuid.uuid4())
+        image.save(f'{app.config["STATIC_FOLDER"]}/{newImageName}.png')
+
+        if IN_DEBUG:
+            print(f'Image saved as {newImageName}.png')
+
+        # Delete old image
+        if current_user.picture != 'DEFAULT':
             try:
-                img = Image.open(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
-
-                if img.format != 'PNG':
-                    os.remove(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
-                    imageId = 'DEFAULT'
-                    print('Image must be a png')
-                    return '',400
-
-                # Resize image
-                img.thumbnail((600,600))
-                img.close()
-
+                os.remove(f'{app.config["STATIC_FOLDER"]}/{current_user.picture}.png')
+                if IN_DEBUG:
+                    print(f'Deleted {current_user.picture}.png')
             except Exception as e:
                 print(e)
-                os.remove(f'{app.config["STATIC_FOLDER"]}/{imageId}.png')
-                imageId = 'DEFAULT'
-                print('Invalid file type')
-                return '',400
+                if IN_DEBUG:
+                    print('Failed to delete old image')
 
-    else:
-        imageId = curr.picture
+    picture = newImageName if image else current_user.picture
 
-    username = request.form.get('username')
+    # Update user
+    newData = User(
+        name=username,
+        email=email,
+        phash=phash,
+        picture=picture
+    )
 
-    if username:
-        if not validateUsername(username):
-            print('Invalid username')
-            return '',400
+    if IN_DEBUG:
+        print('Updating user data')
+        print(f'Name: {username}')
+        print(f'Email: {email}')
+        print(f'Picture: {picture}')
 
-        if userExists(username) and username.lower() != curr.name.lower():
-            print('Username already exists')
-            return '',400
-    else:
-        username = curr.name
-
-    # Update user data
-    new_data = User(username,curr.phash,curr.email,imageId)
-
-    db.update_user(uid,new_data)
+    db.update_user(uid,newData)
 
     return '',200
 
