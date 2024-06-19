@@ -1,31 +1,57 @@
 <div id="darken"></div>
 <div id="profile-edit-page">
-    <img id="close-btn" style="width:30px;height:30px;" src="./assets/close-svgrepo-com.svg">
-    <div>
-        <div id="picture-container">
-            <img id="profile-pic" src="https://placehold.co/180">
-            <div>
-                <input type="file" id="profile-pic-input" hidden>
-                <button id="upload-pic"><img id="upload-symbol" style="width:50px;height:50px;" src="./assets/upload-svgrepo-com.svg"></button>
-            </div>
-        </div>
-        <div id="username-container">
-            <input class="user-form" type="text" id="username-input" placeholder="Username">
-            <button id="check-name">Check</button>
-        </div>
-    </div>
-    <div id="buttons">
-        <button class="user-form" id="save-profile">Save</button>
-        <button class="user-form delete-btn" id="delete-profile">Dele profile</button>
-    </div>
-    <div class="hidden" id="confirm-delete">
-        <strong>You are about to delete your profile!</strong>
+  <img
+    id="close-btn"
+    style="width: 30px; height: 30px"
+    src="./assets/close-svgrepo-com.svg"
+  />
+  <div>
+    <form id="edit-profile-form">
+      <div id="picture-container">
+        <img id="profile-pic" src="https://placehold.co/180" />
         <div>
-            <p>Type your password to confirm</p>
-            <div>
-                <input class="user-form" type="password" id="password-input" placeholder="Password">
-                <button class="user-form delete-btn" id="confirm-delete-btn">Delete</button>
-            </div>
+          <input type="file" id="profile-pic-input" hidden />
+          <button id="upload-pic">
+            <img
+              id="upload-symbol"
+              style="width: 50px; height: 50px"
+              src="./assets/upload-svgrepo-com.svg"
+            />
+          </button>
         </div>
+      </div>
+      <div id="username-container">
+        <input
+          class="user-form"
+          type="text"
+          id="username-input"
+          placeholder="Username"
+        />
+        <button id="check-name">Check</button>
+      </div>
+    </form>
+  </div>
+  <div id="buttons">
+    <button class="user-form" id="save-profile">Save</button>
+    <button class="user-form delete-btn" id="delete-profile">
+      Dele profile
+    </button>
+  </div>
+  <div class="hidden" id="confirm-delete">
+    <strong>You are about to delete your profile!</strong>
+    <div>
+      <p>Type your password to confirm</p>
+      <div>
+        <input
+          class="user-form"
+          type="password"
+          id="password-input"
+          placeholder="Password"
+        />
+        <button class="user-form delete-btn" id="confirm-delete-btn">
+          Delete
+        </button>
+      </div>
     </div>
+  </div>
 </div>

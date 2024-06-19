@@ -104,25 +104,15 @@ function start_modal() {
       return;
     }
 
-    let picture = '';
-    try {
-      picture = await readImage(imageData);
-    } catch (e) {
-      if (e instanceof FileError) {
-        if (imageData !== undefined) {
-          showNotification('Failed to read image', 'ERROR');
-          return;
-        } else {
-          /* Ignore and move on */
-        }
-      }
-      // Other error, rethrow, in theory shouldn't happen 🤷‍♀️
-      throw e;
+    const formData = new FormData();
+    formData.append('username', username);
+    if (imageData) {
+      formData.append('picture', imageData);
     }
 
-    console.log({ username, picture });
+    console.log(formData);
 
-    const result = await updateUserData({ username, picture });
+    const result = await updateUserData(formData);
     if (result) {
       showNotification('Profile updated', 'SUCCESS');
     } else {

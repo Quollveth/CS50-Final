@@ -179,18 +179,14 @@ export const getUserData = (): Promise<UserData> => {
  * @throws auth error on unauthenticated user
  * @throws server error
  */
-export const updateUserData = (
-  data: {
-    username:string,
-    picture:base64string;
-  }
-): Promise<boolean> => {
+export const updateUserData = (form:FormData): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.updateUserData}`,
       method: 'POST',
-      //TODO: Have upload a file instead of a base64 string
-      data: data,
+      data: form,
+      contentType: false,
+      processData: false,
       xhrFields: {
         withCredentials: true,
       },
