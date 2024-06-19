@@ -220,7 +220,7 @@ class MySQL:
         if not uid and not username:
             raise ValueError("Must query by either uid or username")
 
-        if uid and uid in self.__cache.users:
+        if uid and self.__cache.users.get(uid):
             return self.__cache.users[uid]
 
         with self.__factory() as session:
@@ -228,6 +228,7 @@ class MySQL:
                 uData = session.query(User).filter_by(uid=uid).first()
             else:
                 uData = session.query(User).filter_by(name=username).first()
+        self.__cache.users[uid] = uData
         return uData
 
     def query_all_users(self):
@@ -257,9 +258,7 @@ class MySQL:
             raise ValueError("Must specify order id")
 
         if oid in self.__cache.orders:
-            print("Cache hit")
             return self.__cache.orders[oid]
-        print("Cache miss")
 
         with self.__factory() as session:
             oData = session.query(Order).filter_by(oid=oid).first()
@@ -312,6 +311,28 @@ class MySQL:
             users = session.query(Order).filter_by(oid=oid).first().users
         return users
 
+    def query_user_placed_orders(self, uid):
+        """Query all orders placed by a user from the database
+
+        Keyword arguments:
+        uid -- the user id to query
+
+        Returns:
+        List of Order objects
+
+        Raises:
+        ValueError -- if uid is not specified
+        """
+        if not uid:
+            raise ValueError("Must specify user id")
+        with self.__factory() as session:
+            orders = (
+                session.query(Order)
+                .filter_by(recipient=uid)
+                .all()
+            )
+        return orders
+
     ## Update ##
 
     def update_user(self, uid, newData):
@@ -362,7 +383,16 @@ class MySQL:
 
         self.__cache.invalidate_order(oid)
         with self.__factory() as session:
-            session.query(Order).filter_by(oid=oid).update(newData)
+            session.query(Order).filter_by(oid=oid).update({
+                Order.oid: oid,
+                Order.name: newData.name,
+                Order.description: newData.description,
+                Order.deadline: newData.deadline,
+                Order.placed: newData.placed,
+                Order.taken: newData.taken,
+                Order.completed: newData.completed,
+                Order.recipient: newData.recipient
+            })
             session.commit()
 
     ## Delete ##

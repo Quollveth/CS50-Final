@@ -410,13 +410,41 @@ def validate_password():
 @login_required
 def delete_user():
     uid = session.get("user")
+    if IN_DEBUG:
+        print(f'Received delete request for user {uid}')
+
     password = request.form.get('password')
     user = db.query_user(uid=uid)
     if not check_password_hash(user.phash,password):
+        if IN_DEBUG:
+            print('Invalid password')
         return '',400
 
-    db.delete_user(uid)
 
+    # Delete image
+    if user.picture != 'DEFAULT':
+        try:
+            os.remove(f'{app.config["STATIC_FOLDER"]}/{user.picture}.png')
+            if IN_DEBUG:
+                print(f'Deleted {user.picture}.png')
+        except Exception as e:
+            print(e)
+            if IN_DEBUG:
+                print('Failed to delete profile image') 
+
+    # Delete all user orders
+    orders = db.query_user_placed_orders(uid)
+
+    for order in orders:
+        db.delete_order(order.oid)
+        if IN_DEBUG:
+            print(f'Deleted order {order.oid}')
+
+    ## TODO: Update orders that were taken by user
+
+    # Delete user
+    db.delete_user(uid)
+    
     return '',200
 
 
@@ -483,19 +511,21 @@ def place_order():
 
         print()
 
-    db.insert(order)
+    db.insert_order(order)
     return '',200
 
 #### Get all available orders
 @app.route('/get-all-orders',methods=['GET'])
 @login_required
 def get_all_orders():
-    orders = db.get_orders()
+    orders = db.query_all_orders()
 
     if not orders:
         return '',400
 
     order_list = []
+
+    #TODO: Remove expired orders
 
     for order in orders:
         order_list.append({
@@ -516,7 +546,7 @@ def get_order():
     if not oid:
         return '',400
 
-    order = db.get_order_data(oid=oid)
+    order = db.query_order(oid=oid)
     if not order:
         return '',400
 
@@ -543,11 +573,11 @@ def take_in_order():
     if not uid:
         return '',400
 
-    order = db.get_order_data(oid=oid)
+    order = db.query_order(oid)
     if not order:
         return '',400
 
-    db.take_order(oid,uid)
+    db.insert_user_order(uid,oid)
 
     return  '',200
 
@@ -558,7 +588,7 @@ def take_in_order():
 def get_user_orders():
     uid = session.get("user")
 
-    orders = db.get_user_orders(uid)
+    orders = db.query_user_orders(uid)
     if not orders:
         return '',400
 
