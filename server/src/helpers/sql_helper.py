@@ -1,4 +1,13 @@
-from sqlalchemy import create_engine, Column, VARCHAR, Integer, Text, ForeignKey, DateTime, Table
+from sqlalchemy import (
+    create_engine,
+    Column,
+    VARCHAR,
+    Integer,
+    Text,
+    ForeignKey,
+    DateTime,
+    Table,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, registry, relationship
 
@@ -6,9 +15,10 @@ Base = declarative_base()
 
 
 user_orders = Table(
-    'user_orders', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('order_id', Integer, ForeignKey('orders.id'), primary_key=True)
+    "user_orders",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("order_id", Integer, ForeignKey("orders.id"), primary_key=True),
 )
 
 
@@ -19,16 +29,12 @@ class Order(Base):
     description = Column("description", Text, nullable=False)
     deadline = Column("deadline", DateTime, nullable=False)
     placed = Column("placed", DateTime, nullable=False)
-    taken = Column("taken",Integer, nullable=False)
-    completed = Column("completed",Integer, nullable=False)
+    taken = Column("taken", Integer, nullable=False)
+    completed = Column("completed", Integer, nullable=False)
 
     recipient = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    users = relationship(
-        "User",
-        secondary=user_orders,
-        back_populates="orders"
-    )
+    users = relationship("User", secondary=user_orders, back_populates="orders")
 
     def __init__(self, name, description, deadline, placed, recipient):
         self.name = name
@@ -48,248 +54,345 @@ class User(Base):
     email = Column("email", Text, nullable=False)
     picture = Column("picture", Text, nullable=False)
 
-    orders = relationship(
-        "Order",
-        secondary=user_orders,
-        back_populates="users"
-    )
+    orders = relationship("Order", secondary=user_orders, back_populates="users")
 
-    def __init__(self, name, phash, email):
+    def __init__(self, name, phash, email, picture = "DEFAULT"):
         self.name = name
         self.phash = phash
         self.email = email
-        self.picture = 'DEFAULT' # Means default picture
+        self.picture = picture
+
+
+class dbCache:
+    def __init__(self):
+        self.users = {}
+        self.orders = {}
+
+    def clear(self):
+        self.users = {}
+        self.orders = {}
+
+    def invalidate_user(self, uid):
+        if uid in self.users:
+            del self.users[uid]
+
+    def invalidate_order(self, oid):
+        if oid in self.orders:
+            del self.orders[oid]
 
 
 class MySQL:
     """
     A simple wrapper around SQLAlchemy for MySQL database.
-
-    Attributes:
-    - session: The session object for database querying.
-
-    Methods:
-    - __init__(self, url): Initializes the MySQL object.
-    - get_usernames(self): Retrieves all usernames from the database.
-    - insert(self, object): Inserts an object into the database.
-    - get_user_data(self, uid=None, username=None): Retrieves user data from the database.
-    - update_user(self, uid, new_data): Updates user data in the database.
     """
 
-    @property
-    def session(self):
-        return self._session
-
-    @session.setter
-    def session(self, any):
-        raise AttributeError("Cannot overwrite session attribute")
-
     def __init__(self, url):
-        """
-        Initializes the MySQL object.
+        """Initialize the MySQL object.
 
-        Args:
-        - url: The connection URL for the MySQL database.
-
-        Returns:
-        - MySQL object for database querying.
+        Keyword arguments:
+        url -- the database URL in the format "user:password@host:port/database" not including the "mysql://" prefix
         """
-        fullUrl = (
-            "mysql://" + url + "?charset=utf8"
+
+        fullUrl = "mysql://" + url + "?charset=utf8"
+        engine = create_engine(
+            fullUrl,
+            pool_recycle=3600,
+            pool_size=10,
+            max_overflow=20,
+            pool_timeout=30,
         )
-
-        engine = create_engine(fullUrl, pool_recycle=3600, pool_size=10, max_overflow=20, pool_timeout=30, )
         Base.metadata.create_all(bind=engine)
-        factory = sessionmaker(bind=engine)
+        self.__factory = sessionmaker(bind=engine, expire_on_commit=True)
+        self.__cache = dbCache()
 
-        self._session = factory()
+    #### Enforce read-only session factory and cache ####
 
-    def insert(self, object):
+    @property
+    def factory(self):
+        return self.__session
+
+    @factory.setter
+    def factory(self, value):
+        raise AttributeError("Cannot set session attribute")
+
+    @factory.deleter
+    def factory(self):
+        raise AttributeError("Cannot delete session attribute")
+
+    @property
+    def cache(self):
+        return self.__cache
+
+    @cache.setter
+    def cache(self, value):
+        raise AttributeError("Cannot set cache attribute")
+
+    @cache.deleter
+    def cache(self):
+        raise AttributeError("Cannot delete cache attribute, use clear_cache()")
+
+    def clear_cache(self):
+        self.__cache.clear()
+
+    #### Operations ####
+
+    ## Insert ##
+    def insert_user(self, user):
+        """Insert a user object into the database.
+
+        Arguments:
+        user -- user object to insert
+
+        Raises:
+        ValueError -- if user is not a User object
         """
-        Inserts an object into the database.
+        if not isinstance(user, User):
+            raise ValueError("Must insert User object")
 
-        Args:
-        - object: The object to be inserted into the database.
+        self.__cache.invalidate_user(user.uid)
+
+        with self.__factory() as session:
+            session.add(user)
+            session.commit()
+
+    def insert_order(self, order):
+        """Insert a order object into the database.
+
+        Arguments:
+        order -- order object to insert
+
+        Raises:
+        ValueError -- if order is not a Order object
         """
-        self._session.add(object)
-        self._session.commit()
-        self._session.refresh(object)
+        if not isinstance(order, Order):
+            raise ValueError("Must insert Order object")
 
-    ###### User related functions
+        self.__cache.invalidate_order(order.oid)
+        with self.__factory() as session:
+            session.add(order)
+            session.commit()
 
-    def get_usernames(self):
+    def insert_user_order(self, uid, oid):
+        """Insert a user-order relationship into the database.
+
+        Arguments:
+        uid -- user id
+        oid -- order id
+
+        Raises:
+        ValueError -- if either uid or oid is not specified
         """
-        Retrieves all usernames from the database.
+        if not uid or not oid:
+            raise ValueError("Must specify both user and order id")
+
+        with self.__factory() as session:
+            if uid in self.__cache.users and oid in self.__cache.orders:
+                user = self.__cache.users[uid]
+                order = self.__cache.orders[oid]
+            else:
+                user = session.query(User).filter_by(uid=uid).first()
+                order = session.query(Order).filter_by(oid=oid).first()
+
+            user.orders.append(order)
+            session.commit()
+
+            self.__cache.invalidate_user(uid)
+            self.__cache.invalidate_order(oid)
+
+    ## Query ##
+
+    def query_user(self, uid=None, username=None):
+        """Query the database for a user object.
+
+        Keyword arguments:
+        uid -- the user id to query
+        username -- the username to query
 
         Returns:
-        - A list of usernames.
-        """
-        usernames = self._session.query(User.name).all()
+        User object if found, None otherwise
 
-        return usernames
-
-    def get_user_data(self, uid=None, username=None):
-        """
-        Retrieves user data from the database.
-
-        Args:
-        - uid: The ID of the user to retrieve.
-        - username: The username of the user to retrieve.
-
-        Returns:
-        - The User object corresponding to the specified ID or username.
+        Raises:
+        ValueError -- if both uid and username are specified
+        ValueError -- if neither uid nor username are specified
         """
         if uid and username:
-            raise ValueError("Cannot specify both uid and username")
+            raise ValueError("Cannot query by both uid and username")
+        if not uid and not username:
+            raise ValueError("Must query by either uid or username")
 
-        if uid:
-            return self._session.query(User).filter_by(uid=uid).first()
-        if username:
-            return self._session.query(User).filter_by(name=username).first()
+        if uid and uid in self.__cache.users:
+            return self.__cache.users[uid]
 
-        raise ValueError("Must specify either uid or username")
+        with self.__factory() as session:
+            if uid:
+                uData = session.query(User).filter_by(uid=uid).first()
+            else:
+                uData = session.query(User).filter_by(name=username).first()
+        return uData
 
-    def update_user(self, uid, new_data):
-        """
-        Updates user data in the database.
-
-        Args:
-        - uid: The ID of the user to update.
-        - new_data: A dictionary containing the new data for the user.
-        """
-        user = self._session.query(User).filter_by(uid=uid).first()
-
-        if not user:
-            raise ValueError(f"User with ID {uid} not found.")
-
-        for key, value in new_data.items():
-            setattr(user, key, value)
-            self._session.commit()
-        self._session.refresh(user)
-
-    def delete_user(self,uid):
-        """
-        Deletes a user from the database.
-
-        Args:
-        - uid: The ID of the user to delete.
-        """
-        user = self._session.query(User).filter_by(uid=uid).first()
-
-        if not user:
-            raise ValueError(f"User with ID {uid} not found.")
-
-        self._session.delete(user)
-        self._session.commit()
-        self._session.refresh(user)
-
-    ###### Orders related functions
-
-    def get_orders(self):
-        """
-        Retrieves all orders from the database.
+    def query_all_users(self):
+        """Query all users from the database
 
         Returns:
-        - A list of orders.
+        List of User objects
         """
-        return self._session.query(Order).all()
+        with self.__factory() as session:
+            users = session.query(User).all()
+        return users
 
-    def get_order_data(self, oid):
-        """
-        Retrieves order data from the database.
-
-        Args:
-        - oid: The ID of the order to retrieve.
-
-        Returns:
-        - The Order object corresponding to the specified ID.
-        """
-        return self._session.query(Order).filter_by(oid=oid).first()
-
-    def get_user_orders(self,uid):
-        """
-        Retrieves all orders associated with a user
-        
-        Keyword arguments:
-        uid -- User ID
-
-        Returns:
-        A list of orders
-
-        Raises:
-        ValueError -- If the user is not found
-        """
-        user = self._session.query(User).filter(User.uid == uid).one_or_none()
-        if not user:
-            raise ValueError(f"User with id {uid} not found")
-
-        return user.orders
-    
-    def get_order_users(self,oid):
-        """
-        Retrieves all users associated with an order
-        
-        Keyword arguments:
-        oid -- Order ID
-
-        Returns:
-        A list of users
-
-        Raises:
-        ValueError -- If the order is not found
-        """
-        order = self._session.query(Order).filter(Order.oid == oid).one_or_none()
-        if not order:
-            raise ValueError(f"Order with id {oid} not found")
-
-        return order.users
-        
-
-    def update_order(self, oid, new_data):
-        """
-        Updates order data in the database.
-
-        Args:
-        - oid: The ID of the order to update.
-        - new_data: A dictionary containing the new data for the order.
-        """
-        order = self._session.query(Order).filter_by(oid=oid).first()
-
-        if not order:
-            raise ValueError(f"Order with ID {oid} not found.")
-
-        for key, value in new_data.items():
-            setattr(order, key, value)
-            self._session.commit()
-            self._session.refresh(order)
-
-    def take_order(self,oid,uid):
-        """
-        Assigns a order to a user
-        Multiple users can take the same order
+    def query_order(self, oid):
+        """Query the database for a order object.
 
         Keyword arguments:
-        oid -- Order ID
-        uid -- User ID
+        oid -- the order id to query
+
+        Returns:
+        Order object if found, None otherwise
 
         Raises:
-        ValueError -- If the order or user is not found
-        ValueError -- If the user is already associated with the order
+        ValueError -- if oid is not specified
         """
-        order = self._session.query(Order).filter_by(oid=oid).first()
-        user = self._session.query(User).filter_by(uid=uid).first()
 
-        if not order:
-            raise ValueError(f"Order with ID {oid} not found.")
+        if not oid:
+            raise ValueError("Must specify order id")
 
-        if not user:
-            raise ValueError(f"User with ID {uid} not found.")
+        if oid in self.__cache.orders:
+            print("Cache hit")
+            return self.__cache.orders[oid]
+        print("Cache miss")
 
-        if user not in order.users:
-            order.users.append(user)
-            self._session.commit()
-            self._session.refresh(order)
-            return
+        with self.__factory() as session:
+            oData = session.query(Order).filter_by(oid=oid).first()
+            self.__cache.orders[oid] = oData
+        return oData
 
-        raise ValueError(f"User with ID {uid} is already associated with order ID {oid}.")
-        
+    def query_all_orders(self):
+        """Query all orders from the database
+
+        Returns:
+        List of Order objects
+        """
+        with self.__factory() as session:
+            orders = session.query(Order).all()
+        return orders
+
+    def query_user_orders(self, uid):
+        """Query all orders for a user from the database
+
+        Keyword arguments:
+        uid -- the user id to query
+
+        Returns:
+        List of Order objects
+
+        Raises:
+        ValueError -- if uid is not specified
+        """
+        if not uid:
+            raise ValueError("Must specify user id")
+        with self.__factory() as session:
+            orders = session.query(User).filter_by(uid=uid).first().orders
+        return orders
+
+    def query_order_users(self, oid):
+        """Query all users for a order from the database
+
+        Keyword arguments:
+        oid -- the order id to query
+
+        Returns:
+        List of User objects
+
+        Raises:
+        ValueError -- if oid is not specified
+        """
+        if not oid:
+            raise ValueError("Must specify order id")
+        with self.__factory() as session:
+            users = session.query(Order).filter_by(oid=oid).first().users
+        return users
+
+    ## Update ##
+
+    def update_user(self, uid, newData):
+        """Update a user object in the database.
+
+        Keyword arguments:
+        uid -- the user id to update
+        newData -- the new user object to update with
+
+        Raises:
+        ValueError -- if newData is not a User object
+        ValueError -- if uid is not specified
+        """
+
+        if not isinstance(newData, User):
+            raise ValueError("Must update with User object")
+
+        if not uid:
+            raise ValueError("Must specify user id")
+
+        self.__cache.invalidate_user(uid)
+        with self.__factory() as session:
+            session.query(User).filter_by(uid=uid).update(newData)
+            session.commit()
+
+    def update_order(self, oid, newData):
+        """Update a order object in the database.
+
+        Keyword arguments:
+        oid -- the order id to update
+        newData -- the new order object to update with
+
+        Raises:
+        ValueError -- if newData is not a Order object
+        ValueError -- if oid is not specified
+        """
+        if not isinstance(newData, Order):
+            raise ValueError("Must update with Order object")
+
+        if not oid:
+            raise ValueError("Must specify order id")
+
+        self.__cache.invalidate_order(oid)
+        with self.__factory() as session:
+            session.query(Order).filter_by(oid=oid).update(newData)
+            session.commit()
+
+    ## Delete ##
+    def delete_user(self, uid):
+        """Delete a user object from the database.
+
+        Keyword arguments:
+        uid -- the user id to delete
+
+        Raises:
+        ValueError -- if uid is not specified
+        """
+
+        if not uid:
+            raise ValueError("Must specify user id")
+
+        self.__cache.invalidate_user(uid)
+        with self.__factory() as session:
+            session.query(User).filter_by(uid=uid).delete()
+            session.commit()
+
+    def delete_order(self, oid):
+        """Delete a order object from the database.
+
+        Keyword arguments:
+        oid -- the order id to delete
+
+        Raises:
+        ValueError -- if oid is not specified
+        """
+        if not oid:
+            raise ValueError("Must specify order id")
+
+        self.__cache.invalidate_order(oid)
+        with self.__factory() as session:
+            session.query(Order).filter_by(oid=oid).delete()
+            session.commit()
+
+# }

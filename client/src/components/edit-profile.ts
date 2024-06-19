@@ -49,7 +49,7 @@ function start_modal() {
     closeModal();
   });
 
-  // Get current image
+  // Get current data
   getUserData().then((data) => {
     $('#profile-pic').attr('src', data.picture!);
     $('#username-input').val(data.username as string);
@@ -57,6 +57,9 @@ function start_modal() {
 
   // Upload image
   imageInput.on('change', () => {
+
+    //TODO: Have upload a file instead of a base64 string
+  
     const file = imageInput.prop('files')[0];
     const reader = new FileReader();
     reader.onload = (e) => {

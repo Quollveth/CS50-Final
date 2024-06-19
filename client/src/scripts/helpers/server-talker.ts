@@ -189,6 +189,7 @@ export const updateUserData = (
     $.ajax({
       url: `${SERVER_IP}${Routes.updateUserData}`,
       method: 'POST',
+      //TODO: Have upload a file instead of a base64 string
       data: data,
       xhrFields: {
         withCredentials: true,

@@ -167,12 +167,8 @@ def userExists(username:str):
 
     user = username.lower()
 
-    usernames = db.get_usernames()
-
-    for name in usernames:
-        if user == name[0]:
-            return True
-
+    if db.query_user(username=user):
+        return True
     return False
 
 # Verify if username exists
@@ -245,7 +241,7 @@ def register():
     )
 
     # DB Insertion
-    db.insert(userData)
+    db.insert_user(userData)
 
     return jsonify({
         'result':RegistResult.SUCCESS.value
@@ -271,7 +267,7 @@ def login():
             'result':False
         }),400
 
-    user = db.get_user_data(username=username.lower())
+    user = db.query_user(username=username.lower())
 
     if not user:
         return jsonify({
@@ -305,7 +301,7 @@ def logout():
 def get_user_data():
     uid = session.get("user")
 
-    user = db.get_user_data(uid=uid)
+    user = db.query_user(uid=uid)
 
     if not user:
         return '',400
@@ -328,10 +324,11 @@ def update_user_data():
     uid = session.get("user")
 
     # Get current data
-    curr = db.get_user_data(uid=uid)
+    curr = db.query_user(uid=uid)
 
     # Save image to static folder
     image = request.form.get('picture')
+    # TODO: Have this receive a file instead of a base64 string
     if image:
         imageId = str(uuid.uuid4())
         binaryData = b64decode(image)
@@ -376,10 +373,7 @@ def update_user_data():
         username = curr.name
 
     # Update user data
-    new_data = {
-        'name':username,
-        'picture':imageId,
-    }
+    new_data = User(username,curr.phash,curr.email,imageId)
 
     db.update_user(uid,new_data)
 
@@ -396,8 +390,8 @@ def validate_password():
 
     if not password:
         return '',400
-    
-    user = db.get_user_data(uid=uid)
+
+    user = db.query_user(uid=uid)
     if not check_password_hash(user.phash,password):
         return '',400
 
@@ -410,7 +404,7 @@ def validate_password():
 def delete_user():
     uid = session.get("user")
     password = request.form.get('password')
-    user = db.get_user_data(uid=uid)
+    user = db.query_user(uid=uid)
     if not check_password_hash(user.phash,password):
         return '',400
 
@@ -425,7 +419,7 @@ def get_username():
     if not id:
         return '',400
 
-    data = db.get_user_data(uid=uid)
+    data = db.query_user(uid=uid)
     if not data:
         return '',400
 
