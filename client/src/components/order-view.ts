@@ -49,7 +49,7 @@ const initWindow = async () => {
     });
 
     acceptButton.on('click',()=>{
-        const loggedUser = localStorage.getItem('uid');
+        const loggedUser = sessionStorage.getItem('uid');
         if(orderDetails.recipient == parseInt(loggedUser!)){
             showNotification('You cannot accept your own request','ERROR');
             closeWindow();

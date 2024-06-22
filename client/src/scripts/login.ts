@@ -33,7 +33,7 @@ $(function () {
                 passwordField.val('');
                 return;
             }            
-            localStorage.setItem('uid', result.userId.toString());
+            sessionStorage.setItem('uid', result.userId.toString());
             window.location.href = 'index.html'
         }
         catch (e: any){
