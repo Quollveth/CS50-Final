@@ -1,5 +1,5 @@
 import type { Order } from '../scripts/helpers/orders';
-import { capitalize } from '../scripts/helpers/helpers';
+import { capitalize, dateFormat } from '../scripts/helpers/helpers';
 import type { Document } from '../scripts/helpers/documents';
 import { getUserOrders, getUserDocuments, getUserName } from '../scripts/helpers/server-talker';
 
@@ -84,12 +84,15 @@ const createCard = async (order: Order) => {
     class: 'card-content',
   });
   const recipient = $('<p>', {
-    text: 'For ' + recipientName,
+    text: 'For ' + capitalize(recipientName),
   });
   const deadline = $('<p>', {
-    text: 'Deadline: ' + order.deadline,
+    text: 'Deadline: ' + dateFormat(order.deadline),
   });
 
+  cardBody.on('click',()=>{
+    console.log(`Clicked on order ${order.id}`);
+  })
 
   cardContent.append(recipient, deadline);
   cardBody.append(cardTitle, cardContent);

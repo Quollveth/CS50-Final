@@ -32,6 +32,14 @@ export const timeSince = (date: Date): string => {
   return seconds + (seconds === 1 ? ' second' : ' seconds');
 };
 
+
+export const dateFormat = (date:string) => {
+  // The date is in the format yyyy-mm-dd
+  const [year, month, day] = date.split('-');
+  return `${day}/${month}/${year}`;
+}
+
+
 /* Notification handling
  * Notification is part of the template and thus available in all pages
  *

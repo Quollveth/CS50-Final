@@ -1,9 +1,8 @@
 import type { Order } from '../scripts/helpers/orders';
 import { getAvailableOrders, getUserName } from '../scripts/helpers/server-talker';
-import { capitalize,timeSince,loadComponent } from '../scripts/helpers/helpers';
+import { capitalize,timeSince,loadComponent, dateFormat } from '../scripts/helpers/helpers';
 
 const addOrderCard = async (order: Order) => {
-
     const recipientName = await getUserName(order.recipient);
 
     const cardBody = $('<div>', {
@@ -21,7 +20,7 @@ const addOrderCard = async (order: Order) => {
       text: 'By:   ' + capitalize(recipientName),
     });
     const deadline = $('<p>', {
-      text: 'Deadline: ' + order.deadline,
+      text: 'Deadline: ' + dateFormat(order.deadline),
     });
     const time = $('<p>', {
       class: 'order-time',
