@@ -1,7 +1,7 @@
 import type { Order } from '../scripts/helpers/orders';
 import { capitalize } from '../scripts/helpers/helpers';
 import type { Document } from '../scripts/helpers/documents';
-import { getUserOrders, getUserDocuments } from '../scripts/helpers/server-talker';
+import { getUserOrders, getUserDocuments, getUserName } from '../scripts/helpers/server-talker';
 
 //// Orders carousel
 let orderIndex = 0;
@@ -69,7 +69,9 @@ $('.prev').on('click', () => {
  * @param order Order object data
  * @returns Top level card element
  */
-const createCard = (order: Order) => {
+const createCard = async (order: Order) => {
+  const recipientName = await getUserName(order.recipient);
+
   const cardBody = $('<div>', {
     id: 'order-' + order.id,
     class: 'card-body',
@@ -82,12 +84,11 @@ const createCard = (order: Order) => {
     class: 'card-content',
   });
   const recipient = $('<p>', {
-    text: 'For ' + order.recipient,
+    text: 'For ' + recipientName,
   });
   const deadline = $('<p>', {
-    text: 'Deadline: ' + order.deadline.substring(0,order.deadline.indexOf('T')),
+    text: 'Deadline: ' + order.deadline,
   });
-
 
 
   cardContent.append(recipient, deadline);
@@ -153,24 +154,23 @@ const createNavigator = () => {
 }
 
 
-const buildCarousel = (orderList: Order[]) => {
+const buildCarousel = async (orderList: Order[]) => {
   let ordersInSlide = 0;
   let currentSlide = addCarouselItem(null, false);
 
-  orderList.forEach((order) => {
-    // Create card
-    const currentCard = createCard(order);
+  for (const order of orderList) {
+      // Create card
+      const currentCard = await createCard(order);
+      currentSlide.append(currentCard);
+      ordersInSlide++;
 
-    currentSlide.append(currentCard);
-    ordersInSlide++;
-
-    // If card is full create a new one
-    if (ordersInSlide == ordersPerSlide) {
-        $('.carousel-inner').append(currentSlide);
-        currentSlide = addCarouselItem(null, false);
-        ordersInSlide = 0;
-    }
-  });
+      // If card is full create a new one
+      if (ordersInSlide == ordersPerSlide) {
+          $('.carousel-inner').append(currentSlide[0]);
+          currentSlide = addCarouselItem(null, false);
+          ordersInSlide = 0;
+      }
+  }
   // Append last slide
   if(ordersInSlide > 0){
     $('.carousel-inner').append(currentSlide);

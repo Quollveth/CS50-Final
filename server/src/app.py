@@ -573,6 +573,9 @@ def take_in_order():
     if not uid:
         return '',400
 
+    if IN_DEBUG:
+        print(f'Received request to assign order {oid} to user {uid}')
+
     order = db.query_order(oid)
     if not order:
         return '',400
