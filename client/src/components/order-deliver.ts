@@ -1,5 +1,5 @@
-import { getOrderDetails, getUserName, takeInOrder } from "../scripts/helpers/server-talker";
-import { timeSince,capitalize } from "../scripts/helpers/helpers";
+import { getOrderDetails, getUserName } from "../scripts/helpers/server-talker";
+import { timeSince,capitalize,sizeFormat } from "../scripts/helpers/helpers";
 
 const closeWindow = () => {
     $('.selected-order').removeClass('selected-order');
@@ -52,19 +52,26 @@ const initWindow = async () => {
         $('<img>').attr('src','./assets/upload-svgrepo-com.svg').css('width','20px')
     );
 
-    const fileInfo = $('<div>').addClass('file-info').text('No file uploaded').append(uploadTrigger);
+    const fileInfo = $('<p>').text('No file selected');
+    const fileDisplay = $('<div>').addClass('file-info').append(uploadTrigger,fileInfo);
 
     timeSpacer.append(time,deadline);
     const submitSpacer = $('<div>').addClass('submit-spacer');
 
     const submitConfirm = $('<p>').addClass('submit-confirm').addClass('hidden').text('Press again to confirm.');
-    submitSpacer.append(uploadFile,fileInfo,$('<div>').append(submitButton,submitConfirm));
+    submitSpacer.append(uploadFile,fileDisplay,$('<div>').append(submitButton,submitConfirm));
 
     orderCard.append(orderTitle, description, recipient, submitSpacer, timeSpacer,cancelButton,cancelConfirm,closeButton);
     $('#order-deliver-page').append(orderCard);
 
     closeButton.on('click',()=>{
         closeWindow();
+    });
+
+    uploadFile.on('change',()=>{
+        const file = (uploadFile[0] as HTMLInputElement).files![0];
+
+        fileInfo.text(`${file.name} - ${sizeFormat(file.size)}`);
     });
 
     cancelButton.on('click',()=>{

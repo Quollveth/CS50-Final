@@ -32,7 +32,18 @@ export const timeSince = (date: Date): string => {
   return seconds + (seconds === 1 ? ' second' : ' seconds');
 };
 
+// Format size in bytes to KB or MB
+export const sizeFormat = (size: number): string => {
+  if (size < 1024) {
+    return size + ' bytes';
+  }
+  if (size < 1024 * 1024) {
+    return (size / 1024).toFixed(1) + ' KB';
+  }
+  return (size / (1024 * 1024)).toFixed(1) + ' MB';
+}
 
+// Format date from yyyy-mm-dd to dd/mm/yyyy
 export const dateFormat = (date:string) => {
   // The date is in the format yyyy-mm-dd
   const [year, month, day] = date.split('-');
