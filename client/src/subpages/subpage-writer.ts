@@ -1,5 +1,5 @@
 import type { Order } from '../scripts/helpers/orders';
-import { capitalize, dateFormat } from '../scripts/helpers/helpers';
+import { capitalize, dateFormat, loadComponent } from '../scripts/helpers/helpers';
 import type { Document } from '../scripts/helpers/documents';
 import { getUserOrders, getUserDocuments, getUserName } from '../scripts/helpers/server-talker';
 
@@ -91,7 +91,10 @@ const createCard = async (order: Order) => {
   });
 
   cardBody.on('click',()=>{
-    console.log(`Clicked on order ${order.id}`);
+    sessionStorage.setItem('selectedOrder',order.id.toString());
+    $('.selected-order').removeClass('selected-order');
+    cardBody.addClass('selected-order');
+    loadComponent('./components/order-deliver.html',$('#modal-holder'));
   })
 
   cardContent.append(recipient, deadline);

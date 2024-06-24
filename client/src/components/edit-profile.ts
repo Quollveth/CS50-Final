@@ -56,10 +56,7 @@ function start_modal() {
   });
 
   // Upload image
-  imageInput.on('change', () => {
-
-    //TODO: Have upload a file instead of a base64 string
-  
+  imageInput.on('change', () => {  
     const file = imageInput.prop('files')[0];
     const reader = new FileReader();
     reader.onload = (e) => {
