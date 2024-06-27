@@ -59,6 +59,7 @@ class Submission(Base):
     __tablename__ = "submissions"
     uid = Column(Integer, ForeignKey('users.id'), primary_key=True)
     oid = Column(Integer, ForeignKey('orders.id'), primary_key=True)
+    index = Column(Integer, primary_key=True, autoincrement=True)
     filename = Column(Text, nullable=False)
 
     user = relationship("User")
