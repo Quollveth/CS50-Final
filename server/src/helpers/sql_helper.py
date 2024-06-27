@@ -13,15 +13,6 @@ from sqlalchemy.orm import sessionmaker, registry, relationship
 
 Base = declarative_base()
 
-
-user_orders = Table(
-    "user_orders",
-    Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
-    Column("order_id", Integer, ForeignKey("orders.id"), primary_key=True),
-)
-
-
 class Order(Base):
     __tablename__ = "orders"
     oid = Column("id", Integer, primary_key=True, autoincrement=True)
@@ -34,7 +25,7 @@ class Order(Base):
 
     recipient = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    users = relationship("User", secondary=user_orders, back_populates="orders")
+    users = relationship("User", secondary="user_orders", back_populates="orders")
 
     def __init__(self, name, description, deadline, placed, recipient):
         self.name = name
@@ -44,7 +35,7 @@ class Order(Base):
         self.recipient = recipient
         self.taken = 0
         self.completed = 0
-
+###
 
 class User(Base):
     __tablename__ = "users"
@@ -54,14 +45,37 @@ class User(Base):
     email = Column("email", Text, nullable=False)
     picture = Column("picture", Text, nullable=False)
 
-    orders = relationship("Order", secondary=user_orders, back_populates="users")
+    orders = relationship("Order", secondary="user_orders", back_populates="users")
 
     def __init__(self, name, phash, email, picture = "DEFAULT"):
         self.name = name
         self.phash = phash
         self.email = email
         self.picture = picture
+###
 
+### Association tables ###
+class Submission(Base):
+    __tablename__ = "submissions"
+    uid = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    oid = Column(Integer, ForeignKey('orders.id'), primary_key=True)
+    filename = Column(Text, nullable=False)
+
+    user = relationship("User")
+    order = relationship("Order")
+
+    def __init__(self, uid, oid, filename):
+        self.uid = uid
+        self.oid = oid
+        self.filename = filename
+###
+
+user_orders = Table(
+    "user_orders",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("order_id", Integer, ForeignKey("orders.id"), primary_key=True),
+)
 
 class dbCache:
     def __init__(self):
@@ -79,7 +93,7 @@ class dbCache:
     def invalidate_order(self, oid):
         if oid in self.orders:
             del self.orders[oid]
-
+###
 
 class MySQL:
     """
@@ -198,6 +212,26 @@ class MySQL:
 
             self.__cache.invalidate_user(uid)
             self.__cache.invalidate_order(oid)
+
+    def insert_submission(self, submission):
+        """Insert a submission object into the database.
+
+        Arguments:
+        submission -- submission object to insert
+
+        Raises:
+        ValueError -- if submission is not a Submission object
+        """
+        if not isinstance(submission, Submission):
+            raise ValueError("Must insert Submission object")
+
+        print('Inserting submission')
+        print(submission)
+        print(submission.uid, submission.oid, submission.filename)
+            
+        with self.__factory() as session:
+            session.add(submission)
+            session.commit()
 
     ## Query ##
 
@@ -431,4 +465,5 @@ class MySQL:
             session.query(Order).filter_by(oid=oid).delete()
             session.commit()
 
+    ########
 # }

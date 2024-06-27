@@ -1,5 +1,5 @@
-import { getOrderDetails, getUserName } from "../scripts/helpers/server-talker";
-import { timeSince,capitalize,sizeFormat } from "../scripts/helpers/helpers";
+import { getOrderDetails, getUserName, cancelOrder, submitOrder } from "../scripts/helpers/server-talker";
+import { timeSince,capitalize,sizeFormat, showNotification } from "../scripts/helpers/helpers";
 
 const closeWindow = () => {
     $('.selected-order').removeClass('selected-order');
@@ -74,21 +74,49 @@ const initWindow = async () => {
         fileInfo.text(`${file.name} - ${sizeFormat(file.size)}`);
     });
 
-    cancelButton.on('click',()=>{
+    cancelButton.on('click',async ()=>{
         if(cancelConfirm.hasClass('hidden')){
             cancelConfirm.removeClass('hidden');
             return;
         }
-        //TODO: Cancel order
+
+        const result = await cancelOrder(orderDetails.id);
+        if(result == false){
+            showNotification('Something went wrong','ERROR');
+            return;
+        }
+        showNotification('Order cancelled','SUCCESS');
+
         closeWindow();
     });
 
-    submitButton.on('click',()=>{
+    submitButton.on('click',async ()=>{
         if(submitConfirm.hasClass('hidden')){
             submitConfirm.removeClass('hidden');
             return;
         }
         //TODO: Submit file
+        const formData = new FormData();
+        const file = (uploadFile[0] as HTMLInputElement).files![0];
+
+        if(file == undefined){
+            showNotification('No file selected','ERROR');
+            submitConfirm.addClass('hidden');
+            return;
+        }
+
+        formData.append('file',file);
+        formData.append('order',orderDetails.id.toString());
+
+        console.log(formData);
+        const result = await submitOrder(formData);
+
+        if(result == false){
+            showNotification('Something went wrong','ERROR');
+            return;
+        }
+        showNotification('Order submitted','SUCCESS');
+
         closeWindow();
     })
 }

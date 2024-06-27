@@ -399,6 +399,39 @@ export const takeInOrder = (oid:number): Promise<boolean> => {
   });
 }
 
+export const cancelOrder = (oid:number): Promise<boolean> => {
+  return new Promise((resolve) => {
+    //TODO: Implement cancel order
+    resolve(false);
+  })
+}
+
+export const submitOrder = (form:FormData): Promise<boolean> => {
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${SERVER_IP}${Routes.submitOrder}`,
+      method: 'POST',
+      data: form,
+      contentType: false,
+      processData: false,
+      xhrFields: {
+        withCredentials: true,
+      },
+      crossDomain: true,
+      success: () => resolve(true),
+      error: (xhr) => {
+        const err = throwServerError(xhr, [400]);
+        if(err == null){
+          // Expected error
+          resolve(false);
+          return;
+        }
+        throw err;
+      },
+    })
+  });
+}
+
 //// Document Management
 
 export const getUserDocuments = (): Promise<Document[]> => {

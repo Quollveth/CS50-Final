@@ -16,7 +16,7 @@ from flask import Flask, jsonify, request, send_from_directory, session, make_re
 from flask_cors import CORS, cross_origin
 
 # Project imports
-from helpers.sql_helper import MySQL, User, Order
+from helpers.sql_helper import MySQL, User, Order, Submission
 from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 #### Initial setup
@@ -71,6 +71,15 @@ if IN_DOCKER:
 else:
     static_dir = os.path.abspath(f'{(base_dir)}/static/')    # From base go up to static
 
+## Subpaths in static folder
+submission_folder = os.path.join(static_dir,'submissions')
+if not os.path.exists(submission_folder):
+    os.makedirs(submission_folder)
+
+profile_folder = os.path.join(static_dir,'profile')
+if not os.path.exists(profile_folder):
+    os.makedirs(profile_folder)
+
 if IN_DEBUG:
     print(f'App dir: {app_dir}')
     print(f'Base dir: {base_dir}')
@@ -86,7 +95,7 @@ if IN_DOCKER:
             print('Created static folder')
 
     source_file = os.path.abspath(os.path.join(base_dir, 'app', 'static', 'DEFAULT.png'))
-    destination_file = os.path.join(static_dir, 'DEFAULT.png')
+    destination_file = os.path.join(profile_folder, 'DEFAULT.png')
 
     if IN_DEBUG:
         print(f'Source: {source_file}')
@@ -610,6 +619,51 @@ def get_user_orders():
         })
 
     return jsonify(order_list),200
+
+
+#### Submit file to order
+@app.route('/submit-order',methods=['POST'])
+@login_required
+def submit_order():
+    uid = session.get("user")
+
+    if IN_DEBUG:
+        print('Received file submission request:')
+        keys = request.form.keys()
+        for key in keys:
+            print(f'{key}:{request.form.get(key)}')
+        print()
+
+    document = request.files.get('file',None)
+    if not document:
+        return '',400
+
+    oid = request.form.get('order')
+    if not oid:
+        return '',400
+
+    # Validate file
+    #TODO: Validate file
+
+    # Upload file
+    extension = document.filename.split('.')[-1]
+
+    newFileName = str(uuid.uuid4())
+    document.save(f'{app.config["STATIC_FOLDER"]}/submissions/{newFileName}.{extension}')
+
+    if IN_DEBUG:
+        print(f'File saved as {newFileName}.pdf')
+
+    sub = Submission(
+        uid=uid,
+        oid=oid,
+        filename=newFileName
+    )
+
+    db.insert_submission(sub)
+
+    return '',200
+
 
 ####### Static file serving
 
