@@ -160,7 +160,7 @@ export const getUserData = (): Promise<UserData> => {
           username: response.username,
           password: undefined, // The server doesn't store it in plain text or sends it back, don't worry, it's just here to keep typescript happy
           email: response.email,
-          picture: `${SERVER_IP}${Routes.image}/${response.picture}`,
+          picture: `${SERVER_IP}${Routes.profile_picture}/${response.picture}`,
         }
 
         resolve(data);

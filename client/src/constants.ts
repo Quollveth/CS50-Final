@@ -2,7 +2,8 @@ export const SERVER_IP = 'https://127.0.0.1:5000';
 
 export const Routes = {
   healthCheck: '/health', // Health check
-  image: '/image', // Image cdn
+  // CDN
+  profile_picture: '/prof-pic',
 
   /// User management
   login: '/login', // Login form

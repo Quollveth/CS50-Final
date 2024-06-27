@@ -19,6 +19,6 @@ testing/
 docker-volume/
 
 static/
-!static/DEFAULT.png
+!static/profile/DEFAULT.png
 server/src/localhost.key
 server/src/localhost.pem

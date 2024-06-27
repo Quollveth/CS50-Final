@@ -316,7 +316,7 @@ def get_user_data():
         return '',400
 
     # Ensure image exists
-    if not os.path.exists(f'{app.config["STATIC_FOLDER"]}/{user.picture}.png'):
+    if not os.path.exists(f'{profile_folder}/{user.picture}.png'):
         user.picture = 'DEFAULT'
 
     return jsonify({
@@ -359,7 +359,7 @@ def update_user_data():
             return '',400
 
         newImageName = str(uuid.uuid4())
-        image.save(f'{app.config["STATIC_FOLDER"]}/{newImageName}.png')
+        image.save(f'{profile_folder/{newImageName}.png}')
 
         if IN_DEBUG:
             print(f'Image saved as {newImageName}.png')
@@ -367,7 +367,7 @@ def update_user_data():
         # Delete old image
         if current_user.picture != 'DEFAULT':
             try:
-                os.remove(f'{app.config["STATIC_FOLDER"]}/{current_user.picture}.png')
+                os.remove(f'{profile_folder/{current_user.picture}.png}')
                 if IN_DEBUG:
                     print(f'Deleted {current_user.picture}.png')
             except Exception as e:
@@ -433,7 +433,7 @@ def delete_user():
     # Delete image
     if user.picture != 'DEFAULT':
         try:
-            os.remove(f'{app.config["STATIC_FOLDER"]}/{user.picture}.png')
+            os.remove(f'{profile_folder/{user.picture}.png}')
             if IN_DEBUG:
                 print(f'Deleted {user.picture}.png')
         except Exception as e:
@@ -649,7 +649,7 @@ def submit_order():
     extension = document.filename.split('.')[-1]
 
     newFileName = str(uuid.uuid4())
-    document.save(f'{app.config["STATIC_FOLDER"]}/submissions/{newFileName}.{extension}')
+    document.save(f'{submission_folder}/{newFileName}.{extension}')
 
     if IN_DEBUG:
         print(f'File saved as {newFileName}.pdf')
@@ -667,9 +667,9 @@ def submit_order():
 
 ####### Static file serving
 
-@app.route('/image/<path:filename>',methods=['GET'])
+@app.route('/prof-pic/<path:filename>',methods=['GET'])
 def serve_image(filename):
-    return send_from_directory(app.config['STATIC_FOLDER'],filename)
+    return send_from_directory(profile_folder,filename)
 
 
 if __name__ == "__main__":
