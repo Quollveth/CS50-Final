@@ -294,7 +294,6 @@ export const getUserName = (id:number): Promise<string> => {
 //// Order Management
 
 export const getUserOrders = (): Promise<Order[]> => {
-  // Placeholder
   return new Promise((resolve) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.getUserOrders}`,
@@ -313,8 +312,14 @@ export const getUserOrders = (): Promise<Order[]> => {
   });
 }
 
+export const getUserPlacedOrders = (): Promise<Order[]> => {
+  // TODO: Implement
+  return new Promise((resolve) => {
+    resolve([]);
+  });
+}
+
 export const getAvailableOrders = (): Promise<Order[]> => {
-  // Placeholder
   return new Promise((resolve,reject) => {
     $.ajax({
       url: `${SERVER_IP}${Routes.getAllOrders}`,

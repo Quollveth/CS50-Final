@@ -1,36 +1,78 @@
+@import './styles.scss';
+
 #subpage-home {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: start;
     gap: 10px;
 
-    #new-order{
-        margin-top: 50px;
-        border: 1px solid black;
+    #orders {
+        margin-left: 30px;
+    }
 
-        padding: 20px;
+    #orders-header {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: start;
         align-items: center;
-        justify-content: center;
-        gap: 5px;
+        gap: 20px;
+        
+        button {
+            width: 30px;
+            height: 30px;
+            border-radius: 100%;
+            font-size: 16px;
+            border: none;
+            background-color: $button-bg-light;
+            color: $button-text-light;
+            cursor: pointer;
 
-        width: 600px;
-        height: 200px;
-        #order-name {
-            width: 100%;
+            transition: all 0.2s ease-in-out;
+            &:hover{
+                background-color: $button-bg-hover-light;
+                width: 40px;
+                height: 40px;
+                margin-left: -5px;
+            }
         }
-        #order-description {
-            width: 100%;
-            height: 100%;
-            resize: none;
-        }
-        >div {
-            width: 100%;
-            align-self: flex-start;
+    }
+
+    #order-list-head {
+        display: flex;
+        flex-direction: row;
+        height: 20px;
+        gap: 20px;
+
+        ul {
             display: flex;
-            justify-content: space-between;
+            flex-direction: row;
+            gap: 50px;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                font-weight: bold;
+                width: 100px;
+                height: 40px;
+                cursor: pointer;
+
+                text-align: center;
+
+                //border: 1px solid red;
+            }
+        }
+
+        select {
+            width: 100px;
+            height: 40px;
+            font-size: 16px;
+            border: 1px solid $separator-color;
+
+            option {
+                font-size: 16px;
+            }
         }
     }
 }
