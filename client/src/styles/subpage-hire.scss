@@ -113,12 +113,39 @@
         }
     }
 
-    .accept-button{
-        width: 40%;
-        height: 30px;
-        border: none;
-        border-radius: 5px;
+    .accept-spacer {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        gap: 10px;
+        align-items: center;
+        .accept-button{
+            width: 40%;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+        }
+        .quote-input {
+            width: 60%;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+
+            &:focus {
+                outline: none;
+            }
+            // remove number spinner
+            appearance: textfield;
+            -moz-appearance: textfield;
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
     }
+
 
     .close-button{
         position: absolute;

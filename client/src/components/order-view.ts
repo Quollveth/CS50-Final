@@ -29,18 +29,22 @@ const initWindow = async () => {
     });
     const name = await getUserName(orderDetails.recipient);
 
-    const recipient = $('<h5>').text(`By:: ${capitalize(name)}`);
+    const recipient = $('<h5>').text(`By: ${capitalize(name)}`);
     const deadline = $('<p>').text(`Deadline: ${orderDetails.deadline}`).attr('id', 'deadline');
 
     const timeSpacer = $('<div>').addClass('time-spacer');
 
+    const acceptSpacer = $('<div>').addClass('accept-spacer');
     const acceptButton = $('<button>').text('Accept').addClass('accept-button');
+    const quote = $('<input>').attr('type','number').attr('placeholder','$').addClass('quote-input').attr('min','0').attr('max','1000000').attr('step','100');
+    const quoteLabel = $('<label>').text('Quote:').attr('for','quote').addClass('quote-label');
+    acceptSpacer.append(acceptButton,quoteLabel,quote);
 
     const closeButton = $('<button>').addClass('close-button');
     closeButton.append($('<img>').attr('src','./assets/close-svgrepo-com.svg').css('width','20px'));
 
     timeSpacer.append(time,deadline);
-    orderCard.append(orderTitle, description, recipient, timeSpacer,acceptButton,closeButton);
+    orderCard.append(orderTitle, description, recipient, timeSpacer,acceptSpacer,closeButton);
 
     $('#order-view-page').append(orderCard);
 
