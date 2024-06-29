@@ -3,6 +3,7 @@ from sqlalchemy import (
     Column,
     VARCHAR,
     Integer,
+    Number,
     Text,
     ForeignKey,
     DateTime,
@@ -11,73 +12,157 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, registry, relationship
 
+import datetime
+
 Base = declarative_base()
 
-class Order(Base):
-    __tablename__ = "orders"
-    oid = Column("id", Integer, primary_key=True, autoincrement=True)
-    name = Column("name", Text, nullable=False)
-    description = Column("description", Text, nullable=False)
-    deadline = Column("deadline", DateTime, nullable=False)
-    placed = Column("placed", DateTime, nullable=False)
-    taken = Column("taken", Integer, nullable=False)
-    completed = Column("completed", Integer, nullable=False)
 
-    recipient = Column(Integer, ForeignKey("users.id"), nullable=False)
+##### SCHEMA #####
 
-    users = relationship("User", secondary="user_orders", back_populates="orders")
-
-    def __init__(self, name, description, deadline, placed, recipient):
-        self.name = name
-        self.description = description
-        self.deadline = deadline
-        self.placed = placed
-        self.recipient = recipient
-        self.taken = 0
-        self.completed = 0
-###
+### BASE TABLES ###    
 
 class User(Base):
     __tablename__ = "users"
-    uid = Column("id", Integer, primary_key=True, autoincrement=True)
-    name = Column("name", VARCHAR(50), nullable=False)
-    phash = Column("hash", Text, nullable=False)
-    email = Column("email", Text, nullable=False)
-    picture = Column("picture", Text, nullable=False)
 
-    orders = relationship("Order", secondary="user_orders", back_populates="users")
+    uid = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(VARCHAR(50), nullable=False)
+    phash = Column(VARCHAR(255), nullable=False)
+    email = Column(VARCHAR(50), nullable=False)
+    picture = Column(VARCHAR(255), nullable=False)
 
-    def __init__(self, name, phash, email, picture = "DEFAULT"):
+    def __init__(self, name, phash, email, picture='DEFAULT'):
         self.name = name
         self.phash = phash
         self.email = email
         self.picture = picture
-###
 
-### Association tables ###
-class Submission(Base):
-    __tablename__ = "submissions"
-    uid = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    oid = Column(Integer, ForeignKey('orders.id'), primary_key=True)
-    index = Column(Integer, primary_key=True, autoincrement=True)
-    filename = Column(Text, nullable=False)
 
-    user = relationship("User")
-    order = relationship("Order")
+class Order(Base):
+        __tablename__ = "orders"
 
-    def __init__(self, uid, oid, filename):
+        oid = Column(Integer, primary_key=True, autoincrement=True)
+        name = Column(VARCHAR(50), nullable=False)
+        description = Column(Text, nullable=False)
+        deadline = Column(DateTime, nullable=False)
+        placed = Column(DateTime, nullable=False)
+        completed = Column(Integer, nullable=True)
+
+    def __init__(self, name, description, deadline):
+        self.name = name
+        self.description = description
+        self.deadline = deadline
+
+        self.placed = datetime.now()
+        self.completed = 0
+
+
+class Documents(Base):
+    __tablename__ = "documents"
+
+    did = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(VARCHAR(50), nullable=False)
+    filename = Column(VARCHAR(255), nullable=False)
+    extension = Column(VARCHAR(10), nullable=False)
+
+    def __init__(self, title, filename):
+        self.title = title
+        self.filename = filename
+        self.extension = filename.split('.')[-1]
+
+### RELATIONSHIP TABLES ###
+    
+class TakenOrders(Base):
+    __tablename__ = "takenOrders"
+
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    oid = Column(Integer, ForeignKey("orders.oid"), primary_key=True)
+
+    user = relationship("User", back_populates="takenOrders")
+    order = relationship("Order", back_populates="takenOrders")
+
+    def __init__(self, uid, oid):
         self.uid = uid
         self.oid = oid
-        self.filename = filename
-###
+    
 
-user_orders = Table(
-    "user_orders",
-    Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
-    Column("order_id", Integer, ForeignKey("orders.id"), primary_key=True),
-)
+class PlacedOrders(Base):
+    __tablename__ = "placedOrders"
 
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    oid = Column(Integer, ForeignKey("orders.oid"), primary_key=True)
+
+    user = relationship("User", back_populates="placedOrders")
+    order = relationship("Order", back_populates="placedOrders")
+
+    def __init__(self, uid, oid):
+        self.uid = uid
+        self.oid = oid
+
+
+class CompletedOrders(Base):
+    __tablename__ = "completedOrders"
+
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    oid = Column(Integer, ForeignKey("orders.oid"), primary_key=True)
+
+    user = relationship("User", back_populates="completedOrders")
+    order = relationship("Order", back_populates="completedOrders")
+
+    def __init__(self, uid, oid):
+        self.uid = uid
+        self.oid = oid
+
+
+class UserDocuments(Base):
+    __tablename__ = "userDocuments"
+
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    did = Column(Integer, ForeignKey("documents.did"), primary_key=True)
+
+    user = relationship("User", back_populates="documents")
+    document = relationship("Document", back_populates="users")
+
+    def __init__(self, uid, did):
+        self.uid = uid
+        self.did = did
+    
+
+class Quotes(Base):
+    __tablename__ = "quotes"
+
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    oid = Column(Integer, ForeignKey("orders.oid"), primary_key=True)
+    quote = Column(Number, nullable=False)
+
+    user = relationship("User", back_populates="orders")
+    order = relationship("Order", back_populates="users")
+
+    def __init__(self, uid, oid, quote):
+        self.uid = uid
+        self.oid = oid
+        self.quote = quote
+
+
+class Submission(Base):
+    __tabename__ = "submissions"
+
+    uid = Column(Integer, ForeignKey("users.uid"), primary_key=True)
+    oid = Column(Integer, ForeignKey("orders.oid"), primary_key=True)
+    did = Column(Integer, ForeignKey("documents.did"), primary_key=True)
+    
+    user = relationship("User", back_populates="submissions")
+    order = relationship("Order", back_populates="submissions")
+    document = relationship("Document", back_populates="submissions")
+        
+    def __init__(self, uid, oid, did):
+        self.uid = uid
+        self.oid = oid
+        self.did = did
+
+
+##### WRAPPER ##### 
+
+        
 class dbCache:
     def __init__(self):
         self.users = {}
