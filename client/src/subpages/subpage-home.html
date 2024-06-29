@@ -1,25 +1,17 @@
-<div id="subpage-home">
+<div id="subpage-writer">
   <div id="orders">
-    <div id="orders-header">
-      <h2>Placed Orders</h2>
-      <button id="new-order">+</button>
+    <div id="orders-carousel" class="carousel">
+      <div class="carousel-inner"></div>
+      <button class="carousel-control prev">❮</button>
+      <button class="carousel-control next">❯</button>
     </div>
-    <div class="separator horizontal"></div>
-    <div id="order-list-head">
-      <ul>
-        <li>Name</li>
-        <li>Placed</li>
-        <li>Deadline</li>
-        <li>Acceptted</li>
-        <li>Unread Submission</li>
-      </ul>
-      <select>
-        <option value="all">All</option>
-        <option value="accepted">Accepted</option>
-        <option value="unaccepted">Waiting</option>
-        <option value="closed">Closed</option>
-      </select>
+  </div>
+  <div class="separator horizontal"></div>
+  <div id="documents-holder">
+    <div id="documents"></div>
+    <div id="document-edit-menu">
+      <a id="document-share">Share</button>
+      <a id="document-delete">Delete</button>
     </div>
-    <div id="orders-list">
   </div>
 </div>
