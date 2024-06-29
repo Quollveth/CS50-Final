@@ -1,5 +1,5 @@
 import type { Order } from '../scripts/helpers/orders';
-import { capitalize, dateFormat, loadComponent } from '../scripts/helpers/helpers';
+import { capitalize, dateFormat, loadComponent, showNotification } from '../scripts/helpers/helpers';
 import type { Document } from '../scripts/helpers/documents';
 import { getUserOrders, getUserDocuments, getUserName } from '../scripts/helpers/server-talker';
 
@@ -244,14 +244,21 @@ const showEditMenu = (e:JQuery.ClickEvent) => {
 
 //// Fetch data
 const populateOrders = async () => {
-  const orders = await getUserOrders();
-  if(orders.length == 0){
-    const noOrders = $('<h2>',{
-      id: 'no-orders-banner',
-      class: 'banner',
-      text: 'You have no accepted requests'
+  let orders:Order[] = [];
+  console.log('trying');
+  try {
+    orders = await getUserOrders();
+  }
+  catch(e) {
+    showNotification('Failed to load orders. Please try again later.', 'ERROR');
+  }
+  console.log('caught');
+  if (orders.length === 0) {
+    const noOrders = $('<h2>', {
+      id: 'empty-orders-banner',
+      text: 'You have no accepted orders.',
     });
-    $('.carousel-inner').append(noOrders);
+    $('#orders').append($('<div>').addClass('orders-banner').append(noOrders));
     return;
   }
 

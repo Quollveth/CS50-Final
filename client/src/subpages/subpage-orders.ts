@@ -46,7 +46,7 @@ const populateOrdersPage = async () => {
       id: 'empty-orders-banner',
       text: 'There are no available orders at the moment. Please check back later.',
     });
-    $('#hiring-orders').append($('<div>').addClass('banner').append(noOrders));
+    $('#hiring-orders').append($('<div>').addClass('orders-banner').append(noOrders));
     return;
   }
 
