@@ -1,6 +1,6 @@
 import type { Order } from '../scripts/helpers/orders';
 import { getAvailableOrders, getUserName } from '../scripts/helpers/server-talker';
-import { capitalize,timeSince,loadComponent, dateFormat } from '../scripts/helpers/helpers';
+import { capitalize,timeSince,loadComponent, dateFormat, showNotification } from '../scripts/helpers/helpers';
 
 const addOrderCard = async (order: Order) => {
     const recipientName = await getUserName(order.recipient);
@@ -34,7 +34,13 @@ const addOrderCard = async (order: Order) => {
 };
 
 const populateOrdersPage = async () => {
-  const orders = await getAvailableOrders();
+  let orders:Order[] = [];
+  try {
+    orders = await getAvailableOrders();
+  }
+  catch(e) {
+    showNotification('Failed to load orders. Please try again later.', 'ERROR');
+  }
   if (orders.length === 0) {
     const noOrders = $('<h2>', {
       id: 'empty-orders-banner',

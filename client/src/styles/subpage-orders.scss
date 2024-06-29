@@ -1,229 +1,172 @@
 @import './styles.scss';
 @import './mixins.scss';
 
-#subpage-writer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-
-  .banner {
-    color: $text-color-light;
-    font-size: 1.5em;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  #orders {
-    margin-top: $topbar-height;
-    width: 100%;
-    max-height: 20%;
-
-    > * {
-      margin: auto;
-    }
-  }
-
-  #document-edit-menu {
-    position: absolute;
-    top: 0;
-    left: 0;
+#subpage-orders {
     display: flex;
     flex-direction: column;
-    margin-right: 10px;
-    z-index: 10;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 
-    @include rounded_list(15px);
-
-    a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      cursor: pointer;
-      padding-right: 50px;
-      text-decoration: none;
+    .banner {
+        color: $text-color-light;
+        font-size: 1.5em;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 120px;
     }
-  }
 
-  #documents {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 30px;
+    #hiring-orders {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 30px;
 
-    .document {
-      border: solid 1px $carousel-card-border-light;
-      position: relative;
+        margin-top: 50px;
 
-      width: 150px;
-      height: 200px;
+        .card-body {
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
 
-      cursor: default;
+            background-color: $hire-card-bg-light;
+            border: 1px solid $hire-card-border-light;
+            color: $hire-card-text-light;
 
-      border-radius: 5px;
-      .document-bottom {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 50px;
-        background-color: $carousel-card-bg-light;
-        border-radius: 0 0 5px 5px;
-        z-index: 2;
+            cursor: pointer;
 
-        .settings-btn {
-          position: absolute;
-          top: 0;
-          right: 0;
-          border: none;
-          background-color: #0000;
-          cursor: pointer;
-          padding: 0;
-          margin-top: -2px;
+            &:hover {
+                border: 1px solid $hire-card-hover-border-light;
+                background-color: darken($hire-card-bg-light, 5%);
+            }
 
-          opacity: 0.1;
+            &.selected-order {
+                border: 1px solid $hire-card-selected-border-light;
+            }
 
-          transition: opacity 0.2s ease-in-out;
-          &:hover {
-            opacity: 0.8;
-          }
-          z-index: 1;
+            .card-title {
+                font-weight: bold;
+                word-wrap: break-word;
+                font-size: 1rem;
+
+                margin: 0px;
+            }
+            .card-content {
+                font-size: 0.8rem;
+            }
+            .order-time {
+                font-size: 0.6rem;
+                align-self: flex-end;
+                margin-bottom: -2px;
+
+                font-weight: bold;
+                color: lighten($hire-card-text-light, 40%)
+            }
         }
-        .document-title {
-          position: absolute;
-          top: 0;
-          margin-left: 10px;
-          max-width: 130px;
-
-          text-align: center;
-        }
-      }
-      > img {
-        width: 100%;
-        height: 100%;
-        border-radius: 5px;
-      }
-      .document-darken {
-        border-radius: 5px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000000;
-        opacity: 0;
-
-        transition: opacity 0.2s ease-in-out;
-      }
-      &:hover {
-        .settings-btn {
-          opacity: 0.4;
-        }
-        .document-darken {
-          opacity: 0.2;
-        }
-      }
     }
-  }
 }
 
+
 .order-card {
-  .submit-spacer {
-    margin-top: 20px;
-    >div{
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-      align-items: center;
-    }
-  }
+    top: 5%;
+    left: 40%;
+    position: absolute;
+    z-index: 2;
+    width: 400px;
+    margin: 15px auto;
+    padding: 20px;
+    border-radius: 8px;
 
-  .submit-button, .cancel-button {
-    border: none;
-    padding: 3px;
-    border-radius: 5px;
-    width: 25%;
-    height: 10%;
-    cursor: pointer;
-  }
-
-  .submit-button {
-    background-color: $button-bg-light;
-    color: $button-text-light;
-    @include darken-on-hover($button-bg-light);
-  }
-
-  .submit-confirm {
-    font-size: small;
-  }
-
-  .cancel-button {
-    background-color: $button-bg-warn-light;
-    color: $button-text-light;
-    @include darken-on-hover($button-bg-warn-light);
-  }
-
-  .cancel-confirm {
-    font-size: small;
-    margin-top: -5px;
-  }
-
-  .submit-spacer {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    .file-info {
-      position: relative;
-      border: 1px solid darken($separator-color, 40%);
-      height: 50px;
-      width: 100%;
-      padding: 5px;
-      border-radius: 5px;
 
-      color: lighten($text-color-light, 40%);
-      font-weight: lighter;
-      font-size: small;
+    >h2 {
+        font-weight: bold;
+        word-wrap: break-word;
+        font-size: 1rem;
+
+        margin: 0px;
     }
-    .upload-trigger {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      border: none;
-      background-color: $separator-color;
-      opacity: 0;
-      border-radius: 5px;
-      transition: opacity 0.1s ease-in-out;
-      &:hover {
-        opacity: 1;
-      }
-      >img {
-        width: 50%;
-        height: 50%;
-        object-fit: cover;
-      }
+
+    >h5 {
+        margin-bottom: -10px;
     }
-  }
+
+    >.time-spacer {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        align-items: flex-end;
+
+        #deadline{
+            color: lighten($hire-card-text-light, 40%);
+            margin-bottom: -5px;
+        }
+        .order-time {
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-bottom: -2px;
+            color: lighten($hire-card-text-light, 40%);
+        }
+    }
+
+    .accept-spacer {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        gap: 10px;
+        align-items: center;
+        .accept-button{
+            width: 40%;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+        }
+        .quote-input {
+            width: 60%;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+
+            &:focus {
+                outline: none;
+            }
+            // remove number spinner
+            appearance: textfield;
+            -moz-appearance: textfield;
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    }
+
+
+    .close-button{
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
 }
 
-.lightMode #document-edit-menu {
-  background-color: $settings-light-bg-color;
-  color: $settings-light-text-color;
-  a {
-    background-color: $settings-light-bg-color;
-    color: $settings-light-text-color;
-    &:hover {
-      background-color: $settings-light-hover-color;
-      color: $settings-light-hover-text-color;
+.lightMode {
+    .order-card {
+        background-color: $form-bg-light;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-  }
-  #document-delete {
-    //background-color: $button-bg-warn-light;
-    @include link_color($text-color-light);
-    &:hover {
-      color: $button-text-warn-light;
-      background-color: $button-bg-warn-light;
+    .accept-button {
+        background-color: $button-bg-light;
+        color: $button-text-light;
+
+        @include darken-on-hover($button-bg-light);
+        cursor: pointer;
     }
-  }
 }
