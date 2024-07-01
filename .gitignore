@@ -10,6 +10,7 @@ server/__pycache__/
 server/flask_session/
 flask_session/
 **/__pycache__/
+server/src/testDB.py
 
 .mysql-data/
 *.code-workspace

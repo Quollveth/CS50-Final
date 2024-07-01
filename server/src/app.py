@@ -16,7 +16,7 @@ from flask import Flask, jsonify, request, send_from_directory, session, make_re
 from flask_cors import CORS, cross_origin
 
 # Project imports
-from helpers.sql_helper import MySQL, User, Order, Submission
+from helpers.sql_helper import MySQL, User, Order, Submission, TakenOrder, Document
 from helpers.validation import validateUsername, validadePassword, validateEmail, login_required
 
 #### Initial setup
@@ -164,7 +164,7 @@ if IN_DEBUG:
 #### Server initialization finished
 
 @app.route("/health", methods=["GET"])
-def hello():
+def health():
     return "",200
 
 ####### User Management
@@ -176,7 +176,7 @@ def userExists(username:str):
 
     user = username.lower()
 
-    if db.query_user(username=user):
+    if db.read.user(username=user):
         return True
     return False
 
@@ -204,7 +204,6 @@ class RegistResult(Enum):
 @app.route("/register", methods=["POST"])
 def register():
 
-
     if IN_DEBUG:
         keys = request.form.keys()
         print('Received register request:')
@@ -217,27 +216,40 @@ def register():
 
     # Validate form data
     if not username or not password or not email:
+        if IN_DEBUG:
+            print('Invalid data')
         return jsonify({
             'result':RegistResult.INVALID.value,
         }), 400
 
     if not validateUsername(username):
+        if IN_DEBUG:
+            print('Invalid username')
         return jsonify({
             'result':RegistResult.INVALID.value,
         }), 400
 
     if not validadePassword(password):
+        if IN_DEBUG:
+            print('Invalid password')
         return jsonify({
             'result':RegistResult.INVALID.value,
         }), 400
 
     if not validateEmail(email):
+        if IN_DEBUG:
+            print('Invalid email')
         return jsonify({
             'result':RegistResult.INVALID.value,
         }), 400
 
+    if IN_DEBUG:
+        print('Data validated')
+
     # Check if username already exists
     if userExists(username):
+        if IN_DEBUG:
+            print('User already exists')
         return jsonify({
             'result':RegistResult.EXISTS.value
         }), 400
@@ -249,8 +261,15 @@ def register():
         phash=generate_password_hash(password)
     )
 
+    if IN_DEBUG:
+        print('User object created')
+        print(f'ID: {userData.uid}')
+        print(f'Name: {userData.name}')
+        print(f'Email: {userData.email}')
+        print(f'Password: {userData.phash}')
+
     # DB Insertion
-    db.insert_user(userData)
+    db.Create.user(userData)
 
     return jsonify({
         'result':RegistResult.SUCCESS.value
@@ -276,7 +295,7 @@ def login():
             'result':False
         }),400
 
-    user = db.query_user(username=username.lower())
+    user = db.read.user(username=username.lower())
 
     if not user:
         return jsonify({
@@ -310,7 +329,7 @@ def logout():
 def get_user_data():
     uid = session.get("user")
 
-    user = db.query_user(uid=uid)
+    user = db.Read.user(uid=uid)
 
     if not user:
         return '',400
@@ -339,7 +358,7 @@ def update_user_data():
             print(f'{key}:{request.form.get(key)}')
         print()
 
-    current_user = db.query_user(uid=uid)
+    current_user = db.Read.user(uid=uid)
     if not current_user:
         return '',400
 
@@ -391,7 +410,7 @@ def update_user_data():
         print(f'Email: {email}')
         print(f'Picture: {picture}')
 
-    db.update_user(uid,newData)
+    db.Update.user(uid,newData)
 
     return '',200
 
@@ -407,7 +426,7 @@ def validate_password():
     if not password:
         return '',400
 
-    user = db.query_user(uid=uid)
+    user = db.Read.user(uid=uid)
     if not check_password_hash(user.phash,password):
         return '',400
 
@@ -423,7 +442,7 @@ def delete_user():
         print(f'Received delete request for user {uid}')
 
     password = request.form.get('password')
-    user = db.query_user(uid=uid)
+    user = db.Read.user(uid=uid)
     if not check_password_hash(user.phash,password):
         if IN_DEBUG:
             print('Invalid password')
@@ -442,18 +461,13 @@ def delete_user():
                 print('Failed to delete profile image') 
 
     # Delete all user orders
-    orders = db.query_user_placed_orders(uid)
-
-    for order in orders:
-        db.delete_order(order.oid)
-        if IN_DEBUG:
-            print(f'Deleted order {order.oid}')
+    ## TODO: Delete all user orders
 
     ## TODO: Update orders that were taken by user
 
     # Delete user
-    db.delete_user(uid)
-    
+    db.Delete.user(uid)
+
     return '',200
 
 
@@ -463,7 +477,7 @@ def get_username():
     if not id:
         return '',400
 
-    data = db.query_user(uid=uid)
+    data = db.Read.user(uid=uid)
     if not data:
         return '',400
 
@@ -488,7 +502,6 @@ def place_order():
     name = request.form.get('order[name]')
     description = request.form.get('order[description]')
     deadline_str = request.form.get('order[deadline]')
-    placed_str = request.form.get('order[placed]')
 
     if IN_DEBUG:
         if not name:
@@ -501,14 +514,13 @@ def place_order():
             print('No placed')
         print()
 
-    if not name or not description or not deadline_str or not placed_str:
+    if not name or not description or not deadline_str:
         return '',400
 
     deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
-    placed = isoparse(placed_str)
     recipient = uid
 
-    order = Order(name,description,deadline,placed,recipient)
+    order = Order(name,description,deadline,recipient)
 
     if IN_DEBUG:
         print('Order object created')
@@ -520,14 +532,14 @@ def place_order():
 
         print()
 
-    db.insert_order(order)
+    db.Create.order(order)
     return '',200
 
 #### Get all available orders
 @app.route('/get-all-orders',methods=['GET'])
 @login_required
 def get_all_orders():
-    orders = db.query_all_orders()
+    orders = db.Read.allOrders()
 
     if not orders:
         return '',400
@@ -555,7 +567,7 @@ def get_order():
     if not oid:
         return '',400
 
-    order = db.query_order(oid=oid)
+    order = db.Read.order(oid=oid)
     if not order:
         return '',400
 
@@ -585,11 +597,16 @@ def take_in_order():
     if IN_DEBUG:
         print(f'Received request to assign order {oid} to user {uid}')
 
-    order = db.query_order(oid)
+    order = db.Read.order(oid)
     if not order:
         return '',400
 
-    db.insert_user_order(uid,oid)
+    userOrder = TakenOrder(
+        uid=uid,
+        oid=oid
+    )
+
+    db.Create.takenOrder(userOrder)
 
     return  '',200
 
@@ -600,7 +617,7 @@ def take_in_order():
 def get_user_orders():
     uid = session.get("user")
 
-    orders = db.query_user_orders(uid)
+    orders = db.Read.userTakenOrders(uid)
     if not orders:
         return '',400
 
@@ -654,13 +671,19 @@ def submit_order():
     if IN_DEBUG:
         print(f'File saved as {newFileName}.pdf')
 
+    doc = Document(
+        title=document.filename,
+        filename=newFileName,
+    )
+    db.Create.document(doc)
+
     sub = Submission(
         uid=uid,
         oid=oid,
-        filename=newFileName
+        did=doc.did
     )
 
-    db.insert_submission(sub)
+    db.Create.submission(sub)
 
     return '',200
 
