@@ -1,6 +1,3 @@
-CS50 Final Project
-
-Clientside browser application, desploys to single html file, uses typescript, sass and webpack
-Serverside built in flask, runs on docker container
-
-Apache license
+This was going to be my final project for cs50.
+I wanted to make a client/server application, the idea went through a lot of changing my mind until i settled on it being a mock platform for writers like a knockoff fiverr thing.
+I eventually gave up and decided to call it quits after the third refactor leading nowhere and move on to something better before the sunken cost fallacy makes me waste another 2 months on this crap
